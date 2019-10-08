@@ -2,7 +2,7 @@
 
 ## Version
 
-Version 1.0
+Version: 1.0
 
 ## Overview
 
@@ -21,7 +21,7 @@ Main output of geometric nested sampling run is file of sampled points and their
 
 ## Toy models
 
-To run with toy models (defined and explained in `toy_models.py`), run `main.py`, which calls the function `runTests()` which can be found in the `tests.py` file. Plots for comparison can be found in `image_output/toy_models_empirical_getdist/`. Text output can be found in `text_output/`. The default toy model used when `main.py` is ran as is when cloned from this repo, should be compared with files `image_output/toy_models_empirical_getdist/circle.png` (in particular, the MHWG curve on this plot). Files created from running main.py for this toy example are saved as th_Sc_mhwg* files in `text_output/` and `image_output/toy_models_empirical_getdist`. Further toy models can be run by adding them to `tests.py` and adjusting the necessary parameters (see the commented out example for how to configure the parameters). The following plot was produced from running the default circle toy model, and shows the kernel density esimate of samples obtained by the geometric nested sampler from the von Mises distribution.
+To run with toy models (defined and explained in `toy_models.py`), go to `tests/` and run `tests.py`, which calls the function `runTests()`, which can be found in the `tests.py` file. Plots for comparison can be found in `image_output/toy_models_empirical_getdist/`. Text output can be found in `text_output/`. The default toy model used when `main.py` is ran as is when cloned from this repo, should be compared with files `image_output/toy_models_empirical_getdist/circle.png` (in particular, the MHWG curve on this plot). Files created from running main.py for this toy example are saved as th_Sc_mhwg* files in `text_output/` and `image_output/toy_models_empirical_getdist`. Further toy models can be run by adding them to `tests.py` and adjusting the necessary parameters (see the commented out example for how to configure the parameters). The following plot was produced from running the default circle toy model, and shows the kernel density esimate of samples obtained by the geometric nested sampler from the von Mises distribution.
 
 
 ![alt text](gns_circle.png)
@@ -32,7 +32,7 @@ The toy models (see https://arxiv.org/abs/1905.09110) are designed to make use o
 
 ## Running the algorithm with custom likelihood/prior functions
 
-If custom priors/ likelihoods are to be used, one needs to call the `nestedRun()` function and pass the required likelihood and prior functions. All of these functions must take as an argument a `numpy` array with shape `(nLive, nDims)` where `nLive` is the number of live points in the nested run, and is defined in the functions `NestedRunLinear` and `NestedRunLog` which are in the `nested_run.py` file. `nDims` is the dimensionality of the parameter space of the inference. Furthermore, these functions should return an array of size `(nLive)`, with the respective likelihood/prior values for each live point. Note the algorithm can be run in linear or log mode (by running `NestedRunLinear` or `NestedRunLog`, which is determined by the corresponding value in the `setupDict`), the latter of which requires a function which calculates the log likelihood. See `prob_funcs.py` for examples of such functions. Sampler will also work with probability distributions (and their inverse CDFs) defined in `scipy.stats`. 
+If custom priors/ likelihoods are to be used, one needs to call the `nestedRun()` function in the `gns.nested_run` module, and pass the required likelihood and prior functions. All of these functions must take as an argument a `numpy` array with shape `(nLive, nDims)` where `nLive` is the number of live points in the nested run, and is defined in the functions `NestedRunLinear` and `NestedRunLog` which are in the `nested_run.py` file. `nDims` is the dimensionality of the parameter space of the inference. Furthermore, these functions should return an array of size `(nLive)`, with the respective likelihood/prior values for each live point. Note the algorithm can be run in linear or log mode (by running `NestedRunLinear` or `NestedRunLog`, which is determined by the corresponding value in the `setupDict`), the latter of which requires a function which calculates the log likelihood. See `prob_funcs.py` for examples of such functions. Sampler will also work with probability distributions (and their inverse CDFs) defined in `scipy.stats`. 
 
 Note that because the nested sampler samples in the unit hypercube, functions for the inverse of the CDF of the prior distributions are also required. This function also takes an array of size `(nLive, nDims)`, but returns an array of the same shape. Note also that the unit hypercube and physical parameter vectors take the shape `(nLive, nDims)`. 
 
@@ -64,10 +64,30 @@ These are automatically employed in `tests.py`, but can be turned on and off by 
 
 ## Installation
 
-No installation of the geometric nested sampler itself is required, simply clone the gns repo:
+### Pip install
 
-`git clone https://github.com/SuperKam91/gns.git`
+To install using pip, do 
+
+`pip install GNS==1.0,` 
+
+to install the gns algorithm and the requirements to run the algorithm. To also install the packages required for plotting, do 
+
+`pip install GNS[plotting]==1.0.`
+
+Finally, to install the gns package and include `MultiNest` algorithm runs (for comparison tests), do
+
+`pip install GNS[multinest]==1.0.`
+
+Note that the above do not install the tests found in the `tests/` directory
+
+### git
+
+No installation of the geometric nested sampler itself is strictly necessary, one can simply clone the gns repo:
+
+`git clone https://github.com/SuperKam91/gns.git.`
 
 Next, install all the modules included in the `requirements.txt` file to be able to run the geometric nested sampling algorithm. To use the plotting functions featured in the package, one must also install all the files included in `requirements_plotting.txt`. I highly recommend installing the plot-dependent packages, to compare results the results of the toy models with those in `image_output`. Finally, to run MultiNest, install all packages in `requirements_mutlinest.txt`.
 
-Alternatively, one can run `python setup.py install` or `pip install .` from the root of the repo to install the base requirements (i.e. those in `requirements.txt`. Note that the plotting and MultiNest packages are part of `extras_require`
+Alternatively, one can run `python setup.py install` or `pip install .` from the root of the repo to install the base requirements (i.e. those in `requirements.txt`. As with the non-local `pip install` case, one can install the packages required for plotting and Multinest by doing or `pip install .[plotting]` (and similar for Multinest).
+
+Note that by default, the tests in the `tests/` directory run the gns algorithm from the code in the repo in which `tests/` sits. To change this i.e. to use the installed package, in `tests.py`, set `run_repo = False`.

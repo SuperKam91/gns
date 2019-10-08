@@ -1,3 +1,6 @@
 #### Ignore compiled python module files
 gns/*.pyc
 gns/*.py~
+dist/
+build/
+GNS.egg-info/

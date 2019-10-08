@@ -8,17 +8,28 @@ from shutil import rmtree
 
 from setuptools import find_packages, setup, Command
 
+def get_version(short=False):
+    with open('README.md') as f:
+        for line in f:
+            if 'Version:' in line:
+                ver = line.split(':')[1].strip()
+                if short:
+                    subver = ver.split('.')
+                    return '%s.%s' % tuple(subver[:2])
+                else:
+                    return ver
+
 # Package meta-data.
-NAME = 'gns'
+NAME = 'GNS'
 DESCRIPTION = 'Geometric nested sampling algorithm, as described in https://arxiv.org/abs/1905.09110.'
 URL = 'https://github.com/SuperKam91/gns'
 EMAIL = 'kj316@mrao.cam.ac.uk'
 AUTHOR = 'Kamran Javid'
 REQUIRES_PYTHON = '>=2.7.0'
-VERSION = '1.0'
+VERSION = get_version()
 
 # What packages are required for this module to be executed?
-REQUIRED = ['numpy', 'itertools', 'scipy']
+REQUIRED = ['numpy', 'scipy']
 
 # What packages are optional?
 EXTRAS = {

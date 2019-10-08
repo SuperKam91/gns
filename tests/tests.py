@@ -4,8 +4,13 @@ import itertools
 import scipy
 import matplotlib.pyplot as plt
 
+run_repo = True
+
 #import custom modules
-import context
+if run_repo: #run gns code from repo which this test file sits in
+	import context
+else: #run installed package
+	pass
 import gns.nested_run as nested_run
 import gns.plotting as plotting
 import gns.toy_models as toy_models
