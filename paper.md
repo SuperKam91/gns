@@ -27,25 +27,25 @@ For parameters which represent coordinates on the surface of a sphere, the algor
 
 # Bayesian inference and nested sampling
 
-For a model $\mathcal{M}$ and data $\vec{\mathcal{D}}$, we can obtain model parameters (also known as input or sampling parameters) $\vec{\theta}$ conditioned on $\mathcal{M}$ and $\vec{\mathcal{D}}$ using Bayes' theorem:
+For a model $\mathcal{M}$ and data $\mathbf{\mathcal{D}}$, we can obtain model parameters (also known as input or sampling parameters) $\mathbf{\theta}$ conditioned on $\mathcal{M}$ and $\mathbf{\mathcal{D}}$ using Bayes' theorem:
 
 $$
-\mathrm{Pr}\left(\vec{\theta}|\vec{\mathcal{D}},\mathcal{M}\right) = \frac{\mathrm{Pr}\left(\vec{\mathcal{D}}|\vec{\theta},\mathcal{M}\right)\mathrm{Pr}\left(\vec{\theta}|\mathcal{M}\right)}{\mathrm{Pr}\left(\vec{\mathcal{D}}|\mathcal{M}\right)},
+\mathrm{Pr}\left(\mathbf{\theta}|\mathbf{\mathcal{D}},\mathcal{M}\right) = \frac{\mathrm{Pr}\left(\mathbf{\mathcal{D}}|\mathbf{\theta},\mathcal{M}\right)\mathrm{Pr}\left(\mathbf{\theta}|\mathcal{M}\right)}{\mathrm{Pr}\left(\mathbf{\mathcal{D}}|\mathcal{M}\right)},
 $$
 
-where $\mathrm{Pr}\left(\vec{\theta}|\vec{\mathcal{D}},\mathcal{M}\right) \equiv \mathcal{P}\left(\vec{\theta}\right)$ is the posterior distribution of the model parameter set, $\mathrm{Pr}\left(\vec{\mathcal{D}}|\vec{\theta},\mathcal{M}\right) \equiv \mathcal{L}\left(\vec{\theta}\right)$ is the likelihood function for the data, $\mathrm{Pr}\left(\vec{\theta}|\mathcal{M}\right) \equiv \pi\left(\vec{\theta}\right)$ is the prior probability distribution for the model parameter set, and $\mathrm{Pr}\left(\vec{\mathcal{D}}|\mathcal{M}\right) \equiv \mathcal{Z}$ is the Bayesian evidence of the data given a model $\mathcal{M}$. The evidence can be interpreted as the factor required to normalise the posterior over the model parameter space:
+where $\mathrm{Pr}\left(\mathbf{\theta}|\mathbf{\mathcal{D}},\mathcal{M}\right) \equiv \mathcal{P}\left(\mathbf{\theta}\right)$ is the posterior distribution of the model parameter set, $\mathrm{Pr}\left(\mathbf{\mathcal{D}}|\mathbf{\theta},\mathcal{M}\right) \equiv \mathcal{L}\left(\mathbf{\theta}\right)$ is the likelihood function for the data, $\mathrm{Pr}\left(\mathbf{\theta}|\mathcal{M}\right) \equiv \pi\left(\mathbf{\theta}\right)$ is the prior probability distribution for the model parameter set, and $\mathrm{Pr}\left(\mathbf{\mathcal{D}}|\mathcal{M}\right) \equiv \mathcal{Z}$ is the Bayesian evidence of the data given a model $\mathcal{M}$. The evidence can be interpreted as the factor required to normalise the posterior over the model parameter space:
 
 $$
-\mathcal{Z} = \int \mathcal{L}\left(\vec{\theta}\right) \pi\left(\vec{\theta}\right)\, \mathrm{d}\vec{\theta}.
+\mathcal{Z} = \int \mathcal{L}\left(\mathbf{\theta}\right) \pi\left(\mathbf{\theta}\right)\, \mathrm{d}\mathbf{\theta}.
 $$.
 
-Nested sampling [@skilling2006nested] exploits the relation between the likelihood and prior volume to transform the integral which gives the evidence as a one-dimensional integral. The prior volume $X$ is defined by $\mathrm{d}X = \pi\left(\vec{\theta}\right) \mathrm{d}\vec{\theta}$, thus $X$ is defined on $[0,1]$ and we can say:
+Nested sampling [@skilling2006nested] exploits the relation between the likelihood and prior volume to transform the integral which gives the evidence as a one-dimensional integral. The prior volume $X$ is defined by $\mathrm{d}X = \pi\left(\mathbf{\theta}\right) \mathrm{d}\mathbf{\theta}$, thus $X$ is defined on $[0,1]$ and we can say:
 
 $$
 \mathcal{Z} = \int_{0}^{1} \mathcal{L}(X) \mathrm{d}X.
 $$
 
-The integral extends over the region(s) of the parameter space contained within the iso-likelihood contour $\mathcal{L}\left(\vec{\theta}\right) = \mathcal{L}$ (see @javid2019physical for a proof of the equivlance of both evidence integrals).
+The integral extends over the region(s) of the parameter space contained within the iso-likelihood contour $\mathcal{L}\left(\mathbf{\theta}\right) = \mathcal{L}$ (see @javid2019physical for a proof of the equivlance of both evidence integrals).
 
 Nested sampling has been used extensively within the astrophysics community for both computing the posterior distributions of parameters of interest and for model comparison (see e.g. [@feroz2009bayesian; @javid2018physical; @javid2018comparison; @perrott2019sunyaev; @javid2019physical] which all use data from the Arcminute MicroKelvin Imager [@hickish2018digital] to solve Bayesian inference problems). Two of the most popular nested sampling algorithms are Multinest [@feroz2009multinest] and PolyChord  [@handley2015polychord; @handley2015polychord]. The former of these approximates the iso-likelihood contours as hyperellipsoids in the unit hypercube in which it samples. PolyChord performs coordinate transformations such that the resultant space is easier to navigate.
 
@@ -55,11 +55,11 @@ Here I present the geometric nested sampling algorithm, as described in @javid20
 
 One key issue with Metropolis Hastings nested sampling is that at each nested sampling iteration, if too many trial points are rejected, then the livepoints will be highly correlated with each other after a number of nested sampling iterations. To prevent this one must sample a large number of trial points in order to increase the number of acceptances and decrease the auto-correlation of the trial point chain. 
 
-This solution can be problematic if computing the likelihood is computationally expensive. One particular case in which the sampled point is guaranteed to be rejected, is if the point lies outside of the domain of $\mathcal{P}$ (support of $\pi$). Of course, this can be avoided by adapting $q\left(\vec{\theta}_{\rm t} | \vec{\theta}_{l}\right)$ so that it is truncated to fit the support of $\pi$, but in high dimensions this can be tedious, and inefficient in itself. Hence one desires an algorithm which does not sample outside the support of $\pi$, without having to truncate $q$.
+This solution can be problematic if computing the likelihood is computationally expensive. One particular case in which the sampled point is guaranteed to be rejected, is if the point lies outside of the domain of $\mathcal{P}$ (support of $\pi$). Of course, this can be avoided by adapting $q\left(\mathbf{\theta}_{\rm t} | \mathbf{\theta}_{l}\right)$ so that it is truncated to fit the support of $\pi$, but in high dimensions this can be tedious, and inefficient in itself. Hence one desires an algorithm which does not sample outside the support of $\pi$, without having to truncate $q$.
 
 ![Wrapped trial distribution for circular parameters. Dotted red lines denote edge of posterior domain. Green and blue curves are candidate trial distributions.](wrapped_plot.png)
 
-Another issue which most sampling algorithms are subject to occurs when the modes of the posterior distribution are far away from each other in $\vec{\theta}$ space, e.g. when they are at "opposite ends" of the domain of $\pi$. In the context of nested sampling this can result in one or more of the modes not being sampled accurately, particularly in the case of low livepoint runs.
+Another issue which most sampling algorithms are subject to occurs when the modes of the posterior distribution are far away from each other in $\mathbf{\theta}$ space, e.g. when they are at "opposite ends" of the domain of $\pi$. In the context of nested sampling this can result in one or more of the modes not being sampled accurately, particularly in the case of low livepoint runs.
 Thus a sampling algorithm should be able to efficiently manoeuvre between well separated modes which lie at the "edges" of $\pi$'s support. 
 
 Specific to the geometric nested sampler, is the way it treats parameters that exhibit certain geometrical properties. For example, parameters which exhibit circular or periodic properties (e.g. time or angle), the trial distribution used in the MCMC evaluation is 'wrapped' around its domain as shown in Figure 1. A wrapped trial distribution such as this one means that samples are never automatically rejected for being outside of the domain of the posterior. Furthermore, any modes occurring near the edge of the domain are still "close to the other end" of the domain, and so can be sampled more efficiently.
