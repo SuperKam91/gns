@@ -1,5 +1,5 @@
 ---
-title: 'Geometric nested sampling'
+title: 'Geometric nested sampling: sampling from distributions defined on non-trivial geometries'
 
 tags:
   - Nested sampling
