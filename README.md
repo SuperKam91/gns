@@ -62,6 +62,10 @@ Can also call MultiNest (https://arxiv.org/abs/0809.3437) by calling the pyMulti
 
 These are automatically employed in `tests.py`, but can be turned on and off by setting the appropriate flags in the file. 
 
+## Requirements
+
+This package was developed and tested using `python 2.7` and thus I recommend this version when running the algorithm. The `wheel` file on PyPi is a `py2` file and so requires `python 2.X`.
+
 ## Installation
 
 ### Pip install
