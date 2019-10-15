@@ -3,8 +3,8 @@ import numpy as np
 import scipy
 
 #import custom modules
-import output
-import tools
+from . import output
+from . import tools
 
 ###############NS loop related functions
 

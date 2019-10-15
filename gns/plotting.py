@@ -10,7 +10,7 @@ except:
 import matplotlib.gridspec
 
 #import custom modules
-import input
+from . import input
 try:
 	import spherical_kde
 except:
@@ -62,14 +62,14 @@ def callGetDist(chainsFilePrefix, plotName, nParams, plotLegend):
 	parameters from chains file as labelled in that file and in .paramnames
 	plotName should contain image type extension (e.g. .png)
 	"""
-	print plotName
+	print(plotName)
 	try:
 		import getdist.plots, getdist.loadMCSamples
 	except ImportError:
 		try:
 			import getdist
 		except ImportError:	
-			print "can't import getdist. Exiting..."
+			print("can't import getdist. Exiting...")
 			sys.exit(1)
 	save = False
 	paramList = ['p' + str(i+1) for i in range(nParams)]
@@ -125,7 +125,7 @@ def get3DMarg(params, Lhood, n):
 	for j in range(n):
 		L3[j] = Lhood[j::n].sum()
 		L2[j] = Lhood[j * n * n:(j + 1) * n * n].sum()
-		L1Indices = np.array([range(i, i + n) for i in range(j * n, n * n * n, n * n)]) # for each j, gives a n x n shaped array
+		L1Indices = np.array([list(range(i, i + n)) for i in range(j * n, n * n * n, n * n)]) # for each j, gives a n x n shaped array
 		L1[j] = Lhood[L1Indices].sum()
 	return p1, L1, p2, L2, p3, L3
 
@@ -147,10 +147,10 @@ def get4DMarg(params, Lhood, n):
 	L1 = np.zeros(n)
 	for j in range(n):
 		L4[j] = Lhood[j::n].sum()
-		L3Indices = np.array([range(i, i + n) for i in range(j * n, n * n * n * n, n * n)]) # for each j, gives a n^2 x n shaped array
+		L3Indices = np.array([list(range(i, i + n)) for i in range(j * n, n * n * n * n, n * n)]) # for each j, gives a n^2 x n shaped array
 		L3[j] = Lhood[L3Indices].sum()
 		L2[j] = Lhood[j * n * n * n:(j + 1) * n * n * n].sum()
-		L1Indices = np.array([range(i, i + n * n) for i in range(j * n * n, n * n * n * n, n * n * n)]) # for each j, gives a n x n^2 shaped array
+		L1Indices = np.array([list(range(i, i + n * n)) for i in range(j * n * n, n * n * n * n, n * n * n)]) # for each j, gives a n x n^2 shaped array
 		L1[j] = Lhood[L1Indices].sum()
 	return p1, L1, p2, L2, p3, L3, p4, L4
 
@@ -173,12 +173,12 @@ def get5DMarg(params, Lhood, n):
 	L1 = np.zeros(n)
 	for j in range(n):
 		L5[j] = Lhood[j::n].sum()
-		L4Indices = np.array([range(i, i + n) for i in range(j * n, n * n * n * n * n, n * n)]) # for each j, gives a n^3 x n shaped array
+		L4Indices = np.array([list(range(i, i + n)) for i in range(j * n, n * n * n * n * n, n * n)]) # for each j, gives a n^3 x n shaped array
 		L4[j] = Lhood[L4Indices].sum() 
-		L3Indices = np.array([range(i, i + n * n) for i in range(j * n * n, n * n * n * n * n, n * n * n)]) # for each j, gives a n^2 x n^2 shaped array
+		L3Indices = np.array([list(range(i, i + n * n)) for i in range(j * n * n, n * n * n * n * n, n * n * n)]) # for each j, gives a n^2 x n^2 shaped array
 		L3[j] = Lhood[L3Indices].sum()
 		L2[j] = Lhood[j * n * n * n * n:(j + 1) * n * n * n * n].sum()
-		L1Indices = np.array([range(i, i + n * n * n) for i in range(j * n * n * n, n * n * n * n * n, n * n * n * n)]) # for each j, gives a n x n^3 shaped array
+		L1Indices = np.array([list(range(i, i + n * n * n)) for i in range(j * n * n * n, n * n * n * n * n, n * n * n * n)]) # for each j, gives a n x n^3 shaped array
 		L1[j] = Lhood[L1Indices].sum()
 	return p1, L1, p2, L2, p3, L3, p4, L4, p5, L5
 
@@ -186,7 +186,7 @@ def cornerPlots(chainsFilePrefix, plotName, plotLegend, labels):
 	try:
 		import corner
 	except ImportError:
-		print "can't import corner. Exiting..."
+		print("can't import corner. Exiting...")
 		sys.exit(1)
 	colours = ['black', 'blue', 'red', 'green']
 	patchesList = []

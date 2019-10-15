@@ -2,8 +2,8 @@
 import numpy as np
 
 #import custom modules
-import prob_funcs
-import geom
+from . import prob_funcs
+from . import geom
 
 def getToyHypersGeom(shape):
 	"""
@@ -282,6 +282,6 @@ def getTargetSupport(priorParams):
 			targetSupport[1,i] = param2Vec[i]
 			targetSupport[2,i] = np.abs(targetSupport[1,i] - targetSupport[0,i])
 		else:
-			print "prior type not recognised"
+			print("prior type not recognised")
 			sys.exit(1)
 	return targetSupport

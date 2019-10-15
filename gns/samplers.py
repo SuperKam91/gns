@@ -3,8 +3,8 @@ import numpy as np
 import sys
 
 #import custom modules
-import prob_funcs
-import geom_sampler
+from . import prob_funcs
+from . import geom_sampler
 
 ##########Lhood sampling functions
 
@@ -166,7 +166,7 @@ def applyBoundaries(livePoint, targetSupport, boundaryList):
 			differenceCorrection = 'nothing'
 			pointCorrection = 'nothing'
 		else:
-			print "invalid value in boundaryList. Exiting..."
+			print("invalid value in boundaryList. Exiting...")
 			sys.exit(1)
 		#if np.isfinite(targetSupport[2,i]):
 		#	livePoint[i] = applyBoundary(livePoint[i], targetSupport[0,i], targetSupport[1,i], differenceCorrection, pointCorrection)

@@ -26,7 +26,7 @@ def checkLhoodShape(livePointsLhood, nLive):
 	"""
 	assert (livePointsLhood.shape == (nLive,1) or livePointsLhood.shape == (nLive,)), "livePointsLhood wrong shape. should be (%s,) or (%s,1)" %(nLive, nLive)
 	if livePointsLhood.shape == (nLive,1):
-		print "converting shape from (%s, 1) to (%s,)"%(nLive, nLive) 
+		print("converting shape from (%s, 1) to (%s,)"%(nLive, nLive)) 
 		return livePointsLhood.reshape(-1,)
 	else:
 		return livePointsLhood

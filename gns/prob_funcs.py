@@ -40,7 +40,7 @@ def fitPriors(priorParams):
 		elif priorType[i] == 3:
 			priorFunc = scipy.stats.sine()
 		else:
-			print "priors other than uniform, Gaussian and sin not currently supported"
+			print("priors other than uniform, Gaussian and sin not currently supported")
 			sys.exit(1)
 		priorFuncs.append(priorFunc)
 	return priorFuncs

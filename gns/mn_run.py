@@ -7,8 +7,8 @@ try:
 	import pymultinest
 except:
 	pass
-import ns_loop_funcs
-import prob_funcs
+from . import ns_loop_funcs
+from . import prob_funcs
 
 def MNRun(priorParams, LLhoodParams, paramNames):
 	"""

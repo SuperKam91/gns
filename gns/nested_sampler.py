@@ -66,7 +66,7 @@ def fitPriors(priorParams):
 		elif priorType[i] == 2:
 			priorFunc = scipy.stats.norm(param1Vec[i], param2Vec[i])
 		else:
-			print "priors other than uniform and Gaussian not currently supported"
+			print("priors other than uniform and Gaussian not currently supported")
 			sys.exit(1)
 		priorFuncs.append(priorFunc)
 	return priorFuncs
@@ -686,7 +686,7 @@ def evalIntegrand(*args):
 	theta = np.array(args[:-1]).reshape(1,-1)
 	integrandFuncs = args[-1]
 	integrandVal = 1.
-	for func, argIndices in integrandFuncs.iteritems():
+	for func, argIndices in integrandFuncs.items():
 		integrandVal *= func(theta[argIndices])
 	return integrandVal
 
@@ -709,7 +709,7 @@ def evalExpLogIntegrand(*args):
 	theta = np.array(args[:-2]).reshape(1,-1)
 	integrandLogFuncs = args[-2]
 	integrandLogVal = args[-1]
-	for logFunc, argIndices in integrandLogFuncs.iteritems():
+	for logFunc, argIndices in integrandLogFuncs.items():
 		integrandLogVal += logFunc(theta[argIndices])
 	return np.exp(integrandLogVal)
 
@@ -729,7 +729,7 @@ def evalLogLExpLogIntegrand(*args):
 	integrandLogVal = args[-2]
 	LLhoodFunc = args[-1]
 	LLhoodFuncArgs = integrandLogFuncs[LLhoodFunc] #should be all of theta
-	for logFunc, argIndices in integrandLogFuncs.iteritems():
+	for logFunc, argIndices in integrandLogFuncs.items():
 		integrandLogVal += logFunc(theta[argIndices])
 	return LLhoodFunc(theta[LLhoodFuncArgs]) * np.exp(integrandLogVal)
 
@@ -1337,7 +1337,7 @@ def calcZMomentsKeetonLog(deadPointsLLhood, nLive, nest):
 	"""
 	TODO
 	"""
-	print "not implemented yet. Exiting"
+	print("not implemented yet. Exiting")
 	sys.exit(1)
 	return logEofZ, logEofZ2
 
@@ -1345,7 +1345,7 @@ def calcEofZKeetonLog(LLhoods, nLive, nest):
 	"""
 	TODO
 	"""
-	print "not implemented yet. Exiting"
+	print("not implemented yet. Exiting")
 	sys.exit(1)
 	return logEofZ
 
@@ -1353,7 +1353,7 @@ def calcEofZ2KeetonLog(LLhoods, nLive, nest):
 	"""
 	TODO
 	"""
-	print "not implemented yet. Exiting"
+	print("not implemented yet. Exiting")
 	sys.exit(1)
 	return logEofZ2	
 
@@ -1361,7 +1361,7 @@ def calcHKeetonLog(logEofZK, deadPointsLLhood, nLive, nest):
 		"""
 		TODO
 		"""
-		print "not implemented yet. Exiting"
+		print("not implemented yet. Exiting")
 		sys.exit(1)
 		return H
 
@@ -1420,7 +1420,7 @@ def calcZMomentsFinalKeetonLog(livePointsLLhood, nLive, nest):
 	"""
 	TODO
 	"""
-	print "not implemented yet. Exiting"
+	print("not implemented yet. Exiting")
 	sys.exit(1)
 	return logEofZFinal, logEofZ2Final
 
@@ -1428,7 +1428,7 @@ def calcEofZFinalKeetonLog(finalLLhoods, nLive, nest):
 	"""
 	TODO
 	"""
-	print "not implemented yet. Exiting"
+	print("not implemented yet. Exiting")
 	sys.exit(1)
 	return logEofZFinal
 
@@ -1436,7 +1436,7 @@ def calcEofZ2FinalKeetonLog(finalLLhoods, nLive, nest):
 	"""
 	TODO
 	"""
-	print "not implemented yet. Exiting"
+	print("not implemented yet. Exiting")
 	sys.exit(1)
 	return logEofZ2Final
 
@@ -1444,7 +1444,7 @@ def calcEofZZFinalKeetonLog(deadPointsLLhood, livePointsLLhood, nLive, nest):
 	"""
 	TODO
 	"""
-	print "not implemented yet. Exiting"
+	print("not implemented yet. Exiting")
 	sys.exit(1)
 	return logEofZZFinalK
 
@@ -1452,7 +1452,7 @@ def calcHTotalKeetonLog(logEofZFinalK, deadPointsLLhood, nLive, nest, livePoints
 	"""
 	TODO
 	"""
-	print "not implemented yet. Exiting"
+	print("not implemented yet. Exiting")
 	sys.exit(1)
 	return H
 
@@ -1485,7 +1485,7 @@ def getVarTotalKeetonLog(logVarZ, logVarZFinal, logEofZ, logEofZFinal, logEofZZF
 	"""
 	TODO
 	"""
-	print "not implemented yet. Exiting"
+	print("not implemented yet. Exiting")
 	sys.exit(1)
 	return logVarZTotal
 
@@ -1493,7 +1493,7 @@ def getEofZTotalKeetonLog(logEofZ, logEofZFinal):
 	"""
 	TODO
 	"""
-	print "not implemented yet. Exiting"
+	print("not implemented yet. Exiting")
 	sys.exit(1)
 	return logEofZTotal
 
@@ -1501,7 +1501,7 @@ def getEofZ2TotalKeetonLog(logEofZ2, logEofZ2Final):
 	"""
 	TODO
 	"""
-	print "not implemented yet. Exiting"
+	print("not implemented yet. Exiting")
 	sys.exit(1)
 	return logEofZ2Total
 
@@ -1586,17 +1586,17 @@ def printUpdate(nest, deadPointPhys, deadPointLhood, EofZ, livePointPhys, livePo
 		L = 'Lhood'
 		Z = 'E[Z]'
 	else:
-		print "invalid space"
+		print("invalid space")
 		sys.exit(1)
-	print "for deadpoint %i: physical value = %s %s value = %f" %(nest, deadPointPhys, L, deadPointLhood)
-	print "%s = %s" % (Z, EofZ)
-	print "new live point obtained: physical value = %s %s has value = %s" %(livePointPhys, L, livePointLhood)
+	print("for deadpoint %i: physical value = %s %s value = %f" %(nest, deadPointPhys, L, deadPointLhood))
+	print("%s = %s" % (Z, EofZ))
+	print("new live point obtained: physical value = %s %s has value = %s" %(livePointPhys, L, livePointLhood))
 
 def printBreak():
 	"""
 	tell user final contribution to sampling is being calculated
 	"""
-	print "adding final contribution from remaining live points"
+	print("adding final contribution from remaining live points")
 
 def printZHValues(EofZ, EofZ2, varZ, H, space, stage, method):
 	"""
@@ -1612,33 +1612,33 @@ def printZHValues(EofZ, EofZ2, varZ, H, space, stage, method):
 		Z2 = 'E[Z2]'
 		var = 'var[Z]'
 	else:
-		print "invalid space"
+		print("invalid space")
 		sys.exit(1)
-	print "%s %s (%s) = %s" %(Z, stage, method, EofZ)
-	print "%s %s (%s) = %s" %(Z2, stage, method, EofZ2)
-	print "%s %s (%s) = %s" %(var, stage, method, varZ)
-	print "H %s (%s) = %s" %(stage, method, H)
+	print("%s %s (%s) = %s" %(Z, stage, method, EofZ))
+	print("%s %s (%s) = %s" %(Z2, stage, method, EofZ2))
+	print("%s %s (%s) = %s" %(var, stage, method, varZ))
+	print("H %s (%s) = %s" %(stage, method, H))
 
 def printTheoretical(ZTheor, ZTheorErr, HTheor, HTheorErr):
 	"""
 	Outputs values for theoretical values of Z and H (and their errors)
 	"""
-	print "ZTheor = %s" %ZTheor
-	print "ZTheorErr = %s" %ZTheorErr
-	print "HTheor = %s" %HTheor 
-	print "HTheorErr = %s" %HTheorErr
+	print("ZTheor = %s" %ZTheor)
+	print("ZTheorErr = %s" %ZTheorErr)
+	print("HTheor = %s" %HTheor) 
+	print("HTheorErr = %s" %HTheorErr)
 
 def printSampleNum(numSamples):
 	"""
 	Print number of samples used in sampling (including final livepoints used for posterior weights)
 	"""
-	print "total number of samples = %i" %numSamples
+	print("total number of samples = %i" %numSamples)
 
 def printTerminationUpdateInfo(nest, terminator):
 	"""
 	Print update on termination status when evaluating by H value
 	"""
-	print "current end value is %i. Termination value is %f" %(nest, terminator)
+	print("current end value is %i. Termination value is %f" %(nest, terminator))
 
 def printTerminationUpdateZ(EofZLive, endValue, terminationFactor, space):
 	"""
@@ -1649,10 +1649,10 @@ def printTerminationUpdateZ(EofZLive, endValue, terminationFactor, space):
 	elif space == 'log':
 		Z = 'log(E[ZLive])'
 	else:
-		print "invalid space"
+		print("invalid space")
 		sys.exit(1)
-	print "%s = %s" %(Z, EofZLive)
-	print "current end value is %s. Termination value is %s" %(endValue, terminationFactor)
+	print("%s = %s" %(Z, EofZLive))
+	print("current end value is %s. Termination value is %s" %(endValue, terminationFactor))
 
 def printFinalLivePoints(i, physValue, Lhood, ZLiveType, space):
 	"""
@@ -1667,14 +1667,14 @@ def printFinalLivePoints(i, physValue, Lhood, ZLiveType, space):
 		else:	
 			L = 'LLhood'
 	else:
-		print "invalid space"
+		print("invalid space")
 		sys.exit(1)
 	if ZLiveType == 'average Lhood':
-		print "'average' physical value = %s (n.b. this has no useful meaning), %s = %s" %(physValue, L, Lhood)
+		print("'average' physical value = %s (n.b. this has no useful meaning), %s = %s" %(physValue, L, Lhood))
 	elif ZLiveType == 'average X':
-		print "remaining livepoint number %i: physical value = %s %s value = %s" %(i, physValue, L, Lhood)
+		print("remaining livepoint number %i: physical value = %s %s value = %s" %(i, physValue, L, Lhood))
 	elif ZLiveType == 'max Lhood':
-		print "maximum %s remaining livepoint number %i: physical value = %s %s value = %s" %(L, i, physValue, L, Lhood)
+		print("maximum %s remaining livepoint number %i: physical value = %s %s value = %s" %(L, i, physValue, L, Lhood))
 
 ############nested run functions
 

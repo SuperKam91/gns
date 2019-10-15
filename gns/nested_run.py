@@ -3,17 +3,17 @@ import numpy as np
 import sys
 
 #import custom modules
-import ns_end_funcs
-import ns_loop_funcs
-import prob_funcs
-import samplers
-import calculations
-import recurrence_calculations
-import keeton_calculations
-import theoretical_funcs
-import output
-import array_checks
-import geom_sampler
+from . import ns_end_funcs
+from . import ns_loop_funcs
+from . import prob_funcs
+from . import samplers
+from . import calculations
+from . import recurrence_calculations
+from . import keeton_calculations
+from . import theoretical_funcs
+from . import output
+from . import array_checks
+from . import geom_sampler
 
 ############nested run functions
 

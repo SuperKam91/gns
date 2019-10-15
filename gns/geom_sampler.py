@@ -2,7 +2,7 @@
 import numpy as np
 
 #import custom modules
-import geom
+from . import geom
 
 def splitGeomParams(paramGeomList):
 	"""
@@ -147,8 +147,8 @@ def getCartesianCoords(circleArr, torusArr, sphereArr, circleLowerLimits, circle
 	"""
 	numCirc = len(circleArr)
 	#each torus/ sphere corresponds to two parameters
-	numTorus = len(torusArr) / 2
-	numSphere = len(sphereArr) / 2
+	numTorus = len(torusArr) // 2
+	numSphere = len(sphereArr) // 2
 	#circle requires 2-d cartesian coords, torus and sphere requires 3-d
 	circCartArr = np.zeros(numCirc * 2)
 	torusCartArr = np.zeros(numTorus * 3)
@@ -185,8 +185,8 @@ def getCartesianSigma(circleArr, torusArr, sphereArr, circleSigma, torusSigma, s
 	"""
 	numCirc = len(circleArr)
 	#each torus/ sphere corresponds to two parameters
-	numTorus = len(torusArr) / 2
-	numSphere = len(sphereArr) / 2
+	numTorus = len(torusArr) // 2
+	numSphere = len(sphereArr) // 2
 	circCartSigArr = np.zeros(numCirc * 2)
 	torusCartSigArr = np.zeros(numTorus * 3)
 	sphereCartSigArr = np.zeros(numSphere * 3)

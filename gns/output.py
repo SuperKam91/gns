@@ -4,8 +4,8 @@ import sys
 import scipy
 
 #import custom modules
-import samplers
-import tools
+from . import samplers
+from . import tools
 
 ########file output functions
 
@@ -160,17 +160,17 @@ def printUpdate(nest, deadPointPhys, deadPointLhood, EofZ, livePointPhys, livePo
 		L = 'Lhood'
 		Z = 'E[Z]'
 	else:
-		print "invalid space"
+		print("invalid space")
 		sys.exit(1)
-	print "for deadpoint %i: physical value = %s %s value = %s" %(nest, deadPointPhys, L, deadPointLhood)
-	print "%s = %s" % (Z, EofZ)
-	print "new live point obtained: physical value = %s %s has value = %s" %(livePointPhys, L, livePointLhood)
+	print("for deadpoint %i: physical value = %s %s value = %s" %(nest, deadPointPhys, L, deadPointLhood))
+	print("%s = %s" % (Z, EofZ))
+	print("new live point obtained: physical value = %s %s has value = %s" %(livePointPhys, L, livePointLhood))
 
 def printBreak():
 	"""
 	tell user final contribution to sampling is being calculated
 	"""
-	print "adding final contribution from remaining live points"
+	print("adding final contribution from remaining live points")
 
 def printZHValues(EofZ, EofZ2, varZ, lnZ, lnVarZ, H, space, stage, method):
 	"""
@@ -189,35 +189,35 @@ def printZHValues(EofZ, EofZ2, varZ, lnZ, lnVarZ, H, space, stage, method):
 		Z2 = 'E[Z^2]'
 		var = 'var[Z]'
 	else:
-		print "invalid space"
+		print("invalid space")
 		sys.exit(1)
-	print "%s %s (%s) = %s" %(Z, stage, method, EofZ)
-	print "%s %s (%s) = %s" %(Z2, stage, method, EofZ2)
-	print "%s %s (%s) = %s" %(var, stage, method, varZ)
-	print "%s %s (%s) = %s" %(lnEZ, stage, method, lnZ)
-	print "%s %s (%s) = %s" %(lnVar, stage, method, lnVarZ)
-	print "H %s (%s) = %s" %(stage, method, H)
+	print("%s %s (%s) = %s" %(Z, stage, method, EofZ))
+	print("%s %s (%s) = %s" %(Z2, stage, method, EofZ2))
+	print("%s %s (%s) = %s" %(var, stage, method, varZ))
+	print("%s %s (%s) = %s" %(lnEZ, stage, method, lnZ))
+	print("%s %s (%s) = %s" %(lnVar, stage, method, lnVarZ))
+	print("H %s (%s) = %s" %(stage, method, H))
 
 def printTheoretical(ZTheor, ZTheorErr, HTheor, HTheorErr):
 	"""
 	Outputs values for theoretical values of Z and H (and their errors)
 	"""
-	print "Z_Theor = %s" %ZTheor
-	print "Z_TheorErr = %s" %ZTheorErr
-	print "H_Theor = %s" %HTheor 
-	print "H_TheorErr = %s" %HTheorErr
+	print("Z_Theor = %s" %ZTheor)
+	print("Z_TheorErr = %s" %ZTheorErr)
+	print("H_Theor = %s" %HTheor) 
+	print("H_TheorErr = %s" %HTheorErr)
 
 def printSampleNum(numSamples):
 	"""
 	Print number of samples used in sampling (including final livepoints used for posterior weights)
 	"""
-	print "total number of samples = %i" %numSamples
+	print("total number of samples = %i" %numSamples)
 
 def printTerminationUpdateInfo(nest, terminator):
 	"""
 	Print update on termination status when evaluating by H value
 	"""
-	print "current end value is %i. Termination value is %f" %(nest, terminator)
+	print("current end value is %i. Termination value is %f" %(nest, terminator))
 
 def printTerminationUpdateZ(EofZLive, endValue, terminationFactor, space):
 	"""
@@ -228,10 +228,10 @@ def printTerminationUpdateZ(EofZLive, endValue, terminationFactor, space):
 	elif space == 'log':
 		Z = 'ln(E[Z_Live])'
 	else:
-		print "invalid space"
+		print("invalid space")
 		sys.exit(1)
-	print "%s = %s" %(Z, EofZLive)
-	print "current end value is %s. Termination value is %s" %(endValue, terminationFactor)
+	print("%s = %s" %(Z, EofZLive))
+	print("current end value is %s. Termination value is %s" %(endValue, terminationFactor))
 
 def printFinalLivePoints(i, physValue, Lhood, ZLiveType, space):
 	"""
@@ -246,11 +246,11 @@ def printFinalLivePoints(i, physValue, Lhood, ZLiveType, space):
 		else:	
 			L = 'LLhood'
 	else:
-		print "invalid space"
+		print("invalid space")
 		sys.exit(1)
 	if ZLiveType == 'average Lhood':
-		print "'average' physical value = %s (n.b. this has no useful meaning), %s = %s" %(physValue, L, Lhood)
+		print("'average' physical value = %s (n.b. this has no useful meaning), %s = %s" %(physValue, L, Lhood))
 	elif ZLiveType == 'average X':
-		print "remaining livepoint number %i: physical value = %s %s value = %s" %(i, physValue, L, Lhood)
+		print("remaining livepoint number %i: physical value = %s %s value = %s" %(i, physValue, L, Lhood))
 	elif ZLiveType == 'max Lhood':
-		print "maximum %s remaining livepoint number %i: physical value = %s %s value = %s" %(L, i, physValue, L, Lhood)
+		print("maximum %s remaining livepoint number %i: physical value = %s %s value = %s" %(L, i, physValue, L, Lhood))

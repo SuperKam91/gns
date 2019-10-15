@@ -25,7 +25,8 @@ DESCRIPTION = 'Geometric nested sampling algorithm, as described in https://arxi
 URL = 'https://github.com/SuperKam91/gns'
 EMAIL = 'kj316@mrao.cam.ac.uk'
 AUTHOR = 'Kamran Javid'
-REQUIRES_PYTHON = '=2.7'
+# REQUIRES_PYTHON = '>=2.7'
+REQUIRES_PYTHON = '>=3'
 VERSION = get_version()
 
 # What packages are required for this module to be executed?
@@ -126,7 +127,8 @@ setup(
         # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2.7',],
+        'Programming Language :: Python :: 3.6']
+        #'Programming Language :: Python :: 2.7'],
     # $ setup.py publish support.
     # cmdclass={
     #     'upload': UploadCommand},

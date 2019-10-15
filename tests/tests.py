@@ -5,7 +5,6 @@ import scipy
 import matplotlib.pyplot as plt
 
 run_repo = True
-
 #import custom modules
 if run_repo: #run gns code from repo which this test file sits in
 	import context

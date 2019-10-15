@@ -2,7 +2,7 @@
 import numpy as np
 
 #import custom modules
-import calculations
+from . import calculations
 
 ###########Updating expected values of Z, X and H functions (recurrence relations of mine, Handley and Skilling)
 

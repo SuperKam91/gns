@@ -52,7 +52,7 @@ def evalIntegrand(*args):
 	theta = np.array(args[:-1]).reshape(1,-1)
 	integrandFuncs = args[-1]
 	integrandVal = 1.
-	for func, argIndices in integrandFuncs.iteritems():
+	for func, argIndices in integrandFuncs.items():
 		integrandVal *= func(theta[argIndices])
 	return integrandVal
 
@@ -74,7 +74,7 @@ def evalExpLogIntegrand(*args):
 	theta = np.array(args[:-2]).reshape(1,-1)
 	integrandLogFuncs = args[-2]
 	integrandLogVal = args[-1]
-	for logFunc, argIndices in integrandLogFuncs.iteritems():
+	for logFunc, argIndices in integrandLogFuncs.items():
 		integrandLogVal += logFunc(theta[argIndices])
 	return np.exp(integrandLogVal)
 
@@ -94,7 +94,7 @@ def evalLogLExpLogIntegrand(*args):
 	integrandLogVal = args[-2]
 	LLhoodFunc = args[-1]
 	LLhoodFuncArgs = integrandLogFuncs[LLhoodFunc] #should be all of theta
-	for logFunc, argIndices in integrandLogFuncs.iteritems():
+	for logFunc, argIndices in integrandLogFuncs.items():
 		integrandLogVal += logFunc(theta[argIndices])
 	return LLhoodFunc(theta[LLhoodFuncArgs]) * np.exp(integrandLogVal)
 

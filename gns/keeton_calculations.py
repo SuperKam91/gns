@@ -3,8 +3,8 @@ import numpy as np
 import scipy
 
 #import custom modules
-import calculations
-import tools
+from . import calculations
+from . import tools
 
 ################Calculate Z moments and H a-posteri using Keeton's methods
 

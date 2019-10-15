@@ -3,7 +3,7 @@ import numpy as np
 import warnings
 
 #import custom modules
-import tools
+from . import tools
 
 #Expected values of f(t) (shrinkage parameter)
 

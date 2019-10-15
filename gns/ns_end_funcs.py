@@ -2,8 +2,8 @@
 import numpy as np
 
 #import custom modules
-import recurrence_calculations
-import output
+from . import recurrence_calculations
+from . import output
 
 ############final contribution to NS sampling functions
 
