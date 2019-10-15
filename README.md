@@ -90,8 +90,8 @@ No installation of the geometric nested sampler itself is strictly necessary, on
 
 `git clone https://github.com/SuperKam91/gns.git.`
 
-Next, install all the modules included in the `requirements.txt` file to be able to run the geometric nested sampling algorithm. To use the plotting functions featured in the package, one must also install all the files included in `requirements_plotting.txt`. I highly recommend installing the plot-dependent packages, to compare results the results of the toy models with those in `image_output`. Finally, to run MultiNest, install all packages in `requirements_mutlinest.txt`.
+Next, install all the modules included in the `requirements.txt` file (e.g. `pip install -r requirements.txt`) to be able to run the geometric nested sampling algorithm. To use the plotting functions featured in the package, one must also install all the files included in `requirements_plotting.txt`. I highly recommend installing the plot-dependent packages, to compare results the results of the toy models with those in `image_output`. Finally, to run MultiNest, install all packages in `requirements_mutlinest.txt`.
 
-Alternatively, one can run `python setup.py install` or `pip install .` from the root of the repo to install the base requirements (i.e. those in `requirements.txt`. As with the non-local `pip install` case, one can install the packages required for plotting and Multinest by doing or `pip install .[plotting]` (and similar for Multinest).
+Alternatively, one can run `python setup.py install` or `pip install .` from the root of the repo to install the base requirements (i.e. those in `requirements.txt`) as well as the `GNS` package. As with the non-local `pip install` case, one can install the packages required for plotting and Multinest by doing or `pip install .[plotting]` (and similar for Multinest).
 
 Note that by default, the tests in the `tests/` directory run the gns algorithm from the code in the repo in which `tests/` sits. To change this i.e. to use the installed package, in `tests.py`, set `run_repo = False`.
