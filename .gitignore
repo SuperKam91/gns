@@ -4,3 +4,6 @@ gns/*.py~
 dist/
 build/
 GNS.egg-info/
+gns/__pycache__/
+text_output/*
+!text_output/.gitignore

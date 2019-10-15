@@ -64,7 +64,7 @@ These are automatically employed in `tests.py`, but can be turned on and off by 
 
 ## Requirements
 
-This package was developed and tested using `python 2.7` and thus I recommend this version when running the algorithm. The `wheel` file on PyPi is a `py2` file and so requires `python 2.X`.
+This package was developed and tested using `python 2.7` and `python 3.6` and thus I recommend using one of these versions when running the algorithm. The two `wheel` files on PyPi are `py2` or `py3` files, the appropriate one will be selected by `pip` depending on whether it is called using `python 2.X` or `python 3.X`.
 
 ## Installation
 
