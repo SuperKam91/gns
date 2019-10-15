@@ -25,7 +25,7 @@ DESCRIPTION = 'Geometric nested sampling algorithm, as described in https://arxi
 URL = 'https://github.com/SuperKam91/gns'
 EMAIL = 'kj316@mrao.cam.ac.uk'
 AUTHOR = 'Kamran Javid'
-REQUIRES_PYTHON = '>=2.7.0'
+REQUIRES_PYTHON = '=2.X'
 VERSION = get_version()
 
 # What packages are required for this module to be executed?
