@@ -31,8 +31,8 @@ Examples of `setupDict` objects used to specify parameters of a nested sampling 
 The toy models (see https://arxiv.org/abs/1905.09110) are designed to make use of the key features of geometric nested sampling, i.e. to take advantage of the way it treats parameters defined on curved manifolds. The three toy models which feature in `tests.py` by default are a circular distribution (von Mises distribution), a toroidal distribution (two-dimensional von Mises distribution), and 6 spheres with Kent distributions defined on them (for more on this see https://arxiv.org/abs/1905.09110 and https://www.jstor.org/stable/2984712?seq=1#page_scan_tab_contents). Many more are available in `toy_models.py`, all that needs to be configured is there `paramGeomList` values when added to `tests.py`, and the relevant suffixes/prefixes to index them.
 
 ## Example
-
-~~~
+The following script produces samples from the von Mises distribution shown in the above image, and plots these samples using `getdist`.
+'''
 import numpy as np
 import gns.nested_run as nested_run
 import gns.plotting as plotting
@@ -59,7 +59,7 @@ nested_run.NestedRun(priorFunc, invPriorFunc, None, paramNames, targetSupport, s
 #plot data using getdist
 #NOTE, calls to output.writeParamNames() and output.writeRanges() are made in nested_run to create .paramnames and .ranges files required by getdist
 plotting.callGetDist([outputFile], plotFile + '.png', nDims, ['mhwg'])
-~~~
+'''
 
 ## Running the algorithm with custom likelihood/prior functions
 
