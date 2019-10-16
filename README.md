@@ -30,6 +30,16 @@ Examples of `setupDict` objects used to specify parameters of a nested sampling 
 
 The toy models (see https://arxiv.org/abs/1905.09110) are designed to make use of the key features of geometric nested sampling, i.e. to take advantage of the way it treats parameters defined on curved manifolds. The three toy models which feature in `tests.py` by default are a circular distribution (von Mises distribution), a toroidal distribution (two-dimensional von Mises distribution), and 6 spheres with Kent distributions defined on them (for more on this see https://arxiv.org/abs/1905.09110 and https://www.jstor.org/stable/2984712?seq=1#page_scan_tab_contents). Many more are available in `toy_models.py`, all that needs to be configured is there `paramGeomList` values when added to `tests.py`, and the relevant suffixes/prefixes to index them.
 
+## Example
+
+`
+	setupDict = {'verbose':True, 'trapezoidalFlag': False, 'ZLiveType':'average X', 'terminationType':'evidence', 'terminationFactor': 0.1, 'sampler':None, 'outputFile':None, 'space':'log', 'paramGeomList':None}
+
+
+
+
+`
+
 ## Running the algorithm with custom likelihood/prior functions
 
 If custom priors/ likelihoods are to be used, one needs to call the `nestedRun()` function in the `gns.nested_run` module, and pass the required likelihood and prior functions. All of these functions must take as an argument a `numpy` array with shape `(nLive, nDims)` where `nLive` is the number of live points in the nested run, and is defined in the functions `NestedRunLinear` and `NestedRunLog` which are in the `nested_run.py` file. `nDims` is the dimensionality of the parameter space of the inference. Furthermore, these functions should return an array of size `(nLive)`, with the respective likelihood/prior values for each live point. Note the algorithm can be run in linear or log mode (by running `NestedRunLinear` or `NestedRunLog`, which is determined by the corresponding value in the `setupDict`), the latter of which requires a function which calculates the log likelihood. See `prob_funcs.py` for examples of such functions. Sampler will also work with probability distributions (and their inverse CDFs) defined in `scipy.stats`. 
