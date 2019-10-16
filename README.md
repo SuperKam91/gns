@@ -32,34 +32,45 @@ The toy models (see https://arxiv.org/abs/1905.09110) are designed to make use o
 
 ## Example
 The following script produces samples from the von Mises distribution shown in the above image, and plots these samples using `getdist`.
-'''
+```python
 import numpy as np
 import gns.nested_run as nested_run
 import gns.plotting as plotting
 import gns.toy_models as toy_models
+
 #see previous section for what different pairs in setupDict represent. 
 setupDict = {'verbose':True, 'trapezoidalFlag': False, 'ZLiveType':'average X', 'terminationType':'evidence', 'terminationFactor': 0.1, 'sampler':None, 'outputFile':None, 'space':'log'}
+
 shape = 'circle' #run circle toy model, simple von Mises distribution
 sampler = 'MH WG' #jgeometric nested sampler
 outputFile = '../text_output/example' #for text output
 plotFile = '../image_output/example' #for image output
+
 #get prior and likelihood functions from toy models for circle toy model
 paramNames, priorParams, LhoodParams = toy_models.getToyHypersGeom(shape)
+priorFunc, logPriorFunc, invPriorFunc, _, LLhoodFunc = toy_models.getToyFuncs(priorParams, LhoodParams)
+
 #can manually set paramNames e.g.
 paramNames = [r"$\phi$"] #label plot
-priorFunc, logPriorFunc, invPriorFunc, _, LLhoodFunc = toy_models.getToyFuncs(priorParams, LhoodParams)
+
 nDims = 1 #number of parameters in inference
 #array with first element giving lower bound of prior support, second giving upper bound, and third giving upper - lower. shape (3, nDims)
 targetSupport = np.array([0., 2. * np.pi, 2. * np.pi]).reshape(3,1) 
+
 #See next section for examples of paramGeomList. For simple one-dimensional circular example considered here, just need to consider one 'wrapped' parameter
 setupDict['paramGeomList'] = ['wrapped']
+
+#output files
 setupDict['outputFile'] = outputFile
 setupDict['sampler'] = sampler
+
+#run sampler
 nested_run.NestedRun(priorFunc, invPriorFunc, None, paramNames, targetSupport, setupDict, LLhoodFunc)
+
 #plot data using getdist
 #NOTE, calls to output.writeParamNames() and output.writeRanges() are made in nested_run to create .paramnames and .ranges files required by getdist
 plotting.callGetDist([outputFile], plotFile + '.png', nDims, ['mhwg'])
-'''
+```
 
 ## Running the algorithm with custom likelihood/prior functions
 
