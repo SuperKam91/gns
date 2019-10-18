@@ -1,5 +1,7 @@
 # geometric nested sampling
 
+The README below as well as the package API can be found at: https://geometric-nested-sampling.readthedocs.io/en/latest/
+
 ## Version
 
 Version: 1.0
@@ -110,7 +112,7 @@ This package was developed and tested using `python 3.6` and thus I recommend us
 
 ## Package API
 
-Please see `PACKAGEAPI.md` in the root of the repo.
+Please see https://geometric-nested-sampling.readthedocs.io/en/latest/.
 
 ## Installation
 
