@@ -22,6 +22,8 @@
 # is needed in order to build the documentation
 import os
 import sys
+import sphinx_rtd_theme
+import numpydoc
 
 # local module should not be added to sys path if it's installed on RTFD
 # see: https://stackoverflow.com/a/31882049/6696397
@@ -59,6 +61,7 @@ extensions = [
     "sphinx.ext.autosummary",
     "sphinx.ext.napoleon",  # parameters look better than with numpydoc only
     "numpydoc",
+    "sphinx_rtd_theme"
 ]
 
 # autosummaries from source-files
