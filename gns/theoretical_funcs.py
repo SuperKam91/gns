@@ -14,6 +14,14 @@ def nDIntegratorZTheor(integrandFuncs, limitsList, integrandLogVal, divByFact = 
 	If integrandLogVal evaluates to true, does integration method which takes exp of log of integrand * some large number given by integrandLogVal
 	to avoid underflow. The final integral result (and error) is then divided by exp(integrandLogVal) to get the final value.
 	If divByFact == True, divides integral by exp(integrandLogVal) to give integral of function. If not leaves this step out, and essentially gives integral of function * exp(integrandLogVal). The latter can be useful when exp(integrandLogVal) would under/overflow, in which case one should consider log(integral of function) which is given by log(integral of function * exp(integrandLogVal)) - integrandLogVal
+	
+	Args:
+
+	integrandFuncs : list functions which form integrand (through their product)
+	limitsList : list integration limits
+	integrandLogVal : boolean whether to take log of integrand or not 
+	divByFact : boolean whether to divide by log of integrandLogVal or not
+
 	"""
 	if integrandLogVal:
 		if divByFact: 
@@ -28,6 +36,15 @@ def nDIntegratorHTheor(integrandFuncs, limitsList, integrandLogVal, divByFact = 
 	"""
 	As above but has to call nquad with a  slightly different function representing integrand when using
 	exp(log(integrand)) method for calculating, due to LLhood(theta) part of integrand
+
+	Args:
+
+	integrandFuncs : list functions which form integrand (through their product)
+	limitsList : list integration limits
+	integrandLogVal : boolean whether to take log of integrand or not 
+	divByFact : boolean whether to divide by log of integrandLogVal or not
+	LLhoodFunc : function or False log likelihood function if to be included in integrand calculation
+
 	"""
 	if integrandLogVal:
 		if divByFact:
@@ -105,7 +122,13 @@ def integrateLogFunc(logPriorFunc, LLhoodFunc, targetSupport):
 	Uses logaddexp to get log of integrand.
 	Takes equally spaced samples in each dimension (so width in each dimension is upper - lower lim / num samples in dim).
 	priorHyperParams is as explained in getTheoreticalSamples()
-	TODO: consider multidimensional trapezium rule. Probably won't bother
+	
+	Args:
+
+	logPriorFunc : function log prior function
+	LLhoodFunc : function or False log likelihood function if to be included in integrand calculation
+	targetSupport : array target support values in array of shape (3, nDims)
+
 	"""
 	sampleWidth = 1.
 	oneDn = 100 #number of points per dimension
@@ -141,6 +164,15 @@ def getPriorIntegrandAndLimits(priorFunc, targetSupport, integrandFuncs, integra
 	Not much slower than integrateAll = False, as that method still has to integrate Lhood over all dimensions (just not prior)
 	integrateAll = False assumes all finitely bounded prior dimensions are rectangular, and works out their prior volume
 	as being a rectangle. Also uses priorFuncsPdf, so can't be used with user defined functions. NOTE THIS WILL NOT GIVE THE CORRECT RESULT IF ANY OF THE TOY PRIORS ARE BOUNDED BUT AREN'T UNIFORM, AS WHEN CHECKING TARGETSUPPORT IT WILL ASSUME THAT DIMENSION IS UNIFORM. Could be fixed by adding a flag to targetSupport as to whether prior is uniform or not, but this method is sort of deprecated anyway.
+	
+	Args:
+
+	priorFunc : function prior function
+	targetSupport : array target support values in array of shape (3, nDims)
+	integrandFuncs : list functions which form integrand (through their product)
+	integrateAll : boolean see body of docstring
+	priorFuncsPdf : list or False whether to include prior functions in integrand or not
+
 	"""
 	hyperRectangleVolume = 1.
 	limitsList = []
@@ -170,6 +202,16 @@ def calcZTheor(priorFunc, LLhoodFunc, targetSupport, nDims, integrandLogVal = 1.
 	priorFuncs must be in same order as dimensions of LhoodFunc when it was fitted (and in same order as priorParams).
 	A bit slow, but not sure how I can make it faster tbh, as it will get exponentially slower with # of dimensions
 	LhoodFunc and priorFuncsPdf can be .pdf() or .logpdf() methods (but must be same), but must alter value of integrandLogVal accordingly (set to finite number if want to to integration in log space, something which evaluates to False otherwise)
+	
+	Args:
+
+	priorFunc : function prior function
+	targetSupport : array target support values in array of shape (3, nDims)
+	LLhoodFunc : function log likelihood function if to be included in integrand calculation (if log likelihood not provided)
+	nDims : int number of dimensions of integral
+	integrandLogVal : boolean whether to take log of integrand or not 
+	LhoodFunc : function or False likelihood function if to be included in integrand calculation (instead of likelihood)
+
 	"""
 	if LhoodFunc: #calculate Z without considering underflow
 		integrandFuncs = {LhoodFunc:slice(None)} #slice refers to which dimensions of data array are required for given function in integration call. In case of Lhood, all dimensions of the parameter space are required
@@ -184,6 +226,11 @@ def calcZTheorApprox(targetSupport):
 	"""
 	Only valid in limit that prior is hyperrectangle, and majority of lhood is contained in prior hypervolume
 	such that limits of integration (domain of the sampling space defined by the prior) can be extended close enough +- infinity such that the Lhood integrates to 1 over this domain
+	
+	Args:
+
+	targetSupport : array target support values in array of shape (3, nDims)
+
 	"""	
 	priorVolume = 1.
 	for i in range(len(targetSupport[0,:])):
@@ -198,6 +245,18 @@ def calcHTheor(priorFunc, LLhoodFunc, targetSupport, nDims, Z, ZErr, integrandLo
 	For uniform priors, calculates volume and skips that part of integral (over pi(theta)).
 	Uses same trick as ZTheor in that it composes a dictionary of functions to integrate, mapped to dimension(s) of theta vector to integrate along for given function.
 	Passes this dictionary to function which nquad actually evaluates.
+
+	Args:
+
+	priorFunc : function prior function
+	LLhoodFunc : function log likelihood function if to be included in integrand calculation (if log likelihood not provided)
+	targetSupport : array target support values in array of shape (3, nDims)
+	nDims : int number of dimensions of integral
+	Z : float Bayesian evidence
+	ZErr : float error on Z
+	integrandLogVal : boolean whether to take log of integrand or not 
+	LhoodFunc : function or False likelihood function if to be included in integrand calculation (instead of likelihood)
+
 	"""	
 	if LhoodFunc: #calculate H without considering underflow
 		integrandFuncs = {LhoodFunc:slice(None), LLhoodFunc:slice(None)} #slice refers to which dimensions of data array are required for given function in integration call. In case of Lhood, all dimensions of the parameter space are required
@@ -212,6 +271,14 @@ def calcHErr(Z, ZErr, LhoodPiLogLIntegral, LhoodPiLogLErr):
 	"""
 	Calculates error on H due to uncertainty of Z, HIntegrand and ln(Z).
 	ignores possible correlation between Z and LhoodPiLogLIntegral
+
+	Args:
+
+	Z : float Bayesian evidence
+	ZErr : float error on Z
+	LhoodPiLogLIntegral : float log of integral of likelihood x prior
+	LhoodPiLogLErr : float error on log of integral of likelihood x prior
+
 	"""
 	logZErr = ZErr / Z
 	IntOverZErr = LhoodPiLogLIntegral / Z * np.sqrt((ZErr / Z)**2. + (LhoodPiLogLErr / LhoodPiLogLIntegral)**2.)
@@ -223,5 +290,12 @@ def calcHTheorApprox(Z, nDims, priorVolume):
 	such that limits of integration can be extended to +- infinity
 	ONLY VALID FOR NON-TRUNCATED GAUSSIAN LIKELIHOODS
 	TODO: consider approximations for non-Gaussian Lhoods
+
+	Args:
+
+	Z : float Bayesian evidence
+	nDims : int number of dimensions of integral
+	priorVolume : float volume of hyper rectangle associated with uniform priors assumed
+
 	"""
 	return -0.5 * nDims / (Z * priorVolume) * (1. + np.log(2. * np.pi)) - np.log(Z)

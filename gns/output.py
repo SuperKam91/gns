@@ -20,6 +20,11 @@ writeTheorZ = lambda Z, ZErr, outputFile : np.savetxt(outputFile + '_tz.txt', np
 def writeParamNames(outputFile, paramNames):
 	"""
 	Write file giving index and list parameter names for getDist
+
+	Args:
+
+	outputFile : string output file location
+	paramNames : list parameter names
 	"""
 	nameFile = open(outputFile + '.paramnames', 'w')
 	for i, name in enumerate(paramNames):
@@ -30,6 +35,10 @@ def rectifyLigoParamNames(file):
 	"""
 	paramNames in ligo runs I've already done aren't in Latex. 
 	So Latex them in the .paramnames file for getdist here
+
+	Args:
+
+	file : string input file location	
 	"""
 	f = open(file, 'r')
 	fStr = f.read()
@@ -45,6 +54,10 @@ def rectifyShapeParamNames(file):
 	"""
 	paramNames in shape toy models which I've already ran aren't Latex'd. 
 	So Latex them in the .paramnames file for getdist here
+
+	Args:
+
+	file : string input file location	
 	"""
 	f = open(file, 'r')
 	fStr = f.read()
@@ -61,10 +74,14 @@ def writeRanges(outputFile, paramNames, targetSupport):
 	N means that constraints are inferred from data
 	Here constraints are derived from target function's support (sampling space), and unbounded
 	supports are assigned N N
+
+	Args:
+
+	outputFile : string output file location	
+	paramNames : list parameter names
+	targetSupport : array target support values in array of shape (3, nDims)
+
 	"""
-	print('ranges called now')
-	print(paramNames)
-	return
 	rangeFile = open(outputFile + '.ranges', 'w')
 	for i in range(len(paramNames)):
 		if np.isfinite(targetSupport[2,i]):
@@ -80,6 +97,20 @@ def writeOutput(outputFile, totalPointsPhys, totalPointsLhood, weights, XArr, pa
 	When inputs are log values, the weights written are transformed to linear space, in order for KDE to work.
 	Furthermore these weights are normalised by dividing by Z
 	For log case, Z and varZ should actually be ln(E[Z]) and ln(var[Z])
+
+	Args:
+
+	outputFile : string output file location	
+	totalPointsPhys : array all sampled points in their physical representation 
+	totalPointsLhood : array Lhood values of all sampled points
+	weights : array posterior weights
+	XArr : array nested sampling prior volume values of each sample
+	paramNames : list parameter names
+	targetSupport : array target support values in array of shape (3, nDims)
+	Z : float Bayesian evidence
+	varZ : float var Z
+	lnZ : float log Z 
+	lnVarZ : float log var Z
 	"""
 	paramNamesStr = ', '.join(paramNames)
 	if space == 'linear':
@@ -107,6 +138,18 @@ def writeTheoreticalSamples(outputFile, logPriorFunc, invPriorFunc, LLhoodFunc, 
 	TO MAKE THIS WORK IN GETDIST, WEIGHTS HAVE TO BE PROPORTIONAL TO LHOOD IN CASE OF SAMPLING METHOD, OR POSTERIOR IN CASE OF GRID METHOD. HENCE WE SET THE WEIGHTS EQUAL TO THE LHOOD OR POSTERIOR, AND SET THE LHOOD TO 1 (LLHOOD = 0)
 	Will probably only work if n is high
 	priorHyperParams is a (2. nDims) array with the hyperparameters (e.g. mean and standard dev) of the prior in each dimension. Only needed if usings the gridding method, and one or more of the priors is unbounded, to determine upper and lower bounds of grid
+	
+	Args:
+
+	outputFile : string output file location	
+	logPriorFunc : function log prior function
+	invPriorFunc : function inverse prior function
+	LLhoodFunc : function log likelihood function
+	targetSupport : array target support values in array of shape (3, nDims)
+	paramNames : list parameter names
+	method : string method to calculate theoretical estimate
+	priorHyperParams : array prior hyperparameter values (2, nDims)
+
 	"""
 	nDims = len(paramNames) 
 	if method == 'sampling':

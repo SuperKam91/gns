@@ -19,6 +19,15 @@ except:
 ############plotting functions
 
 def plotLhood(x, Lhood, space):
+	"""
+	Plot likelihood values
+
+	Args:
+
+	x : array inputs to likelihood function
+	Lhood : function likelihood function
+	space : string whether to calculate likelihood or log of it
+	"""
 	if space == 'log':
 		Lhood = np.exp(Lhood)
 	plt.figure('Lhood versus param')
@@ -30,6 +39,14 @@ def plotPhysPosteriorIW(x, unnormalisedSamples, Z, space):
 	"""
 	Plots posterior in physical space according to importance weights w(theta)L(theta) / Z. Doesn't use KDE so isn't true shape of posterior. 
 	If inputting logWeights/ logZ then set space == 'log'
+
+	Args:
+
+	x : array inputs to likelihood function
+	unnormalisedSamples : array unnormalised likelihood samples
+	Z : float Bayesian evidence
+	space : string whether to calculate likelihood or log of it
+
 	"""
 	if space == 'log':
 		normalisedSamples = np.exp(unnormalisedSamples - Z)
@@ -43,6 +60,13 @@ def plotPhysPosteriorIW(x, unnormalisedSamples, Z, space):
 def plotXPosterior(X, L, Z, space):
 	"""
 	Plots X*L(X)/Z in log X space, not including KDE methods
+
+	Args:
+
+	x : array inputs to likelihood function
+	L : array likelihood values
+	Z : float Bayesian evidence
+	space : string whether to calculate likelihood or log of it
 	"""
 	if space == 'log':
 		LhoodDivZ = np.exp(L - Z)
@@ -61,6 +85,14 @@ def callGetDist(chainsFilePrefix, plotName, nParams, plotLegend):
 	produces triangular posterior plots using getDist for first nParams
 	parameters from chains file as labelled in that file and in .paramnames
 	plotName should contain image type extension (e.g. .png)
+
+	Args:
+
+	chainsFilePrefix : string chains file excluding the '.txt' prefix
+	plotName : string name of plot 
+	nParams : int dimensionality of parameter space 
+	plotLegend : list used for plot legend
+
 	"""
 	print(plotName)
 	try:
@@ -88,6 +120,14 @@ def GetDistPlotterTheor(g, p, x, plotName, Z = 1.):
 	Takes GetDistPlotter object and plots theoretical posterior (p) on its axis
 	for given x values. Currently only works in 1-d. 
 	Optionally normalises points w.r.t. Z
+
+	Args:
+
+	g : GetDistPlotter object
+	p : array of theoretical posterior points 
+	x : array domain of points 
+	plotName : string name of plot
+
 	"""
 	ax=g.subplots[0,0]
 	ax.plot(x, p / Z, 'k')

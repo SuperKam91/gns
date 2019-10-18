@@ -20,6 +20,17 @@ from . import geom_sampler
 def NestedRun(priorFunc, invPriorFunc, LhoodFunc, paramNames, targetSupport, setupDict, LLhoodFunc = None):
 	"""
 	Wrapper around linear and log nested run functions.
+
+	Args:
+
+	priorFunc : function prior function
+	invPriorFunc : function inverse prior function
+	LhoodFunc : function likelihood function
+	paramNames : list parameter names
+	targetSupport : array target support values in array of shape (3, nDims)
+	setupDict : dict setup dictionary explained in README.md
+	LLhoodFunc : function log likelihood function
+
 	"""
 	if setupDict['space'] == 'linear':
 		NestedRunLinear(priorFunc, invPriorFunc, LhoodFunc, paramNames, targetSupport, setupDict)
@@ -30,6 +41,16 @@ def NestedRunLog(priorFunc, invPriorFunc, LLhoodFunc, paramNames, targetSupport,
 	"""
 	function which completes a NS run. parameters of priors and likelihood need to be specified, as well as a flag indication type of prior for each dimension and the pdf for the lhood.
 	setupDict contains other setup parameters such as termination type & factor, method of finding new livepoint, details of how weights are calculated, how final Z contribution is added, and directory/file prefix for saved files.
+
+	Args:
+
+	priorFunc : function prior function
+	invPriorFunc : function inverse prior function
+	LLhoodFunc : function log likelihood function
+	paramNames : list parameter names
+	targetSupport : array target support values in array of shape (3, nDims)
+	setupDict : dict setup dictionary explained in README.md
+
 	"""
 	nLive = 500 #low value is 50, high value is 500
 	nDims = len(paramNames)
@@ -160,6 +181,16 @@ def NestedRunLinear(priorFunc, invPriorFunc, LhoodFunc, paramNames, targetSuppor
 	"""
 	function which completes a NS run. parameters of priors and likelihood need to be specified, as well as a flag indication type of prior for each dimension and the pdf for the lhood.
 	setupDict contains other setup parameters such as termination type & factor, method of finding new livepoint, details of how weights are calculated, how final Z contribution is added, and directory/file prefix for saved files.
+	
+	Args:
+
+	priorFunc : function prior function
+	invPriorFunc : function inverse prior function
+	LhoodFunc : function likelihood function
+	paramNames : list parameter names
+	targetSupport : array target support values in array of shape (3, nDims)
+	setupDict : dict setup dictionary explained in README.md
+
 	"""
 	nLive = 500 #low value is 50, high value is 500
 	nDims = len(paramNames)

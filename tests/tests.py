@@ -19,6 +19,9 @@ import gns.output as output
 import gns.input as input
 
 def runTests():
+	"""
+	Run geometric nested sampling tests specified in body of the function.
+	"""
 	#configuration for toy model runs
 	###########################################################################
 	setupDict = {'verbose':True, 'trapezoidalFlag': False, 'ZLiveType':'average X', 'terminationType':'evidence', 'terminationFactor': 0.1, 'sampler':None, 'outputFile':None, 'space':'log', 'paramGeomList':None}
@@ -179,6 +182,13 @@ def shapeChainPlots(shapeSuffix, inputFile, outputFile = None, plotWeights = Fal
 	if plotWeights, plots the weights L omega / Z instead of Lhood for empirical samples
 	n.b. for mn samples, 2nd column doesn't appear to be LLhood, in fact I have no idea what it is,
 	hence plotting it is pretty pointless
+
+	Args:
+
+	shapeSuffix : string shape suffix string of name
+	inputFile : string input file location 
+	outputFile : string output file location 
+	plotWeights : boolean see body of docstring
 	"""
 	if 'tg' in inputFile or plotWeights:
 		Lhood, _, params = input.getFromTxt(inputFile)
@@ -271,29 +281,4 @@ def shapeChainPlots(shapeSuffix, inputFile, outputFile = None, plotWeights = Fal
 				plt.show()
 			plt.close()
 
-# runTests()
-
-import numpy as np
-import gns.nested_run as nested_run
-import gns.plotting as plotting
-import gns.toy_models as toy_models
-#see previous section for what different pairs in setupDict represent. 
-setupDict = {'verbose':True, 'trapezoidalFlag': False, 'ZLiveType':'average X', 'terminationType':'evidence', 'terminationFactor': 0.1, 'sampler':None, 'outputFile':None, 'space':'log'}
-shape = 'circle' #run circle toy model, simple von Mises distribution
-sampler = 'MH WG' #jgeometric nested sampler
-outputFile = '../text_output/example' #for text output
-plotFile = '../image_output/example' #for image output
-plotPar = r"$\phi$" #label plot
-#get prior and likelihood functions from toy models for circle toy model
-paramNames, priorParams, LhoodParams = toy_models.getToyHypersGeom(shape)
-priorFunc, logPriorFunc, invPriorFunc, _, LLhoodFunc = toy_models.getToyFuncs(priorParams, LhoodParams)
-nDims = 1 #number of parameters in inference
-#array with first element giving lower bound of prior support, second giving upper bound, and third giving upper - lower. shape (3, nDims)
-targetSupport = np.array([0., 2. * np.pi, 2. * np.pi]).reshape(3,1) 
-#See next section for examples of paramGeomList. For simple one-dimensional circular example considered here, just need to consider one 'wrapped' parameter
-setupDict['paramGeomList'] = ['wrapped']
-setupDict['outputFile'] = outputFile
-setupDict['sampler'] = sampler
-nested_run.NestedRun(priorFunc, invPriorFunc, None, paramNames, targetSupport, setupDict, LLhoodFunc)
-#plot data using getdist
-plotting.callGetDist([outputFile], plotFile + '.png', nDims, ['mhwg'])
+runTests()
