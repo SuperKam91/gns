@@ -74,11 +74,11 @@ napoleon_use_admonition_for_notes = True
 # Attributes like parameters
 # napoleon_use_ivar = True
 # this is a nice class-doc layout
-numpydoc_show_class_members = True
+# numpydoc_show_class_members = True
 # class members have no separate file, so they are not in a toctree
-numpydoc_class_members_toctree = False
+# numpydoc_class_members_toctree = False
 # for the covmodels alot of classmembers show up...
-numpydoc_show_inherited_class_members = False
+# numpydoc_show_inherited_class_members = False
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
 
