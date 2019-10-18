@@ -62,6 +62,9 @@ def writeRanges(outputFile, paramNames, targetSupport):
 	Here constraints are derived from target function's support (sampling space), and unbounded
 	supports are assigned N N
 	"""
+	print('ranges called now')
+	print(paramNames)
+	return
 	rangeFile = open(outputFile + '.ranges', 'w')
 	for i in range(len(paramNames)):
 		if np.isfinite(targetSupport[2,i]):

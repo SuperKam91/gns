@@ -71,7 +71,7 @@ def callGetDist(chainsFilePrefix, plotName, nParams, plotLegend):
 		except ImportError:	
 			print("can't import getdist. Exiting...")
 			sys.exit(1)
-	save = False
+	save = True
 	paramList = ['p' + str(i+1) for i in range(nParams)]
 	chains = [getdist.loadMCSamples(chain) for chain in chainsFilePrefix]
 	g = getdist.plots.getSubplotPlotter(width_inch = 6)
