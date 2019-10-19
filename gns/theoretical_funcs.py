@@ -18,8 +18,11 @@ def nDIntegratorZTheor(integrandFuncs, limitsList, integrandLogVal, divByFact = 
 	Args:
 
 	integrandFuncs : list functions which form integrand (through their product)
+	
 	limitsList : list integration limits
+	
 	integrandLogVal : boolean whether to take log of integrand or not 
+	
 	divByFact : boolean whether to divide by log of integrandLogVal or not
 
 	"""
@@ -40,9 +43,13 @@ def nDIntegratorHTheor(integrandFuncs, limitsList, integrandLogVal, divByFact = 
 	Args:
 
 	integrandFuncs : list functions which form integrand (through their product)
+	
 	limitsList : list integration limits
+	
 	integrandLogVal : boolean whether to take log of integrand or not 
+	
 	divByFact : boolean whether to divide by log of integrandLogVal or not
+	
 	LLhoodFunc : function or False log likelihood function if to be included in integrand calculation
 
 	"""
@@ -126,7 +133,9 @@ def integrateLogFunc(logPriorFunc, LLhoodFunc, targetSupport):
 	Args:
 
 	logPriorFunc : function log prior function
+	
 	LLhoodFunc : function or False log likelihood function if to be included in integrand calculation
+	
 	targetSupport : array target support values in array of shape (3, nDims)
 
 	"""
@@ -168,9 +177,13 @@ def getPriorIntegrandAndLimits(priorFunc, targetSupport, integrandFuncs, integra
 	Args:
 
 	priorFunc : function prior function
+	
 	targetSupport : array target support values in array of shape (3, nDims)
+	
 	integrandFuncs : list functions which form integrand (through their product)
+	
 	integrateAll : boolean see body of docstring
+	
 	priorFuncsPdf : list or False whether to include prior functions in integrand or not
 
 	"""
@@ -206,10 +219,15 @@ def calcZTheor(priorFunc, LLhoodFunc, targetSupport, nDims, integrandLogVal = 1.
 	Args:
 
 	priorFunc : function prior function
+	
 	targetSupport : array target support values in array of shape (3, nDims)
+
 	LLhoodFunc : function log likelihood function if to be included in integrand calculation (if log likelihood not provided)
+
 	nDims : int number of dimensions of integral
+
 	integrandLogVal : boolean whether to take log of integrand or not 
+
 	LhoodFunc : function or False likelihood function if to be included in integrand calculation (instead of likelihood)
 
 	"""
@@ -249,12 +267,19 @@ def calcHTheor(priorFunc, LLhoodFunc, targetSupport, nDims, Z, ZErr, integrandLo
 	Args:
 
 	priorFunc : function prior function
+	
 	LLhoodFunc : function log likelihood function if to be included in integrand calculation (if log likelihood not provided)
+	
 	targetSupport : array target support values in array of shape (3, nDims)
+	
 	nDims : int number of dimensions of integral
+	
 	Z : float Bayesian evidence
+	
 	ZErr : float error on Z
+	
 	integrandLogVal : boolean whether to take log of integrand or not 
+	
 	LhoodFunc : function or False likelihood function if to be included in integrand calculation (instead of likelihood)
 
 	"""	
@@ -275,8 +300,11 @@ def calcHErr(Z, ZErr, LhoodPiLogLIntegral, LhoodPiLogLErr):
 	Args:
 
 	Z : float Bayesian evidence
+	
 	ZErr : float error on Z
+	
 	LhoodPiLogLIntegral : float log of integral of likelihood x prior
+	
 	LhoodPiLogLErr : float error on log of integral of likelihood x prior
 
 	"""
@@ -294,7 +322,9 @@ def calcHTheorApprox(Z, nDims, priorVolume):
 	Args:
 
 	Z : float Bayesian evidence
+	
 	nDims : int number of dimensions of integral
+	
 	priorVolume : float volume of hyper rectangle associated with uniform priors assumed
 
 	"""

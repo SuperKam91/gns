@@ -25,7 +25,9 @@ def plotLhood(x, Lhood, space):
 	Args:
 
 	x : array inputs to likelihood function
+	
 	Lhood : function likelihood function
+	
 	space : string whether to calculate likelihood or log of it
 	"""
 	if space == 'log':
@@ -43,8 +45,11 @@ def plotPhysPosteriorIW(x, unnormalisedSamples, Z, space):
 	Args:
 
 	x : array inputs to likelihood function
+	
 	unnormalisedSamples : array unnormalised likelihood samples
+	
 	Z : float Bayesian evidence
+	
 	space : string whether to calculate likelihood or log of it
 
 	"""
@@ -64,8 +69,11 @@ def plotXPosterior(X, L, Z, space):
 	Args:
 
 	x : array inputs to likelihood function
+	
 	L : array likelihood values
+	
 	Z : float Bayesian evidence
+	
 	space : string whether to calculate likelihood or log of it
 	"""
 	if space == 'log':
@@ -89,8 +97,11 @@ def callGetDist(chainsFilePrefix, plotName, nParams, plotLegend):
 	Args:
 
 	chainsFilePrefix : string chains file excluding the '.txt' prefix
+	
 	plotName : string name of plot 
+	
 	nParams : int dimensionality of parameter space 
+	
 	plotLegend : list used for plot legend
 
 	"""
@@ -124,8 +135,11 @@ def GetDistPlotterTheor(g, p, x, plotName, Z = 1.):
 	Args:
 
 	g : GetDistPlotter object
+	
 	p : array of theoretical posterior points 
+	
 	x : array domain of points 
+	
 	plotName : string name of plot
 
 	"""

@@ -24,11 +24,17 @@ def NestedRun(priorFunc, invPriorFunc, LhoodFunc, paramNames, targetSupport, set
 	Args:
 
 	priorFunc : function prior function
+	
 	invPriorFunc : function inverse prior function
+	
 	LhoodFunc : function likelihood function
+	
 	paramNames : list parameter names
+	
 	targetSupport : array target support values in array of shape (3, nDims)
+	
 	setupDict : dict setup dictionary explained in README.md
+	
 	LLhoodFunc : function log likelihood function
 
 	"""
@@ -45,10 +51,15 @@ def NestedRunLog(priorFunc, invPriorFunc, LLhoodFunc, paramNames, targetSupport,
 	Args:
 
 	priorFunc : function prior function
+
 	invPriorFunc : function inverse prior function
+	
 	LLhoodFunc : function log likelihood function
+	
 	paramNames : list parameter names
+	
 	targetSupport : array target support values in array of shape (3, nDims)
+	
 	setupDict : dict setup dictionary explained in README.md
 
 	"""
@@ -185,10 +196,15 @@ def NestedRunLinear(priorFunc, invPriorFunc, LhoodFunc, paramNames, targetSuppor
 	Args:
 
 	priorFunc : function prior function
+	
 	invPriorFunc : function inverse prior function
+	
 	LhoodFunc : function likelihood function
+	
 	paramNames : list parameter names
+	
 	targetSupport : array target support values in array of shape (3, nDims)
+	
 	setupDict : dict setup dictionary explained in README.md
 
 	"""

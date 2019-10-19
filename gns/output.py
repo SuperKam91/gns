@@ -24,7 +24,9 @@ def writeParamNames(outputFile, paramNames):
 	Args:
 
 	outputFile : string output file location
+	
 	paramNames : list parameter names
+	
 	"""
 	nameFile = open(outputFile + '.paramnames', 'w')
 	for i, name in enumerate(paramNames):
@@ -39,6 +41,7 @@ def rectifyLigoParamNames(file):
 	Args:
 
 	file : string input file location	
+	
 	"""
 	f = open(file, 'r')
 	fStr = f.read()
@@ -58,6 +61,7 @@ def rectifyShapeParamNames(file):
 	Args:
 
 	file : string input file location	
+	
 	"""
 	f = open(file, 'r')
 	fStr = f.read()
@@ -78,7 +82,9 @@ def writeRanges(outputFile, paramNames, targetSupport):
 	Args:
 
 	outputFile : string output file location	
+	
 	paramNames : list parameter names
+	
 	targetSupport : array target support values in array of shape (3, nDims)
 
 	"""
@@ -101,16 +107,27 @@ def writeOutput(outputFile, totalPointsPhys, totalPointsLhood, weights, XArr, pa
 	Args:
 
 	outputFile : string output file location	
+	
 	totalPointsPhys : array all sampled points in their physical representation 
+	
 	totalPointsLhood : array Lhood values of all sampled points
+	
 	weights : array posterior weights
+	
 	XArr : array nested sampling prior volume values of each sample
+	
 	paramNames : list parameter names
+	
 	targetSupport : array target support values in array of shape (3, nDims)
+	
 	Z : float Bayesian evidence
+	
 	varZ : float var Z
+	
 	lnZ : float log Z 
+	
 	lnVarZ : float log var Z
+	
 	"""
 	paramNamesStr = ', '.join(paramNames)
 	if space == 'linear':
@@ -142,12 +159,19 @@ def writeTheoreticalSamples(outputFile, logPriorFunc, invPriorFunc, LLhoodFunc, 
 	Args:
 
 	outputFile : string output file location	
+	
 	logPriorFunc : function log prior function
+	
 	invPriorFunc : function inverse prior function
+	
 	LLhoodFunc : function log likelihood function
+	
 	targetSupport : array target support values in array of shape (3, nDims)
+	
 	paramNames : list parameter names
+	
 	method : string method to calculate theoretical estimate
+	
 	priorHyperParams : array prior hyperparameter values (2, nDims)
 
 	"""
