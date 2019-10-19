@@ -59,7 +59,7 @@ extensions = [
     "sphinx.ext.ifconfig",
     "sphinx.ext.viewcode",
     "sphinx.ext.autosummary",
-    'sphinx.ext.githubpages',
+#     'sphinx.ext.githubpages',
     "sphinx.ext.napoleon",  # parameters look better than with numpydoc only
     "numpydoc",
     "sphinx_rtd_theme"
