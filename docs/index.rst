@@ -179,9 +179,5 @@ Alternatively, one can run ``python setup.py install`` or ``pip install .`` from
 Note that by default, the tests in the ``tests/`` directory run the gns algorithm from the code in the repo in which ``tests/`` sits. To change this i.e. to use the installed package, in ``tests.py``, set ``run_repo = False``.
 
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+.. currentmodule::
+   gns
