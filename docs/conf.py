@@ -31,7 +31,7 @@ import numpydoc
 
 #Location of Sphinx files
 sys.path.insert(0, os.path.abspath('./../'))
-
+autodoc_mock_imports = ["nested_run"]
 import sphinx.apidoc
 def setup(app):
     app.add_javascript('copybutton.js')
