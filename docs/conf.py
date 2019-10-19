@@ -22,7 +22,7 @@
 # is needed in order to build the documentation
 import os
 import sys
-import sphinx_rtd_theme
+# import sphinx_rtd_theme
 import numpydoc
 
 # local module should not be added to sys path if it's installed on RTFD
@@ -62,7 +62,7 @@ extensions = [
 #     'sphinx.ext.githubpages',
     "sphinx.ext.napoleon",  # parameters look better than with numpydoc only
     "numpydoc",
-    "sphinx_rtd_theme"
+#     "sphinx_rtd_theme"
 ]
 
 # autosummaries from source-files
