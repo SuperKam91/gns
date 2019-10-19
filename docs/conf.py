@@ -30,14 +30,14 @@ import numpydoc
 # from pentapy import __version__ as ver
 
 
-def skip(app, what, name, obj, skip, options):
-    if name in ["__call__"]:
-        return False
-    return skip
+# def skip(app, what, name, obj, skip, options):
+#     if name in ["__call__"]:
+#         return False
+#     return skip
 
 
-def setup(app):
-    app.connect("autodoc-skip-member", skip)
+# def setup(app):
+#     app.connect("autodoc-skip-member", skip)
 
 
 # -- General configuration ------------------------------------------------
