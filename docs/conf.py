@@ -22,22 +22,29 @@
 # is needed in order to build the documentation
 import os
 import sys
+import numpydoc
 
 # local module should not be added to sys path if it's installed on RTFD
 # see: https://stackoverflow.com/a/31882049/6696397
 # sys.path.insert(0, os.path.abspath("../../"))
 # from pentapy import __version__ as ver
 
-
-def skip(app, what, name, obj, skip, options):
-    if name in ["__call__"]:
-        return False
-    return skip
-
-
+#Location of Sphinx files
+sys.path.insert(0, os.path.abspath('./../'))
+autodoc_mock_imports = ["nested_run"]
+import sphinx.apidoc
 def setup(app):
-    app.connect("autodoc-skip-member", skip)
-
+    app.add_javascript('copybutton.js')
+    sphinx.apidoc.main(['-f', #Overwrite existing files
+                        '-T', #Create table of contents
+                        '-e', #Give modules their own pages
+                        #'-E', #user docstring headers
+                        #'-M', #Modules first
+                        '-o', #Output the files to:
+                        './_autogen/', #Output Directory
+                        './../gns', #Main Module directory
+                        ]
+    )
 
 # -- General configuration ------------------------------------------------
 
@@ -57,8 +64,10 @@ extensions = [
     "sphinx.ext.ifconfig",
     "sphinx.ext.viewcode",
     "sphinx.ext.autosummary",
+    'sphinx.ext.githubpages',
     "sphinx.ext.napoleon",  # parameters look better than with numpydoc only
     "numpydoc",
+    "sphinx_rtd_theme"
 ]
 
 # autosummaries from source-files
