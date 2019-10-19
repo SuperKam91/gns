@@ -180,7 +180,7 @@ Note that by default, the tests in the ``tests/`` directory run the gns algorith
 
 
 .. currentmodule::
-   gns
+   gns.gns
 
 .. toctree::
    :glob:
@@ -194,4 +194,4 @@ Note that by default, the tests in the ``tests/`` directory run the gns algorith
    :maxdepth: 2
    :caption: Packages:
 
-   _autogen/gns*
+   _autogen/gns.gns*
