@@ -181,3 +181,17 @@ Note that by default, the tests in the ``tests/`` directory run the gns algorith
 
 .. currentmodule::
    gns
+
+.. toctree::
+   :glob:
+   :maxdepth: 2
+   :caption: Quick start:
+
+   _pages/*
+
+.. toctree::
+   :glob:
+   :maxdepth: 2
+   :caption: Packages:
+
+   _autogen/gns*
