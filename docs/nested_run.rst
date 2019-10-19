@@ -1,2 +1,1 @@
-.. currentmodule::
-   gns
+
