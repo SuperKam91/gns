@@ -6,10 +6,18 @@
 =====================================================
 Welcome to Geometric nested sampling's documentation!
 =====================================================
-
+.. currentmodule::
+   gns
+   
 .. toctree::
+   :glob:
    :maxdepth: 2
    :caption: Contents:
+   :caption: Quick start:
+   :caption: Packages:
+
+   _pages/*
+   _autogen/gns
 
 Version
 =======
@@ -171,22 +179,5 @@ Next, install all the modules included in the ``requirements.txt`` file (e.g. ``
 
 Alternatively, one can run ``python setup.py install`` or ``pip install .`` from the root of the repo to install the base requirements (i.e. those in ``requirements.txt``) as well as the ``GNS`` package. As with the non-local ``pip install`` case, one can install the packages required for plotting and Multinest by doing or ``pip install .[plotting]`` (and similar for Multinest).
 
-Note that by default, the tests in the ``tests/`` directory run the gns algorithm from the code in the repo in which ``tests/`` sits. To change this i.e. to use the installed package, in ``tests.py``, set ``run_repo = False``.
-
-.. currentmodule::
-   gns
-
-.. toctree::
-   :glob:
-   :maxdepth: 2
-   :caption: Quick start:
-
-   _pages/*
-
-.. toctree::
-   :glob:
-   :maxdepth: 2
-   :caption: Packages:
-
-   _autogen/gns
+Note that by default, the tests in the ``tests/`` directory run the gns algorithm from the code in the repo in which ``tests/`` sits. To change this i.e. to use the installed package, in ``tests.py``, set ``run_repo = False``
 
