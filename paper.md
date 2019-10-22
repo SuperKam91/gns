@@ -58,7 +58,7 @@ One key issue with Metropolis Hastings nested sampling is that at each nested sa
 This solution can be problematic if computing the likelihood is computationally expensive. One particular case in which the sampled point is guaranteed to be rejected, is if the point lies outside of the domain of $\mathcal{P}$ (support of $\pi$). Of course, this can be avoided by adapting $q\left(\mathbf{\theta}_{\rm t} | \mathbf{\theta}_{l}\right)$ so that it is truncated to fit the support of $\pi$, but in high dimensions this can be tedious, and inefficient in itself. Hence one desires an algorithm which does not sample outside the support of $\pi$, without having to truncate $q$.
 
 ![Wrapped trial distribution for circular parameters. Dotted red lines denote edge of posterior domain. Green and blue curves are candidate trial distributions.](paper_figs/wrapped_plot.png =50x50)
-<img src="paper_figs/wrapped_plot.png" alt="Wrapped trial distribution for circular parameters. Dotted red lines denote edge of posterior domain. Green and blue curves are candidate trial distributions." width="200"/>
+<img src="paper_figs/wrapped_plot.png" alt="Wrapped trial distribution for circular parameters. Dotted red lines denote edge of posterior domain. Green and blue curves are candidate trial distributions." width="500"/>
 
 Another issue which most sampling algorithms are subject to occurs when the modes of the posterior distribution are far away from each other in $\mathbf{\theta}$ space, e.g. when they are at "opposite ends" of the domain of $\pi$. In the context of nested sampling this can result in one or more of the modes not being sampled accurately, particularly in the case of low livepoint runs.
 Thus a sampling algorithm should be able to efficiently manoeuvre between well separated modes which lie at the "edges" of $\pi$'s support. 
@@ -67,6 +67,8 @@ Specific to the geometric nested sampler, is the way it treats parameters that e
 For parameters which exhibit spherical properties (e.g. polar and azimuthal angles $\theta$ and $\phi$), the geometric nested sampler uses another trick. Instead of considering their joint rectangular sampling space with area $\pi \times 2\pi$, the algorithm transforms their values into their three-dimensional Euclidean representation ($x, y, z$), and samples from a spherical Gaussian trial distribution. Any sampled points which do not lay on the original sphere described by $\theta$ and $\phi$ are projected back onto the sphere before being converted back to their angular forms, which ensures no trial points outside of the domain are sampled. This idea is illustrated in Figure 2.
 
 ![Sampling spherical parameters by using their Euclidean interpretation. $(x_{l}, y_{l}, z_{l})$ represents the centre of the trial distribution, from which point $(x', y', z')$ is sampled. Since this point does not lay on the sphere, it is projected back onto it (to give point $(x_{t}, y_{t}, z_{t})$) before it is converted back to its angular representation](paper_figs/Sphere.jpg =50x50)
+<img src="paper_figs/Sphere.jpg" alt="Sampling spherical parameters by using their Euclidean interpretation. $(x_{l}, y_{l}, z_{l})$ represents the centre of the trial distribution, from which point $(x', y', z')$ is sampled. Since this point does not lay on the sphere, it is projected back onto it (to give point $(x_{t}, y_{t}, z_{t})$) before it is converted back to its angular representation." width="500"/>
+
 
 # Acknowledgements
 
