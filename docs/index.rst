@@ -12,12 +12,22 @@ Welcome to Geometric nested sampling's documentation!
 .. toctree::
    :glob:
    :maxdepth: 2
-   :caption: Contents:
    :caption: Quick start:
-   :caption: Packages:
 
    _pages/*
+
+.. toctree::
+   :glob:
+   :maxdepth: 2
+   :caption: Packages:
+
    _autogen/gns
+
+.. automodule:: gns
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Version
 =======
