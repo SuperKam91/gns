@@ -10,7 +10,7 @@ Welcome to Geometric nested sampling's documentation!
 .. toctree::
    :maxdepth: 2
    :caption: Package API:
-   _autogen/gns
+   _autogen/gns.nested_run
 
 
 Version
