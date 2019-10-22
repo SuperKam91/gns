@@ -11,8 +11,8 @@ Welcome to Geometric nested sampling's documentation!
    :glob:
    :maxdepth: 2
    :caption: Package API:
-   _autogen/gns
 
+   _autogen/gns
 
 Version
 =======
