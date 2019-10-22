@@ -6,27 +6,13 @@
 =====================================================
 Welcome to Geometric nested sampling's documentation!
 =====================================================
-.. currentmodule::
-   gns
-   
-.. toctree::
-   :glob:
-   :maxdepth: 2
-   :caption: Quick start:
-
-   _pages/*
 
 .. toctree::
    :glob:
    :maxdepth: 2
-   :caption: Packages:
+   :caption: Package API:
 
    _autogen/gns
-
-.. automodule:: gns
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 
 Version
