@@ -1,6 +1,10 @@
 #import standard modules 
 import numpy as np
 import scipy
+try: #newer scipy versions
+	import scipy.special.logsumexp as logsumexp
+except ImportError: #older scipy versions
+	import logsumexp as logsumexp
 
 #import custom modules
 from . import output
@@ -68,7 +72,7 @@ def getLogEofZLive(nLive, logEofX, livePointsLLhood, LLhoodStar, ZLiveType, trap
 	logEofwLive = getLogEofwLive(nLive, logEofX, ZLiveType) 
 	logEofWeightsLive, avLLhood, nFinal = getLogEofWeightsLive(logEofwLive, LLhoodStar, livePointsLLhood2, trapezoidalFlag, ZLiveType) #this will be an array nLive long for 'average' ZLiveType and 'X' averageLhoodOrX or a 1 element array for 'max' ZLiveType or 'Lhood' averageLhoodOrX
 	#logEofZLive = tools.logAddArr2(-np.inf, logEofWeightsLive)
-	logEofZLive = scipy.misc.logsumexp(logEofWeightsLive)
+	logEofZLive = logsumexp(logEofWeightsLive)
 	return liveMaxIndex, liveLLhoodMax, logEofZLive, avLLhood, nFinal
 
 def getEofZLive(nLive, EofX, livePointsLhood, LhoodStar, ZLiveType, trapezoidalFlag):
@@ -141,7 +145,7 @@ def getLogEofWeightsLive(logEofw, LLhoodStar, liveLLhoods, trapezoidalFlag, ZLiv
 		else: #assumes 'final' Lhood value is given by the average of the remaining L values, and that this is at X = 0
 			nFinal = 1
 			#LSumLhood = np.array([tools.logAddArr2(-np.inf, liveLLhoods)])
-			LSumLhood = np.array([scipy.misc.logsumexp(liveLLhoods)]) #Make array for consistency
+			LSumLhood = np.array([logsumexp(liveLLhoods)]) #Make array for consistency
 			n = len(liveLLhoods) #1 for ZLiveType == 'max' or nLive for ZLiveType == 'average Lhood'
 			avLLhood = LSumLhood - np.log(n) 
 			logEofWeightsLive = np.log(0.5) + logEofw + np.logaddexp(LLhoodStar, avLLhood)  
@@ -153,7 +157,7 @@ def getLogEofWeightsLive(logEofw, LLhoodStar, liveLLhoods, trapezoidalFlag, ZLiv
 		else:
 			nFinal = 1
 			#LSumLhood = np.array([tools.logAddArr2(-np.inf, liveLLhoods)])
-			LSumLhood = np.array([scipy.misc.logsumexp(liveLLhoods)])
+			LSumLhood = np.array([logsumexp(liveLLhoods)])
 			n = len(liveLLhoods)
 			avLLhood = LSumLhood - np.log(n)
 			logEofWeightsLive = logEofw + avLLhood

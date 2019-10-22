@@ -3,10 +3,10 @@ import numpy as np
 import sys
 import scipy.stats 
 from scipy.special import ive as ModifiedBessel, gamma as Gamma #for Kent distribution
-try:
-	from scipy.special import logsumexp
-except ImportError:
-	from scipy.misc import logsumexp
+try: #newer scipy versions
+	import scipy.special.logsumexp as logsumexp
+except ImportError: #older scipy versions
+	import scipy.misc.logsumexp as logsumexp
 import inspect
 
 #import custom modules

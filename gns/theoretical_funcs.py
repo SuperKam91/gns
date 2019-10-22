@@ -2,6 +2,10 @@
 import numpy as np
 import scipy.integrate
 import scipy
+try: #newer scipy versions
+	import scipy.special.logsumexp as logsumexp
+except ImportError: #older scipy versions
+	import scipy.misc.logsumexp as logsumexp
 
 #import custom modules
 
@@ -162,7 +166,7 @@ def integrateLogFunc(logPriorFunc, LLhoodFunc, targetSupport):
 		logPrior[i] = logPriorFunc(params[i,:])
 	LLhood = LLhoodFunc(params).reshape(-1,)
 	logIntegrandArr = logPrior + LLhood
-	logIntegral = scipy.misc.logsumexp(logIntegrandArr) + np.log(sampleWidth) #change to scipy.special
+	logIntegral = logsumexp(logIntegrandArr) + np.log(sampleWidth) #change to scipy.special
 	return logIntegral
 
 def getPriorIntegrandAndLimits(priorFunc, targetSupport, integrandFuncs, integrateAll = True, priorFuncsPdf = None):

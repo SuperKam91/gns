@@ -1,6 +1,10 @@
 #import standard modules 
 import numpy as np
 import scipy
+try: #newer scipy versions
+	import scipy.special.logsumexp as logsumexp
+except ImportError: #older scipy versions
+	import scipy.misc.logsumexp as logsumexp
 
 #import custom modules
 from . import calculations
@@ -100,7 +104,7 @@ def calcEofZKeetonLog(LLhoods, nLive, nest):
 	logEoftArr = np.log(calculations.getEofftArr(calculations.EoftPowi, nLive, nest))
 	logLEoft = LLhoods + logEoftArr
 	#return tools.logAddArr2(-np.inf, logLEoft) - np.log(nLive)
-	return scipy.misc.logsumexp(logLEoft) - np.log(nLive)
+	return logsumexp(logLEoft) - np.log(nLive)
 
 def calcEofZ2KeetonLog(LLhoods, nLive, nest):
 	"""
@@ -120,7 +124,7 @@ def calcLogSums(LLhoods, nLive, nest):
 	innerLogSums = np.fromiter(calcInnerLogSums(LLhoods, nLive, nest), dtype = float, count = nest)
 	outerLogSums = logLEoft + innerLogSums
 	#return tools.logAddArr2(-np.inf, outerLogSums)
-	return scipy.misc.logsumexp(outerLogSums)
+	return logsumexp(outerLogSums)
 
 def calcInnerLogSums(LLhoods, nLive, nest):
 	"""
@@ -130,7 +134,7 @@ def calcInnerLogSums(LLhoods, nLive, nest):
 		logEoft2OverEoftArr = np.log(calculations.getEofftArr(calculations.Eoft2OverEoftPowi, nLive, k))
 		innerLogTerms = LLhoods[:k] + logEoft2OverEoftArr
 		#innerLogSum = tools.logAddArr2(-np.inf, innerLogTerms)
-		innerLogSum = scipy.misc.logsumexp(innerLogTerms)
+		innerLogSum = logsumexp(innerLogTerms)
 		yield innerLogSum
 
 def calcLogSumsLoop(LLhoods, nLive, nest):
@@ -165,7 +169,7 @@ def calcHKeetonLog2(logEofZ, LLhoods, nLive, nest):
 	"""
 	logSumTerms = np.log(LLhoods) + LLhoods + np.log(calculations.getEofftArr(calculations.EoftPowi, nLive, nest))
 	#logSumTerm = np.log(1. / logEofZ) + np.log(1. / nLive) + tools.logAddArr2(-np.inf, logSumTerms)
-	logSumTerm = np.log(1. / logEofZ) + np.log(1. / nLive) + scipy.misc.logsumexp(logSumTerms)
+	logSumTerm = np.log(1. / logEofZ) + np.log(1. / nLive) + logsumexp(logSumTerms)
 	maxTerm = max(logSumTerm, logEofZ)
 	logH = tools.logSubExp(logSumTerm, np.log(logEofZ), logSumTerm)
 	return np.exp(logH)
@@ -241,7 +245,7 @@ def calcEofZFinalKeetonLog(finalLLhoods, nLive, nest):
 	Based on function calcEofZFinalKeeton().
 	"""
 	#logLhoodAv = tools.logAddArr2(-np.inf, finalLLhoods) - np.log(nLive)
-	logLhoodAv = scipy.misc.logsumexp(finalLLhoods) - np.log(nLive)
+	logLhoodAv = logsumexp(finalLLhoods) - np.log(nLive)
 	logEofFinalX = np.log(calculations.EoftPowi(nLive, nest))
 	return logLhoodAv + logEofFinalX
 
@@ -250,7 +254,7 @@ def calcEofZ2FinalKeetonLog(finalLLhoods, nLive, nest):
 	Based on function calcEofZ2FinalKeetonLog()
 	"""
 	#logLhoodAv = tools.logAddArr2(-np.inf, finalLLhoods) - np.log(nLive)
-	logLhoodAv = scipy.misc.logsumexp(finalLLhoods) - np.log(nLive)
+	logLhoodAv = logsumexp(finalLLhoods) - np.log(nLive)
 	logEofFinalX2 = np.log(calculations.Eoft2Powi(nLive, nest))
 	return 2. * logLhoodAv + logEofFinalX2
 
@@ -259,12 +263,12 @@ def calcEofZZFinalKeetonLog(LLhoods, finalLLhoods, nLive, nest):
 	Based on function calcEofZZFinalKeeton()
 	"""
 	#logFinalLhoodAv = tools.logAddArr2(-np.inf, finalLLhoods) - np.log(nLive)
-	logFinalLhoodAv = scipy.misc.logsumexp(finalLLhoods) - np.log(nLive)
+	logFinalLhoodAv = logsumexp(finalLLhoods) - np.log(nLive)
 	finalTerm = logFinalLhoodAv - np.log(nLive + 1.) + np.log(calculations.EoftPowi(nLive, nest))
 	logEoft2OverEoftArr = np.log(calculations.getEofftArr(calculations.Eoft2OverEoftPowi, nLive, nest)) 
 	loopTerms = LLhoods + logEoft2OverEoftArr
 	#loopTerm = tools.logAddArr2(-np.inf, loopTerms)
-	loopTerm = scipy.misc.logsumexp(loopTerms)
+	loopTerm = logsumexp(loopTerms)
 	return finalTerm + loopTerm
 
 def calcHTotalKeetonLog(logEofZ, LLhoods, nLive, nest, finalLLhoods):
@@ -274,7 +278,7 @@ def calcHTotalKeetonLog(logEofZ, LLhoods, nLive, nest, finalLLhoods):
 	function evaluations
 	"""
 	#logFinalLhoodAv = tools.logAddArr2(-np.inf, finalLLhoods) - np.log(nLive)
-	logFinalLhoodAv = scipy.misc.logsumexp(finalLLhoods) - np.log(nLive)
+	logFinalLhoodAv = logsumexp(finalLLhoods) - np.log(nLive)
 	HPartial = calcHKeetonLog(logEofZ, LLhoods, nLive, nest)
 	LAvOverZ = np.exp(logFinalLhoodAv - logEofZ)
 	HPartial2 = LAvOverZ * logFinalLhoodAv * calculations.EoftPowi(nLive, nest)
@@ -287,7 +291,7 @@ def calcHTotalKeetonLog2(logEofZ, LLhoods, nLive, nest, finalLLhoods):
 	small L, Z
 	"""
 	#logFinalLhoodAv = tools.logAddArr2(-np.inf, finalLLhoods) - np.log(nLive)
-	logFinalLhoodAv = scipy.misc.logsumexp(finalLLhoods) - np.log(nLive)
+	logFinalLhoodAv = logsumexp(finalLLhoods) - np.log(nLive)
 	HPartial = calcHKeetonLog2(logEofZ, LLhoods, nLive, nest)
 	#logHPartial = calcHKeetonLog2(logEofZ, LLhoods, nLive, nest) 
 	logHPartial2 = - logEofZ + logFinalLhoodAv + np.log(logFinalLhoodAv) + np.log(calculations.EoftPowi(nLive, nest))
@@ -326,7 +330,7 @@ def getVarTotalKeetonLog(logVarZ, logVarZFinal, logEofZ, logEofZFinal, logEofZZF
 	Get log of total variance based on Keeton's equations
 	"""
 	#positiveTerms = tools.logAddArr2(-np.inf, np.array([logVarZ, logVarZFinal, np.log(2.) + logEofZZFinal]))
-	positiveTerms = scipy.misc.logsumexp(np.array([logVarZ, logVarZFinal, np.log(2.) + logEofZZFinal]))
+	positiveTerms = logsumexp(np.array([logVarZ, logVarZFinal, np.log(2.) + logEofZZFinal]))
 	return tools.logSubExp(positiveTerms, np.log(2.) + logEofZ +  logEofZFinal, positiveTerms)
 
 def getEofZTotalKeetonLog(logEofZ, logEofZFinal):
@@ -339,4 +343,4 @@ def getEofZ2TotalKeetonLog(logEofZ2, logEofZ2Final, logEofZZFinal):
 	"""
 	Get log of EofZ^2 total from loop and final contributions
 	"""
-	return scipy.misc.logsumexp([logEofZ2, logEofZ2Final, np.log(2.) + logEofZZFinal])
+	return logsumexp([logEofZ2, logEofZ2Final, np.log(2.) + logEofZZFinal])
