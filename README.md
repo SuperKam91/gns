@@ -144,14 +144,14 @@ Alternatively, one can run `python setup.py install` or `pip install .` from the
 
 Note that by default, the tests in the `tests/` directory run the gns algorithm from the code in the repo in which `tests/` sits. To change this i.e. to use the installed package, in `tests.py`, set `run_repo = False`.
 
-### Contributing to the gns package
+## Contributing to the `gns` package
 
 Want to contribute to `gns`? There are two main you can contribute via the [GitHub repository](https://github.com/SuperKam91/gns):
 
-## Opening issues
+### Opening issues
 
 Open an issue to report bugs or to propose new features.
 
-## Proposing pull requests
+### Proposing pull requests
 
 Pull requests are very welcome. Note that if you are going to propose drastic changes, please open an issue for discussion first, to make sure that your proposed change will be accepted before you spend effort implementing it.
