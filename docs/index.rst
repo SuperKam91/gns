@@ -157,19 +157,19 @@ To install using pip, do
 
 .. code-block:: none
 
-	pip install GNS==1.0,
+	pip install GNS==1.0
 
 to install the gns algorithm and the requirements to run the algorithm. To also install the packages required for plotting, do 
 
 .. code-block:: none
 
-	pip install GNS[plotting]==1.0.
+	pip install GNS[plotting]==1.0
 
 Finally, to install the gns package and include `MultiNest` algorithm runs (for comparison tests), do
 
 .. code-block:: none
 
-	pip install GNS[multinest]==1.0.
+	pip install GNS[multinest]==1.0
 
 Note that the above do not install the tests found in the `tests/` directory
 
