@@ -50,12 +50,15 @@ The toy models (see https://arxiv.org/abs/1905.09110) are designed to make use o
 
 Example
 -------
-
-The following script produces samples from the von Mises distribution shown in the above image, and plots these samples using ``getdist``.
+The following script produces samples from the von Mises distribution shown in the above image, and plots these samples using ``getdist``. Note to produce the plots at the end of the example, ``getdist`` must be installed. This will be done automatically if ``gns`` was ``pip`` installed (see Installation section below) with the ``plotting`` requirements specified, i.e.
+``pip install GNS[plotting]==1.0``.
+Otherwise ``getdist`` can be installed with the command
+``pip install getdist``.
 
 .. code-block:: python
 
 	import numpy as np
+	import os
 	import gns.nested_run as nested_run
 	import gns.plotting as plotting
 	import gns.toy_models as toy_models
@@ -64,10 +67,19 @@ The following script produces samples from the von Mises distribution shown in t
 	setupDict = {'verbose':True, 'trapezoidalFlag': False, 'ZLiveType':'average X', 'terminationType':'evidence', 'terminationFactor': 0.1, 'sampler':None, 'outputFile':None, 'space':'log'}
 
 	shape = 'circle' #run circle toy model, simple von Mises distribution
-	sampler = 'MH WG' #jgeometric nested sampler
-	outputFile = '../text_output/example' #for text output
-	plotFile = '../image_output/example' #for image output
+	sampler = 'MH WG' #geometric nested sampler
+	
+	#make sure directories to store output exist, and if not, create them
+	textDir = '../text_output/'
+	plotDir = '../image_output/'
+	if not os.path.exists(textDir):
+	  os.mkdir(textDir)
+	if not os.path.exists(plotDir):
+	  os.mkdir(plotDir)
 
+	outputFile = textDir + 'example' #for text output
+	plotFile = plotDir + 'example' #for image output
+	
 	#get prior and likelihood functions from toy models for circle toy model
 	paramNames, priorParams, LhoodParams = toy_models.getToyHypersGeom(shape)
 	priorFunc, logPriorFunc, invPriorFunc, _, LLhoodFunc = toy_models.getToyFuncs(priorParams, LhoodParams)
