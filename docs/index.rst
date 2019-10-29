@@ -70,8 +70,8 @@ Otherwise ``getdist`` can be installed with the command
 	sampler = 'MH WG' #geometric nested sampler
 	
 	#make sure directories to store output exist, and if not, create them
-	textDir = '../text_output/'
-	plotDir = '../image_output/'
+	textDir = './text_output/'
+	plotDir = './image_output/'
 	if not os.path.exists(textDir):
 	  os.mkdir(textDir)
 	if not os.path.exists(plotDir):
