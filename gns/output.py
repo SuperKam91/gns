@@ -2,6 +2,10 @@
 import numpy as np
 import sys
 import scipy
+try: #newer scipy versions
+	from scipy.special import logsumexp
+except ImportError: #older scipy versions
+	from scipy.misc import logsumexp
 
 #import custom modules
 from . import samplers
@@ -208,7 +212,7 @@ def writeTheoreticalSamples(outputFile, logPriorFunc, invPriorFunc, LLhoodFunc, 
 	###################################
 	#THIS IS NECESSARY FOR SAMPLES TO WORK IN GETDIST BY LOADING IN SAMPLES	
 	#LLhoodTotSum = tools.logAddArr2(-np.inf, LLhood)
-	LLhoodTotSum = scipy.misc.logsumexp(LLhood)
+	LLhoodTotSum = logsumexp(LLhood)
 	weights = np.exp(LLhood - LLhoodTotSum) #hopefully this shouldn't cause underflow, but if it does I don't think it can be avoided
 	#if it does cause underflow, could try another normalising factor e.g. max(LLhood) or arbitrary value
 	LLhood = np.array([0.] * n).reshape(-1,1)

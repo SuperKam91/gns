@@ -4,9 +4,9 @@ import sys
 import scipy.stats 
 from scipy.special import ive as ModifiedBessel, gamma as Gamma #for Kent distribution
 try: #newer scipy versions
-	import scipy.special.logsumexp as logsumexp
+	from scipy.special import logsumexp
 except ImportError: #older scipy versions
-	import scipy.misc.logsumexp as logsumexp
+	from scipy.misc import logsumexp
 import inspect
 
 #import custom modules

@@ -2,9 +2,9 @@
 import numpy as np
 import scipy
 try: #newer scipy versions
-	import scipy.special.logsumexp as logsumexp
+	from scipy.special import logsumexp
 except ImportError: #older scipy versions
-	import scipy.misc.logsumexp as logsumexp
+	from scipy.misc import logsumexp
 
 #import custom modules
 from . import calculations
