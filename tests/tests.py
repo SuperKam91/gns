@@ -50,8 +50,6 @@ def runTests():
 	plotFile = '../image_output/toy_models_empirical_getdist/t' + lp
 	# plotFile = '../image_output/toy_models_empirical_corner/t' + lp
 	theorPostFile = outputFile[:-1]
-	shapesLabelsList = [[r"$\phi$"], [r"$\phi$", r"$\theta$"], ['$\\phi_{1}', '$\\theta_{1}', '$\\phi_{2}$', '$\\theta_{2}$', '$\\phi_{3}$', '$\\theta_{3}$', '$\\phi_{4}$', '$\\theta_{4}$', '$\\phi_{5}$', '$\\theta_{5}$', '$\\phi_{6}$', '$\\theta_{6}$']] #parameter names for plots. Should be same length as shapeList
-	# shapesLabelsList = [[r"$\phi$"]] #parameter names
 	###############################################################################
 
 	for i, shape in enumerate(shapeList):
@@ -65,7 +63,6 @@ def runTests():
 		shapeSuffix = shapeSuffixes[i]
 		outputFile2 = outputFile + shapeSuffix
 		theorPostFile2 = theorPostFile + shapeSuffix
-		shapesLabels = shapesLabelsList[i]
 		if calcZ:
 			Z, ZErr = theoretical_funcs.calcZTheor(logPriorFunc, LLhoodFunc, targetSupport, nDims)
 			#np.exp(theoretical_funcs.integrateLogFunc(logPriorFunc, LLhoodFunc, targetSupport)) #my rubbish log integrator
