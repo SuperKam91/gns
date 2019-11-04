@@ -85,7 +85,7 @@ Otherwise ``getdist`` can be installed with the command
 	priorFunc, logPriorFunc, invPriorFunc, _, LLhoodFunc = toy_models.getToyFuncs(priorParams, LhoodParams)
 
 	#can manually set paramNames e.g.
-	paramNames = [r"$\phi$"] #label plot
+	paramNames = [r"\phi"] #label plot
 
 	nDims = 1 #number of parameters in inference
 	#array with first element giving lower bound of prior support, second giving upper bound, and third giving upper - lower. shape (3, nDims)
