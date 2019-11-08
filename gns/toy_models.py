@@ -19,10 +19,15 @@ def getToyHypersGeom(shape):
 	Returns:
 
 	values of respective dictionaries, which contain lists of parameter names, prior and likelihood types, and their hyperparameters in the form:
+	
 	paramNames: list of strings representing parameter names
+	
 	priorParams: list containing prior type (denoted by integer) and hyperparameters (array)
+	
 	LhoodParams: list containing likelihood type (denoted by integer) and hyperparameters (array)
+	
 	Priors which prior types integers correspond to can be found in fitPriors() in prob_funcs.py.
+	
 	Likelihoods which likelihood types integers correspond to can be found in fitLhood() in prob_funcs.py.
 
 	"""
@@ -44,10 +49,15 @@ def getToyHypersGen(dists):
 	Returns:
 
 	values of respective dictionaries, which contain lists of parameter names, prior and likelihood types, and their hyperparameters in the form:
+	
 	paramNames: list of strings representing parameter names
+	
 	priorParams: list containing prior type (denoted by integer) and hyperparameters (array)
+	
 	LhoodParams: list containing likelihood type (denoted by integer) and hyperparameters (array)
+	
 	Priors which prior types integers correspond to can be found in fitPriors() in prob_funcs.py.
+	
 	Likelihoods which likelihood types integers correspond to can be found in fitLhood() in prob_funcs.py.
 
 	"""
@@ -65,16 +75,23 @@ def getToyHypers(n, p, l):
 	Args:
 
 	n: string for dictionary key of parameter names dictionary e.g. 'n1'
+	
 	p: string for dictionary key of priors dictionary e.g. 'p1'
+	
 	l: string for dictionary key of likelihoods dictionary e.g. 'l1'	
 
 	Returns:
 
 	values of respective dictionaries, which contain lists of parameter names, prior and likelihood types, and their hyperparameters in the form:
+	
 	paramNames: list of strings representing parameter names
+	
 	priorParams: list containing prior type (denoted by integer) and hyperparameters (array)
+	
 	LhoodParams: list containing likelihood type (denoted by integer) and hyperparameters (array)
+	
 	Priors which prior types integers correspond to can be found in fitPriors() in prob_funcs.py.
+	
 	Likelihoods which likelihood types integers correspond to can be found in fitLhood() in prob_funcs.py.
 
 
@@ -278,6 +295,7 @@ def getToyObjects(priorParams, LhoodParams):
 	Args:
 
 	priorParams: list containing prior type (denoted by integer) and hyperparameters (array)
+	
 	LhoodParams: list containing likelihood type (denoted by integer) and hyperparameters (array)
 
 	Returns:
@@ -295,6 +313,7 @@ def getToyProbFuncs(priorObjs, LhoodObj):
 	Args:
 
 	priorObjs: list containing prior objects obtained from getToyObjects()
+	
 	LhoodObj: likelihood object obtained from getToyObjects()
 
 	Returns:
@@ -318,8 +337,11 @@ def getToyFuncs(priorParams, LhoodParams):
 	Args:
 
 	priorParams: list containing prior type (denoted by integer) and hyperparameters (array)
+	
 	LhoodParams: list containing likelihood type (denoted by integer) and hyperparameters (array)
+	
 	Priors which prior types integers correspond to can be found in fitPriors() in prob_funcs.py.
+	
 	Likelihoods which likelihood types integers correspond to can be found in fitLhood() in prob_funcs.py.
 
 	Returns:
