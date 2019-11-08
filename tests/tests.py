@@ -3,6 +3,7 @@ import numpy as np
 import itertools
 import scipy
 import matplotlib.pyplot as plt
+import time
 
 run_repo = True
 #import custom modules
@@ -18,40 +19,233 @@ import gns.theoretical_funcs as theoretical_funcs
 import gns.output as output
 import gns.input as input
 
-def runTests():
+TOL = 1e-6
+
+def assert_same(x, y, tol):
 	"""
-	Run geometric nested sampling tests specified in body of the function.
+	Asserts the floats x and y are within tol of each other
+	i.e. |x - y| < tol. Returns boolean according to this,
+	and |x - y| itself
 	"""
-	#configuration for toy model runs
+	diff = np.abs(x - y)
+	return diff < tol, diff
+
+def test_gns_stats_circle():
+	"""
+	Test correct stats are generated for geometric nested sampler for circle toy model. 
+	Note these values have been compared with the theoretically correct values.
+	"""
+	ElnZTrue = -1.778287448059121
+	VarlnZTrue = 0.00222452082689939
+	HTrue = 1.009856152283123
+	paramGeomLists = [['wrapped']] #wrap parameter geometric nested sampler for von Mises distribution (circle)
+	doPlots = [False]
+	return_vals = True
+	shapeList = ['circle'] #run circle toy model, simple von Mises distribution
+	shapeSuffixes = ['_Sc']
+	samplerList = ['MH WG'] #just do geometric MH nested sampling
+	samplerSuffixes = ['_mhwg'] 
+	ElnZPred, VarlnZPred, HPred = runTests(shapeList, shapeSuffixes, samplerList, samplerSuffixes, paramGeomLists, doPlots, return_vals = True)
+	bool_same, diff = assert_same(ElnZTrue, ElnZPred, TOL)
+	if bool_same:
+		print("E[ln(Z)] test for circle model complete.")
+	else:
+		print("E[ln(Z)] test for circle model failed. Discrepancy between true and obtained value is " + str(diff))
+	bool_same, diff = assert_same(VarlnZTrue, VarlnZPred, TOL)
+	if bool_same:
+		print("Var[ln(Z)] test for circle model complete.")
+	else:
+		print("Var[ln(Z)] test for circle model failed. Discrepancy between true and obtained value is " + str(diff))
+	bool_same, diff = assert_same(HTrue, HPred, TOL)
+	if bool_same:
+		print("K-L divergence test for circle model complete.")
+	else:
+		print("K-L divergence test for circle model failed. Discrepancy between true and obtained value is " + str(diff))
+
+def test_gns_stats_torus():
+	"""
+	Test correct stats are generated for geometric nested sampler for torus toy model. 
+	Note these values have been compared with the theoretically correct values.
+	"""
+	ElnZTrue = -3.5870812483323076
+	VarlnZTrue = 0.004308045833100849
+	HTrue = 2.013937631676229
+	paramGeomLists = [['wrapped', 'wrapped']] #wrap parameter geometric nested sampler for torus
+	doPlots = [True]
+	shapeList = ['torus'] #run torus toy model, simple von Mises distribution
+	shapeSuffixes = ['_St']
+	samplerList = ['MH WG'] #just do geometric MH nested sampling
+	samplerSuffixes = ['_mhwg'] 
+	ElnZPred, VarlnZPred, HPred = runTests(shapeList, shapeSuffixes, samplerList, samplerSuffixes, paramGeomLists, doPlots, return_vals = True)
+	bool_same, diff = assert_same(ElnZTrue, ElnZPred, TOL)
+	if bool_same:
+		print("E[ln(Z)] test for torus model complete.")
+	else:
+		print("E[ln(Z)] test for torus model failed. Discrepancy between true and obtained value is " + str(diff))
+	bool_same, diff = assert_same(VarlnZTrue, VarlnZPred, TOL)
+	if bool_same:
+		print("Var[ln(Z)] test for torus model complete.")
+	else:
+		print("Var[ln(Z)] test for torus model failed. Discrepancy between true and obtained value is " + str(diff))
+	bool_same, diff = assert_same(HTrue, HPred, TOL)
+	if bool_same:
+		print("K-L divergence test for torus model complete.")
+	else:
+		print("K-L divergence test for torus model failed. Discrepancy between true and obtained value is " + str(diff))
+
+def test_gns_stats_sphere():
+	"""
+	Test correct stats are generated for geometric nested sampler for sphere toy model. 
+	Note these values have been compared with the theoretically correct values.
+	"""
+	ElnZTrue = -3.024004031644396
+	VarlnZTrue = 0.0033782554288421807
+	HTrue = 1.549216368953933
+	paramGeomLists = [['sphere', 'sphere']] #spherical parameters for sphere
+	doPlots = [True]
+	shapeList = ['sphere'] #run sphere toy model, simple von Mises distribution
+	shapeSuffixes = ['_Ss']
+	samplerList = ['MH WG'] #just do geometric MH nested sampling
+	samplerSuffixes = ['_mhwg'] 
+	ElnZPred, VarlnZPred, HPred = runTests(shapeList, shapeSuffixes, samplerList, samplerSuffixes, paramGeomLists, doPlots, return_vals = True)
+	bool_same, diff = assert_same(ElnZTrue, ElnZPred, TOL)
+	if bool_same:
+		print("E[ln(Z)] test for sphere model complete.")
+	else:
+		print("E[ln(Z)] test for sphere model failed. Discrepancy between true and obtained value is " + str(diff))
+	bool_same, diff = assert_same(VarlnZTrue, VarlnZPred, TOL)
+	if bool_same:
+		print("Var[ln(Z)] test for sphere model complete.")
+	else:
+		print("Var[ln(Z)] test for sphere model failed. Discrepancy between true and obtained value is " + str(diff))
+	bool_same, diff = assert_same(HTrue, HPred, TOL)
+	if bool_same:
+		print("K-L divergence test for sphere model complete.")
+	else:
+		print("K-L divergence test for sphere model failed. Discrepancy between true and obtained value is " + str(diff))
+
+def test_gns_stats_6sphereVIII():
+	"""
+	Test correct stats are generated for geometric nested sampler for 6-sphere VIII toy model. 
+	WARNING this test takes a while to run (~5 hours)
+	"""	
+	ElnZTrue = 2102.1710800835644
+	VarlnZTrue = 0.0504359918722912
+	HTrue = 25.255793511215728
+	paramGeomLists = [['sphere', 'sphere']*6] #spherical parameters geometric nested sampler for 6-sphere
+	doPlots = [True]
+	shapeList = ['6 sphere VIII'] #run 6-sphete VIII toy model, kent distributions defined on 6 separate spheres
+	shapeSuffixes = ['_St']
+	samplerList = ['MH WG'] #just do geometric MH nested sampling
+	samplerSuffixes = ['_mhwg'] 
+	ElnZPred, VarlnZPred, HPred = runTests(shapeList, shapeSuffixes, samplerList, samplerSuffixes, paramGeomLists, doPlots, return_vals = True)
+	bool_same, diff = assert_same(ElnZTrue, ElnZPred, TOL)
+	if bool_same:
+		print("E[ln(Z)] test for 6-sphere VIII model complete.")
+	else:
+		print("E[ln(Z)] test for 6-sphere VIII model failed. Discrepancy between true and obtained value is " + str(diff))
+	bool_same, diff = assert_same(VarlnZTrue, VarlnZPred, TOL)
+	if bool_same:
+		print("Var[ln(Z)] test for 6-sphere VIII model complete.")
+	else:
+		print("Var[ln(Z)] test for 6-sphere VIII model failed. Discrepancy between true and obtained value is " + str(diff))
+	bool_same, diff = assert_same(HTrue, HPred, TOL)
+	if bool_same:
+		print("K-L divergence test for 6-sphere VIII model complete.")
+	else:
+		print("K-L divergence test for 6-sphere VIII model failed. Discrepancy between true and obtained value is " + str(diff))
+
+def test_gns_plot_circle():
+	"""
+	Test correct plot is generated for geometric nested sampler for circle toy model. 
+	Should be compared with ../image_output/toy_models_empirical_getdist/circle.png
+	"""
+	paramGeomLists = [['wrapped']] #wrap parameter geometric nested sampler for von Mises distribution (circle)
+	doPlots = [True]
+	shapeList = ['circle'] #run circle toy model, simple von Mises distribution
+	shapeSuffixes = ['_Sc']
+	samplerList = ['MH WG'] #just do geometric MH nested sampling
+	samplerSuffixes = ['_mhwg'] 
+	runTests(shapeList, shapeSuffixes, samplerList, samplerSuffixes, paramGeomLists, doPlots)
+
+def test_gns_plot_torus():
+	"""
+	Test correct plot is generated for geometric nested sampler for torus toy model. 
+	Should be compared with ../image_output/toy_models_empirical_getdist/circle.png
+	"""
+	paramGeomLists = [['wrapped', 'wrapped']] #wrap parameter geometric nested sampler for torus
+	doPlots = [True]
+	shapeList = ['torus'] #run torus toy model, simple von Mises distribution
+	shapeSuffixes = ['_St']
+	samplerList = ['MH WG'] #just do geometric MH nested sampling
+	samplerSuffixes = ['_mhwg'] 
+	runTests(shapeList, shapeSuffixes, samplerList, samplerSuffixes, paramGeomLists, doPlots)
+
+def test_gns_plot_sphere():
+	"""
+	Test correct plot is generated for geometric nested sampler for torus toy model. 
+	Should be compared with ../image_output/toy_models_empirical_getdist/sphere.png
+	"""
+	paramGeomLists = [['sphere', 'sphere']] #spherical parameters for sphere
+	doPlots = [True]
+	shapeList = ['sphere'] #run sphere toy model, simple von Mises distribution
+	shapeSuffixes = ['_Ss']
+	samplerList = ['MH WG'] #just do geometric MH nested sampling
+	samplerSuffixes = ['_mhwg'] 
+	runTests(shapeList, shapeSuffixes, samplerList, samplerSuffixes, paramGeomLists, doPlots)
+
+def test_gns_plot_6sphereVIII():
+	"""
+	Test correct plot is generated for geometric nested sampler for 6 sphere VIII toy model (see toy_models.py). 
+	Should be compared with ../image_output/toy_models_empirical_getdist/kent_6.png
+	WARNING this test takes a while to run (~5 hours)
+	"""
+	paramGeomLists = [['sphere', 'sphere']*6] #spherical parameters geometric nested sampler for 6-sphere
+	doPlots = [True]
+	shapeList = ['6 sphere VIII'] #run 6-sphete VIII toy model, kent distributions defined on 6 separate spheres
+	shapeSuffixes = ['_St']
+	samplerList = ['MH WG'] #just do geometric MH nested sampling
+	samplerSuffixes = ['_mhwg'] 
+	runTests(shapeList, shapeSuffixes, samplerList, samplerSuffixes, paramGeomLists, doPlots)
+
+def runTests(shapeList = ['circle', 'torus', '6 sphere VIII'], 
+	shapeSuffixes = ['_Sc', '_St', '_S6s8'], 
+	samplerList = ['MH', 'MH WG'], 
+	samplerSuffixes = ['_mh', '_mhwg'], 
+	paramGeomLists = [['wrapped'], ['wrapped', 'wrapped'], ['sphere', 'sphere']*6], 
+	doPlots = [True, True, True],
+	return_vals = False):
+	"""
+	Run geometric nested sampling tests specified by function arguments.
+	By default, runs MH sampler, GNS sampler for three toy models, and plots posteriors using getdist.
+	These three toy models full exploit the different aspects of the GNS algorithm.
+
+	shapeList: list of str, which toy models to run. See toy_models.py for available toy models
+	shapeSuffixes: list of str, should correspond to shapeList value(s). Used to index saved files
+	samplerList: list of str, list specifying which algorithms to run on each problem, 
+	namely 'MH WG': geometric nested sampling, 'MH': vanilla Metropolis Hastings nested sampling, 'MN': MultiNest
+	samplerSuffixes: list of str, should correspond to samplerList value(s). Used to index saved files
+	paramGeomLists: list of lists of str, as described in README
+	doPlots: list of bool, whether to generate getdist plots for each sampler. Should be same length as samplerList
+	return_vals : bool whether to return statistics parameters of nested run or not, 
+	i.e. the expected log evidence E[ln(Z)], its variance var[ln(Z)] and the K-L divergence H.
+	If False, writes these values to file instead (and prints to stdout).
+
+	"""
+	#additional I/O details and configuration for toy model runs
 	###########################################################################
+	seed = 0
 	setupDict = {'verbose':True, 'trapezoidalFlag': False, 'ZLiveType':'average X', 'terminationType':'evidence', 'terminationFactor': 0.1, 'sampler':None, 'outputFile':None, 'space':'log', 'paramGeomList':None}
-	# lp = 'l' #low livepoints (50)
-	#lp = 'i' #intermediate livepoints (100)
-	lp = 'h' #high livepoints (500)
-	#lp = 'm' #massive livepoints (2000)
+	lp = 'h' #as a guide: l for low livepoints (50), i for intermediate livepoints (100), h for high livepoints (500), m for massive livepoints (2000)
 	calcZ = False #calculate theoretical Z
 	calcPost = False #calculate theoretical posterior 'samples'
 	doRun = True
-	# doPlots = [True, True] #if more than one sampler is considered, this should be a boolean list corresponding to which samplers should be plotted, and should be same length as samplerList. Just set to False for no plottingt set to F
-	doPlots = [True]
-	plotter = 'getdist'
 	plotSeparate = False #whether to plot different samplers on same figure or not
-	# shapeList = ['circle', 'torus', '6 sphere VIII'] #run these three toy models
-	shapeList = ['circle'] #run circle toy model, simple von Mises distribution
-	# shapeSuffixes = ['_Sc', '_St', '_S6s8'] #should correspond to shapeList value(s). Used to index saved files
-	shapeSuffixes = ['_Sc']
 	theoryList = ['grid'] #how to calculate theoretical values if calcPost == True | calcZ == True
 	theorySuffixes = ['_tg'] #should correspond to theoryList values. Used to index saved files
-	# samplerList = ['MH', 'MH WG'] #run both geometric MH nested sampling and vanilla MH nested sampling, 
-	samplerList = ['MH WG'] #just do geometric MH nested sampling
-	# samplerSuffixes = ['_mh', '_mhwg']
-	samplerSuffixes = ['_mhwg'] #should correspond to samplerList value(s). Used to index saved files
 	outputFile = '../text_output/t' + lp
 	plotFile = '../image_output/toy_models_empirical_getdist/t' + lp
-	# plotFile = '../image_output/toy_models_empirical_corner/t' + lp
 	theorPostFile = outputFile[:-1]
-	shapesLabelsList = [[r"$\phi$"], [r"$\phi$", r"$\theta$"], ['$\\phi_{1}', '$\\theta_{1}', '$\\phi_{2}$', '$\\theta_{2}$', '$\\phi_{3}$', '$\\theta_{3}$', '$\\phi_{4}$', '$\\theta_{4}$', '$\\phi_{5}$', '$\\theta_{5}$', '$\\phi_{6}$', '$\\theta_{6}$']] #parameter names for plots. Should be same length as shapeList
-	# shapesLabelsList = [[r"$\phi$"]] #parameter names
 	###############################################################################
 
 	for i, shape in enumerate(shapeList):
@@ -65,10 +259,8 @@ def runTests():
 		shapeSuffix = shapeSuffixes[i]
 		outputFile2 = outputFile + shapeSuffix
 		theorPostFile2 = theorPostFile + shapeSuffix
-		shapesLabels = shapesLabelsList[i]
 		if calcZ:
 			Z, ZErr = theoretical_funcs.calcZTheor(logPriorFunc, LLhoodFunc, targetSupport, nDims)
-			#np.exp(theoretical_funcs.integrateLogFunc(logPriorFunc, LLhoodFunc, targetSupport)) #my rubbish log integrator
 			output.writeTheorZ(Z, ZErr, theorPostFile2)
 		if calcPost:
 			for j, theory in enumerate(theoryList):
@@ -78,34 +270,26 @@ def runTests():
 				chainsFilesPrefixes.append(theorPostFile2 + theorySuffix)
 				plotLegend.append(theorPostFile2[16:] + theorySuffix)
 		for j, sampler in enumerate(samplerList):
-			np.random.seed(0) #set this to value if you want NS to use same randomisations
+			if seed is not None:
+				np.random.seed(seed) #set this to value if you want NS to use same randomisations
+			setupDict['paramGeomList'] = paramGeomLists[i]
 			samplerSuffix = samplerSuffixes[j]
 			setupDict['sampler'] = sampler
 			setupDict['outputFile'] = outputFile2 + samplerSuffix
-			if doRun:
-				if sampler == 'MH WG':
-					#what modes to calculate different parameters in for geometric nested sampler. either 'vanilla', 'wrapped' or 'sphere'. length of outer list
-					#should be same length as shapeList. Length of each inner list should be same as number of parameters for that model (see toy_models.py)
-					# paramGeomLists = [['wrapped'], ['wrapped', 'wrapped'], ['sphere', 'sphere']*6] 
-					paramGeomLists = [['wrapped']] #wrap parameter geometric nested sampler for von Mises distribution (circle)
-				else:
-					#for vanilla MH sampler, all modes must be vanilla
-					# paramGeomLists = [['vanilla'], ['vanilla', 'vanilla'], ['vanilla', 'vanilla']*6]
-					paramGeomLists = [['vanilla']]
-				setupDict['paramGeomList'] = paramGeomLists[i]
-				if sampler != 'MN' and sampler != 'MNW': 
-					setupDict['outputFile'] = '../text_output/t' + lp + shapeSuffixes[i] + samplerSuffixes[j]
-					nested_run.NestedRun(priorFunc, invPriorFunc, LhoodFunc, paramNames, targetSupport, setupDict, LLhoodFunc)
-				else:
-					#run multinest
-					import gns.mn_run as mn_run
-					if sampler == 'MN':
-						wrapped = False
-					elif sampler == 'MNW':
-						wrapped = True
-					mn_run.MNRun2(invPriorFunc, LLhoodFunc, paramNames, setupDict['outputFile'], wrapped)
-					output.writeRanges(setupDict['outputFile'], paramNames, targetSupport)
-					output.writeParamNames(setupDict['outputFile'], paramNames)
+			if sampler != 'MN' and sampler != 'MNW': 
+				setupDict['outputFile'] = '../text_output/t' + lp + shapeSuffixes[i] + samplerSuffixes[j]
+				if return_vals:
+					return nested_run.NestedRun(priorFunc, invPriorFunc, LhoodFunc, paramNames, targetSupport, setupDict, LLhoodFunc, return_vals)
+			else:
+				#run multinest
+				import gns.mn_run as mn_run
+				if sampler == 'MN':
+					wrapped = False
+				elif sampler == 'MNW':
+					wrapped = True
+				mn_run.MNRun2(invPriorFunc, LLhoodFunc, paramNames, setupDict['outputFile'], wrapped)
+				output.writeRanges(setupDict['outputFile'], paramNames, targetSupport)
+				output.writeParamNames(setupDict['outputFile'], paramNames)
 			chainsFilesPrefixes.append(setupDict['outputFile'])
 			plotLegend.append(setupDict['outputFile'][17:])
 		#do plots
@@ -113,17 +297,16 @@ def runTests():
 			ext = samplerSuffixes
 			chainsFilesPrefixes = list(itertools.compress(chainsFilesPrefixes, doPlots))
 			plotLegend = list(itertools.compress(plotLegend, doPlots))
-			if 'getdist' in plotter:
-				np.seterr(all = 'ignore')
-				if plotSeparate:
-					for j, chains in enumerate(chainsFilesPrefixes):
-						plotting.callGetDist([chains], plotFile + shapeSuffix + ext[j] + '.png', nDims, [plotLegend[j]])
+			np.seterr(all = 'ignore')
+			if plotSeparate:
+				for j, chains in enumerate(chainsFilesPrefixes):
+					plotting.callGetDist([chains], plotFile + shapeSuffix + ext[j] + '.png', nDims, [plotLegend[j]])
+			else:
+				if len(ext) < 4: #not plotting all samplers and theor
+					sampExt = ''.join(ext)
 				else:
-					if len(ext) < 4: #not plotting all samplers and theor
-						sampExt = ''.join(ext)
-					else:
-						sampExt = ''
-					plotting.callGetDist(chainsFilesPrefixes, plotFile + shapeSuffix + sampExt + '.png', nDims, plotLegend)
+					sampExt = ''
+				plotting.callGetDist(chainsFilesPrefixes, plotFile + shapeSuffix + sampExt + '.png', nDims, plotLegend)
 
 def singleRun():
 	"""
@@ -150,7 +333,6 @@ def singleRun():
 	outputFile2 = outputFile + shapeSuffix
 	if calcZ:
 		Z, ZErr = theoretical_funcs.calcZTheor(logPriorFunc, LLhoodFunc, targetSupport, nDims)
-		#np.exp(theoretical_funcs.integrateLogFunc(logPriorFunc, LLhoodFunc, targetSupport)) #my rubbish log integrator
 		output.writeTheorZ(Z, ZErr, outputFile2)
 	if calcPost:
 		output.writeTheoreticalSamples(outputFile2, logPriorFunc, invPriorFunc, LLhoodFunc, targetSupport, paramNames, method = theory)
@@ -281,4 +463,10 @@ def shapeChainPlots(shapeSuffix, inputFile, outputFile = None, plotWeights = Fal
 				plt.show()
 			plt.close()
 
-runTests()
+test_gns_stats_circle()
+print('Starting next test in 10 seconds...')
+time.sleep(10)
+test_gns_stats_torus()
+print('Starting next test in 10 seconds...')
+time.sleep(10)
+test_gns_stats_sphere()

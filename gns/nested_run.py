@@ -17,7 +17,7 @@ from . import geom_sampler
 
 ############nested run functions
 
-def NestedRun(priorFunc, invPriorFunc, LhoodFunc, paramNames, targetSupport, setupDict, LLhoodFunc = None):
+def NestedRun(priorFunc, invPriorFunc, LhoodFunc, paramNames, targetSupport, setupDict, LLhoodFunc = None, return_vals = False):
 	"""
 	Wrapper around linear and log nested run functions.
 
@@ -37,16 +37,21 @@ def NestedRun(priorFunc, invPriorFunc, LhoodFunc, paramNames, targetSupport, set
 	
 	LLhoodFunc : function log likelihood function
 
+	return_vals : bool whether to return statistics parameters of nested run or not, 
+	i.e. the expected log evidence E[ln(Z)], its variance var[ln(Z)] and the K-L divergence H.
+	If False, writes these values to file instead (and prints to stdout).
+
 	"""
 	if setupDict['space'] == 'linear':
-		NestedRunLinear(priorFunc, invPriorFunc, LhoodFunc, paramNames, targetSupport, setupDict)
+		return NestedRunLinear(priorFunc, invPriorFunc, LhoodFunc, paramNames, targetSupport, setupDict, return_vals)
 	elif setupDict['space'] == 'log':
-		NestedRunLog(priorFunc, invPriorFunc, LLhoodFunc, paramNames, targetSupport, setupDict)
+		return NestedRunLog(priorFunc, invPriorFunc, LLhoodFunc, paramNames, targetSupport, setupDict, return_vals)
 
-def NestedRunLog(priorFunc, invPriorFunc, LLhoodFunc, paramNames, targetSupport, setupDict):
+def NestedRunLog(priorFunc, invPriorFunc, LLhoodFunc, paramNames, targetSupport, setupDict, return_vals = False):
 	"""
 	function which completes a NS run. parameters of priors and likelihood need to be specified, as well as a flag indication type of prior for each dimension and the pdf for the lhood.
-	setupDict contains other setup parameters such as termination type & factor, method of finding new livepoint, details of how weights are calculated, how final Z contribution is added, and directory/file prefix for saved files.
+	setupDict contains other setup parameters such as termination type & factor, method of finding new livepoint, details of how weights are calculated, how final Z contribution is added,
+	and directory/file prefix for saved files.
 
 	Args:
 
@@ -61,6 +66,10 @@ def NestedRunLog(priorFunc, invPriorFunc, LLhoodFunc, paramNames, targetSupport,
 	targetSupport : array target support values in array of shape (3, nDims)
 	
 	setupDict : dict setup dictionary explained in README.md
+
+	return_vals : bool whether to return statistics parameters of nested run or not, 
+	i.e. the expected log evidence E[ln(Z)], its variance var[ln(Z)] and the K-L divergence H.
+	If False, writes these values to file instead (and prints to stdout).
 
 	"""
 	nLive = 500 #low value is 50, high value is 500
@@ -90,14 +99,10 @@ def NestedRunLog(priorFunc, invPriorFunc, LLhoodFunc, paramNames, targetSupport,
 	nest = 0
 	logZLive = np.inf
 	checkTermination = 100
-	#if 'geom' in setupDict['sampler']: #temporary whilst testing geometric ns
 	nonGeomList, boundaryList, geomList, shapeList = geom_sampler.splitGeomParams(setupDict['paramGeomList']) 
 	circleList, torusList, sphereList = geom_sampler.splitGeomShapes(geomList, shapeList)
 	nonGeomLowerLimits, nonGeomUpperLimits = geom_sampler.getNonGeomLimits(targetSupport, nonGeomList)
 	circleLowerLimits, circleUpperLimits, torusLowerLimits, torusUpperLimits, sphereLowerLimits, sphereUpperLimits = geom_sampler.getShapeLimits(targetSupport, circleList, torusList, sphereList)
-	#elif 'MH' in setupDict['sampler']: #temporary whilst testing geometric ns
-	#	vanillaList, circleList, torusList, sphereList = [], [], [], [] #temporary whilst testing geometric ns
-	#	vanillaLowerLimits, vanillaUpperLimits, circleLowerLimits, circleUpperLimits, torusLowerLimits, torusUpperLimits, sphereLowerLimits, sphereUpperLimits = np.array([]), np.array([]), np.array([]), np.array([]), np.array([]), np.array([]), np.array([]), np.array([]) #temporary whilst testing geometric ns
 	while True:
 		LLhoodStarOld = LLhoodStar 
 		deadIndex = np.argmin(livePointsLLhood) #index of lowest likelihood livepoint (next deadpoint)
@@ -117,7 +122,6 @@ def NestedRunLog(priorFunc, invPriorFunc, LLhoodFunc, paramNames, targetSupport,
 		#update array where last deadpoint was with new livepoint picked subject to L_new > L*
 		if setupDict['sampler'] == 'blind':
 			livePointsPhys[deadIndex], livePointsLLhood[deadIndex] = samplers.getNewLiveBlind(invPriorFunc, LLhoodFunc, LLhoodStar, nDims)
-		#elif setupDict['sampler'] == 'MH' or setupDict['sampler'] == 'MH geom': #temporary whilst testing geometric ns
 		elif 'MH' in setupDict['sampler']:
 			livePointsPhys[deadIndex], livePointsLLhood[deadIndex] = samplers.getNewLiveMH(livePointsPhys, deadIndex, priorFunc, targetSupport, LLhoodFunc, LLhoodStar, nDims, nonGeomList, boundaryList, circleList, torusList, sphereList, nonGeomLowerLimits, nonGeomUpperLimits, circleLowerLimits, circleUpperLimits, torusLowerLimits, torusUpperLimits, sphereLowerLimits, sphereUpperLimits)
 		if setupDict['verbose']:
@@ -131,64 +135,47 @@ def NestedRunLog(priorFunc, invPriorFunc, LLhoodFunc, paramNames, targetSupport,
 	#following code may lose precision due to having to exponentiate numbers, which needs to be done
 	#as functions working in log space haven't been implemented yet
 	#######################
-	#EofZ = np.exp(logEofZ) #debug
-	#EofZ2 = np.exp(logEofZ2) #debug
-	#varZ = calculations.calcVariance(EofZ, EofZ2) #debug
 	logVarZ = calculations.calcVarianceLog(logEofZ, logEofZ2)
 	EofLogZ = calculations.calcEofLogZ(logEofZ, logEofZ2, 'log')
 	varLogZ = calculations.calcVarLogZ(logEofZ, logEofZ2, 'log')
 	logEofZK, logEofZ2K = keeton_calculations.calcZMomentsKeetonLog(np.array(deadPointsLLhood), nLive, nest)
-	#EofZK, EofZ2K = keeton_calculations.calcZMomentsKeeton(np.exp(np.array(deadPointsLLhood)), nLive, nest) #debug
-	#varZK = calculations.calcVariance(EofZK, EofZ2K) #debug
 	logVarZK = calculations.calcVarianceLog(logEofZK, logEofZ2K)
 	EofLogZK = calculations.calcEofLogZ(logEofZK, logEofZ2K, 'log')
 	varLogZK = calculations.calcVarLogZ(logEofZK, logEofZ2K, 'log')
 	HKL = keeton_calculations.calcHKeetonLog(logEofZK, np.array(deadPointsLLhood), nLive, nest)
-	#HK = keeton_calculations.calcHKeeton(EofZK, np.exp(np.array(deadPointsLLhood)), nLive, nest) #debug
 	if setupDict['verbose']:
 		output.printBreak()
-		#output.printZHValues(EofZ, EofZ2, varZ, H, 'linear', 'before final', 'recursive') #debug
-		#output.printZHValues(EofZK, EofZ2K, varZK, HK, 'linear', 'before final', 'Keeton equations') #debug
 		output.printZHValues(logEofZ, logEofZ2, logVarZ, EofLogZ, varLogZ, H, 'log', 'before final', 'recursive')
 		output.printZHValues(logEofZK, logEofZ2K, logVarZK, EofLogZK, varLogZK, HKL, 'log', 'before final', 'Keeton equations')
 	logEofZTotal, logEofZ2Total, H, livePointsPhysFinal, livePointsLLhoodFinal, logEofXFinalArr = ns_end_funcs.getFinalContributionLog(setupDict['verbose'], setupDict['ZLiveType'], setupDict['trapezoidalFlag'], nFinal, logEofZ, logEofZ2, logEofX, logEofWeights, H, livePointsPhys, livePointsLLhood, avLLhood, liveLLhoodMax, liveMaxIndex, LLhoodStar)
 	totalPointsPhys, totalPointsLLhood, logEofXArr, logEofWeights = ns_end_funcs.getTotal(deadPointsPhys, livePointsPhysFinal, deadPointsLLhood, livePointsLLhoodFinal, logEofXArr, logEofXFinalArr, logEofWeights)
-	#EofZTotal = np.exp(logEofZTotal) #debug
-	#EofZ2Total = np.exp(logEofZ2Total) #debug
-	#varZ = calculations.calcVariance(EofZTotal, EofZ2Total) #debug
 	logVarZTotal = calculations.calcVarianceLog(logEofZTotal, logEofZ2Total)
 	EofLogZTotal = calculations.calcEofLogZ(logEofZTotal, logEofZ2Total, 'log')
 	varLogZTotal = calculations.calcVarLogZ(logEofZTotal, logEofZ2Total, 'log')
 	logEofZFinalK, logEofZ2FinalK = keeton_calculations.calcZMomentsFinalKeetonLog(livePointsLLhood, nLive, nest)
-	#EofZFinalK, EofZ2FinalK = keeton_calculations.calcZMomentsFinalKeeton(np.exp(livePointsLLhood), nLive, nest) #debug
-	#varZFinalK = calculations.calcVariance(EofZFinalK, EofZ2FinalK) #debug
 	logVarZFinalK = calculations.calcVarianceLog(logEofZFinalK, logEofZ2FinalK)
 	logEofZZFinalK = keeton_calculations.calcEofZZFinalKeetonLog(np.array(deadPointsLLhood), livePointsLLhood, nLive, nest)
-	#EofZZFinalK = keeton_calculations.calcEofZZFinalKeeton(np.exp(np.array(deadPointsLLhood)), np.exp(livePointsLLhood), nLive, nest) #debug
 	EofLogZFinalK = calculations.calcEofLogZ(logEofZFinalK, logEofZ2FinalK, 'log')
 	varLogZFinalK = calculations.calcVarLogZ(logEofZFinalK, logEofZ2FinalK, 'log')
 	logVarZTotalK = keeton_calculations.getVarTotalKeetonLog(logVarZK, logVarZFinalK, logEofZK, logEofZFinalK, logEofZZFinalK)
-	#varZTotalK = keeton_calculations.getVarTotalKeeton(varZK, varZFinalK, EofZK, EofZFinalK, EofZZFinalK) #debug
 	logEofZTotalK = keeton_calculations.getEofZTotalKeetonLog(logEofZK, logEofZFinalK)
-	#EofZTotalK = keeton_calculations.getEofZTotalKeeton(EofZK, EofZFinalK) #debug
 	logEofZ2TotalK = keeton_calculations.getEofZ2TotalKeetonLog(logEofZ2K, logEofZ2FinalK, logEofZZFinalK)
-	#EofZ2TotalK = keeton_calculations.getEofZ2TotalKeeton(EofZ2K, EofZ2FinalK) #debug
 	EofLogZTotalK = calculations.calcEofLogZ(logEofZTotalK, logEofZ2TotalK, 'log')
 	varLogZTotalK = calculations.calcVarLogZ(logEofZTotalK, logEofZ2TotalK, 'log')
 	HKL = keeton_calculations.calcHTotalKeetonLog(logEofZTotalK, np.array(deadPointsLLhood), nLive, nest, livePointsLLhood)
-	#HK = keeton_calculations.calcHTotalKeeton(EofZTotalK, np.exp(np.array(deadPointsLLhood)), nLive, nest, np.exp(livePointsLLhood)) #debug
 	numSamples = len(totalPointsPhys[:,0])
-	if setupDict['verbose']:
-		#output.printZHValues(EofZTotal, EofZ2Total, varZ, H, 'linear', 'total', 'recursive') #debug
-		#output.printZHValues(EofZFinalK, EofZ2FinalK, varZFinalK, 'not calculated', 'linear', 'final contribution', 'Keeton equations') #debug
-		#output.printZHValues(EofZTotalK, EofZ2TotalK, varZTotalK, HK, 'linear', 'total', 'Keeton equations') #debug
-		output.printZHValues(logEofZTotal, logEofZ2Total, logVarZTotal, EofLogZTotal, varLogZTotal, H, 'log', 'total', 'recursive')
-		output.printZHValues(logEofZFinalK, logEofZ2FinalK, logVarZFinalK, EofLogZFinalK, varLogZFinalK, 'not calculated', 'log', 'final contribution', 'Keeton equations')
-		output.printZHValues(logEofZTotalK, logEofZ2TotalK, logVarZTotalK, EofLogZTotalK, varLogZTotalK, HKL, 'log', 'total', 'Keeton equations')
-	if setupDict['outputFile']:
-		output.writeOutput(setupDict['outputFile'], totalPointsPhys, totalPointsLLhood, logEofWeights, logEofXArr, paramNames ,'log', targetSupport, logEofZTotal, logVarZTotal, EofLogZTotal, varLogZTotal)
+	if return_vals:
+		return EofLogZTotalK, varLogZTotalK, HKL
+	else:
+		if setupDict['verbose']:
+			output.printZHValues(logEofZTotal, logEofZ2Total, logVarZTotal, EofLogZTotal, varLogZTotal, H, 'log', 'total', 'recursive')
+			output.printZHValues(logEofZFinalK, logEofZ2FinalK, logVarZFinalK, EofLogZFinalK, varLogZFinalK, 'not calculated', 'log', 'final contribution', 'Keeton equations')
+			output.printZHValues(logEofZTotalK, logEofZ2TotalK, logVarZTotalK, EofLogZTotalK, varLogZTotalK, HKL, 'log', 'total', 'Keeton equations')
+		if setupDict['outputFile']:
+			output.writeOutput(setupDict['outputFile'], totalPointsPhys, totalPointsLLhood, logEofWeights, logEofXArr, paramNames ,'log', targetSupport, logEofZTotal, logVarZTotal, EofLogZTotal, varLogZTotal)
 
-def NestedRunLinear(priorFunc, invPriorFunc, LhoodFunc, paramNames, targetSupport, setupDict):
+
+def NestedRunLinear(priorFunc, invPriorFunc, LhoodFunc, paramNames, targetSupport, setupDict, return_vals = False):
 	"""
 	function which completes a NS run. parameters of priors and likelihood need to be specified, as well as a flag indication type of prior for each dimension and the pdf for the lhood.
 	setupDict contains other setup parameters such as termination type & factor, method of finding new livepoint, details of how weights are calculated, how final Z contribution is added, and directory/file prefix for saved files.
@@ -206,6 +193,10 @@ def NestedRunLinear(priorFunc, invPriorFunc, LhoodFunc, paramNames, targetSuppor
 	targetSupport : array target support values in array of shape (3, nDims)
 	
 	setupDict : dict setup dictionary explained in README.md
+
+	return_vals : bool whether to return statistics parameters of nested run or not, 
+	i.e. the expected log evidence E[ln(Z)], its variance var[ln(Z)] and the K-L divergence H.
+	If False, writes these values to file instead (and prints to stdout).
 
 	"""
 	nLive = 500 #low value is 50, high value is 500
@@ -298,10 +289,13 @@ def NestedRunLinear(priorFunc, invPriorFunc, LhoodFunc, paramNames, targetSuppor
 	varLogZTotalK = calculations.calcVarLogZ(EofZTotalK, EofZ2TotalK, 'linear')
 	HK = keeton_calculations.calcHTotalKeeton(EofZTotalK, np.array(deadPointsLhood), nLive, nest, livePointsLhood)
 	numSamples = len(totalPointsPhys[:,0])
-	if setupDict['verbose']:
-		output.printZHValues(EofZTotal, EofZ2Total, varZ, EofLogZTotal, varLogZTotal, H, 'linear', 'total', 'recursive')
-		output.printZHValues(EofZFinalK, EofZ2FinalK, varZFinalK, EofLogZFinalK, varLogZFinalK, 'not calculated', 'linear', 'final contribution', 'Keeton equations')
-		#print "EofZZFinal (keeton) = %s" %EofZZFinalK
-		output.printZHValues(EofZTotalK, EofZ2TotalK, varZTotalK, EofLogZTotalK, varLogZTotalK, HK, 'linear', 'total', 'Keeton equations')
-	if setupDict['outputFile']:
-		output.writeOutput(setupDict['outputFile'], totalPointsPhys, totalPointsLhood, EofWeights, EofXArr, paramNames ,'linear', targetSupport, EofZTotal, varZTotal, EofLogZTotal, varLogZTotal)
+	if return_vals:
+		return EofLogZTotalK, varLogZTotalK, HK
+	else:
+		if setupDict['verbose']:
+			output.printZHValues(EofZTotal, EofZ2Total, varZ, EofLogZTotal, varLogZTotal, H, 'linear', 'total', 'recursive')
+			output.printZHValues(EofZFinalK, EofZ2FinalK, varZFinalK, EofLogZFinalK, varLogZFinalK, 'not calculated', 'linear', 'final contribution', 'Keeton equations')
+			#print "EofZZFinal (keeton) = %s" %EofZZFinalK
+			output.printZHValues(EofZTotalK, EofZ2TotalK, varZTotalK, EofLogZTotalK, varLogZTotalK, HK, 'linear', 'total', 'Keeton equations')
+		if setupDict['outputFile']:
+			output.writeOutput(setupDict['outputFile'], totalPointsPhys, totalPointsLhood, EofWeights, EofXArr, paramNames ,'linear', targetSupport, EofZTotal, varZTotal, EofLogZTotal, varLogZTotal)
