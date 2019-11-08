@@ -17,7 +17,7 @@ Can run Markov Chain Monte Carlo (MCMC) Metropolis Hastings (MH) nested sampling
 In vanilla mode, the trial points are sampled in the physical (native) space of the input parameters.
 In geometric mode (main point of the algorithm), parameter values represent points on a geometric object (e.g. circle, torus or sphere), and trial points are picked by sampling from spaces parameterised by Cartesian coordinates. If the sampled points do not lay on the original object (in general they will not), then they are projected back onto the object before being transformed back to the native space for evaluation of the MH acceptance ratio.
 
-The sampling mode for each parameter is specified in `paramGeomList` passed through `setupDict` to `nestedRun()` (`"vanilla"`, `"wrapped"` or `"sphere"`). `"wrapped"` parameters use a wrapped trial distribution. `"sphere"` parameters are transformed into their Euclidean representation and sampled in this space. Geometric sampling works best for parameters with 'periodic' sampling domains e.g. angles, as sampling in geometric space results in wrapping parameter values at end of domains. The sampler also works well for parameters which exhibit 'spherical' properties. Note for sampling spherical sampling, two physical parameters are required for each geometric transformation. See `tests.py` for examples of how to specify what parameters are sampled in what way and the below section showing `paramGeomList` examples. 
+The sampling mode for each parameter is specified in `paramGeomList` passed through `setupDict` to `nestedRun()` (`"vanilla"`, `"wrapped"` or `"sphere"`). `"wrapped"` parameters use a wrapped trial distribution. `"sphere"` parameters are transformed into their Euclidean representation and sampled in this space. Geometric sampling works best for parameters with 'periodic' sampling domains e.g. angles, as sampling in geometric space results in wrapping parameter values at end of domains. The sampler also works well for parameters which exhibit 'spherical' properties. Note that when sampling spherical parameters, two physical parameters are required for each geometric transformation, i.e. the spherical parameters must come in pairs. See `tests.py` for examples of how to specify what parameters are sampled in what way and the below section showing `paramGeomList` examples. 
 
 Main output of geometric nested sampling run is file of sampled points and their weights. These are stored in `text_output/file_name.txt`, whose format follows that explained in [getdist RTD](https://getdist.readthedocs.io/en/latest/intro.html). Similarly, metadata files are also generated for each run e.g. `file_name.paramnames`, see [getdist RTD](https://getdist.readthedocs.io/en/latest/intro.html) for more details on these files. The format of the text outputs is such that they can be plotted very easily using `getdist`, a kernel density esimate plotter.
 
@@ -118,7 +118,9 @@ Plotting functions are also provided, in the form of simple `matplotlib` functio
 
 Can also call MultiNest ([MultiNest paper](https://arxiv.org/abs/0809.3437)) by calling the `pyMultiNest` wrapper ([PyMultiNest](https://github.com/JohannesBuchner/PyMultiNest)) for comparison. 
 
-These are automatically employed in `tests.py`, but can be turned on and off by setting the appropriate flags in the file. 
+## Tests
+
+Unit tests ensuring the correct values for the Bayesian evidence, its error and the K-L divergence are calculated for toy models which utilise both periodic and spherical parameters, are deployed by running `tests.py` which is in the `tests/` directory. 
 
 ## Requirements
 
