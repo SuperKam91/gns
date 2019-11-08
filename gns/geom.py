@@ -320,12 +320,4 @@ def getPoleOrthogs(v1):
 	return v2, v3
 
 if __name__ == '__main__':
-	#p1 = 1.323; p2 = -1.243; l1 = -8.4; l2 = -4.6; u1 = 6.544 * np.pi; u2 = 4.4 * np.pi
-	#x, y, z = point2CartTorus(p1, p2, l1, l2, u1, u2)
-	#print(x, y, z)
-	#p1, p2 = cartTorus2Point(x, y, z, l1, l2, u1, u2)
-	#print p1, p2
-	#print testCircleProposalSymmetry(0., 0., 2. * np.pi, np.diag([1., 1.]))
-	#print testTorusProposalSymmetry(0., 0., 0., 0., 2. * np.pi, 2. * np.pi, np.diag([1., 1., 1.]))
-	#print testSphereProposalSymmetry(0., 0., 0., 0., 2. * np.pi, 2. * np.pi, np.diag([1., 1., 1.]))
 	pass

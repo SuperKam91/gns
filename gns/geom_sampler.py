@@ -237,8 +237,6 @@ def getGeomTrialPoint(numCirc, numTorus, numSphere, circCartArr, torusCartArr, s
 	i = 0
 	j = 0
 	while j < 2 * numSphere:	
-		#print "in geom trial point, sphere cart arr and sphere cart sigma arr"
-		#print sphereCartArr[i:i+3], np.diag(sphereCartSigArr[i:i+3]**2.)	
 		spherePrimeArr[j], spherePrimeArr[j+1] = getSphereTrial(sphereCartArr[i:i+3], np.diag(sphereCartSigArr[i:i+3]**2.), sphereLowerLimits[j], sphereLowerLimits[j+1], sphereUpperLimits[j], sphereUpperLimits[j+1])
 		i += 3
 		j += 2

@@ -295,7 +295,6 @@ def NestedRunLinear(priorFunc, invPriorFunc, LhoodFunc, paramNames, targetSuppor
 		if setupDict['verbose']:
 			output.printZHValues(EofZTotal, EofZ2Total, varZ, EofLogZTotal, varLogZTotal, H, 'linear', 'total', 'recursive')
 			output.printZHValues(EofZFinalK, EofZ2FinalK, varZFinalK, EofLogZFinalK, varLogZFinalK, 'not calculated', 'linear', 'final contribution', 'Keeton equations')
-			#print "EofZZFinal (keeton) = %s" %EofZZFinalK
 			output.printZHValues(EofZTotalK, EofZ2TotalK, varZTotalK, EofLogZTotalK, varLogZTotalK, HK, 'linear', 'total', 'Keeton equations')
 		if setupDict['outputFile']:
 			output.writeOutput(setupDict['outputFile'], totalPointsPhys, totalPointsLhood, EofWeights, EofXArr, paramNames ,'linear', targetSupport, EofZTotal, varZTotal, EofLogZTotal, varLogZTotal)

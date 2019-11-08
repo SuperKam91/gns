@@ -24,7 +24,12 @@ def fitPriors(priorParams):
 	Only currently handles one dimensional (independent priors). Scipy.stats multivariate functions do not have built in inverse CDF methods, so if I want to consider multivariate priors I may have to write my own code.
 	Note scipy.stats.uniform takes parameters loc and scale where the boundaries are defined to be
 	loc and loc + scale, so scale = upper - lower bound.
-	Returns list of fitted prior objects length of nDims (one function for each parameter) 
+	Returns list of fitted prior objects length of nDims (one function for each parameter).
+
+	The prior types (integers) correspond as follows:
+	1: Uniform
+	2: Gaussian
+	3: Sine
 	"""
 	priorFuncs = []
 	priorFuncsPpf = []
@@ -297,36 +302,37 @@ class LhoodObjs:
 				#p.s. this is a MASSIVE hack, requires gauss lhood obj to be before kent
 				gaussDim = 20
 				try:
-					# print "gauss nLive"
-					# print LhoodObj[0].logpdf(x[:,:gaussDim])
-					# print LhoodObj[0].logpdf(x[:,:gaussDim]).shape
 					LLhoods += LhoodObj[0].logpdf(x[:,0:gaussDim])
 				except IndexError:
-					# print "gauss trial"
-					# print LhoodObj[0].logpdf(x[:gaussDim])
-					# print LhoodObj[0].logpdf(x[:gaussDim]).shape
 					LLhoods += LhoodObj[0].logpdf(x[0:gaussDim])
 				try:
-					# print "kent nLive"
-					# print LhoodObj[1].logpdf(x[:,gaussDim:])
-					# print LhoodObj[1].logpdf(x[:,gaussDim:]).shape
 					LLhoods += LhoodObj[1].logpdf(x[:,gaussDim:])
 				except IndexError:
-					# print "kent trial"
-					# print LhoodObj[1].logpdf(x[gaussDim:])
-					# print LhoodObj[1].logpdf(x[gaussDim:]).shape
 					LLhoods += LhoodObj[1].logpdf(x[gaussDim:])
-					# import sys; sys.exit()
 		return LLhoods
 
 def fitLhood(LhoodParams):
 	"""
-	fit lhood (without data) for parameters to make future evaluations much faster.
-	LLhoodType == 2 is multivariate Gaussian, applicable in most 'usual' circumstances
-	LLhoodType == 3 is the 1d von Mises distribution, a 'wrapped likelihood function defined on [-pi, pi].
-	Equivalent to having a likelihood defined on the unit circle and parameterised by theta isin [-pi, pi].
-	LLhoodType == 4 is the 2d (independent) von Mises distribution, a wrapped likelihood function defined on [-pi, pi] x [-pi, pi]. 
-	Equivalent to having a likelihood defined on the unit torus and parameterised by theta isin [-pi, pi] and phi isin [-pi, pi].
+	fit scipy.stats objects (without data) for parameters to make future evaluations much faster.
+	LLhoodType values correspond as follows
+	2: is multivariate Gaussian, applicable in most 'usual' circumstances
+	3: is the 1d von Mises distribution, a 'wrapped likelihood function defined on [-pi, pi],
+	equivalent to having a likelihood defined on the unit circle and parameterised by theta isin [-pi, pi]
+	4: is the 2d (independent) von Mises distribution, a wrapped likelihood function defined on [-pi, pi] x [-pi, pi], 
+	equivalent to having a likelihood defined on the unit torus and parameterised by theta isin [-pi, pi] and phi isin [-pi, pi]
+	5: uniform x truncated Gaussian on [0, pi]
+	6: von Mises on [-pi, pi] x truncated Gaussian on [-pi/2, pi/2]
+	7: von Mises on [-pi, pi] x truncated Gaussian on [0, pi]
+	8: von Mises on [-pi, pi]^4
+	9: von Mises on [-pi, pi]^6
+	10: Kent distribution on a sphere
+	11: sum of Kent distributions on a sphere
+	12: sums of Kent distributions on three spheres
+	13: sums of Kent distributions on five spheres
+	14: sums of Kent distributions on six spheres
+	15: Gaussian x sum of Kent distributions on a sphere
+	16: von Mises on [-pi, pi]^8
+	17: von Mises on [-pi, pi]^10
 	"""
 	LhoodType = LhoodParams[0]
 	if LhoodParams[0] < 11 or LhoodParams[0] == 16 or LhoodParams[0] == 17: #hack 
