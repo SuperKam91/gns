@@ -8,8 +8,23 @@ from . import geom
 def getToyHypersGeom(shape):
 	"""
 	wrapper around getToyHypers() to get priors/ lhoods
-	specific to geometric nested sampling project
-	NOTE 'sphere' changed to l8 on 18th Feb 2018
+	specific to geometric nested sampling project.
+	NOTE 'sphere' changed to l8 on 18th Feb 2018.
+	See getToyHypers for priors/likelihood that these different shapes (models) correspond to.
+
+	Args:
+
+	shape: string representing toy model name e.g. 'torus III'
+
+	Returns:
+
+	values of respective dictionaries, which contain lists of parameter names, prior and likelihood types, and their hyperparameters in the form:
+	paramNames: list of strings representing parameter names
+	priorParams: list containing prior type (denoted by integer) and hyperparameters (array)
+	LhoodParams: list containing likelihood type (denoted by integer) and hyperparameters (array)
+	Priors which prior types integers correspond to can be found in fitPriors() in prob_funcs.py.
+	Likelihoods which likelihood types integers correspond to can be found in fitLhood() in prob_funcs.py.
+
 	"""
 	shapeDict = {'circle': ['n1', 'p1', 'l4'], 'torus': ['n2', 'p2', 'l5'], 'torus II': ['n4', 'p7', 'l9'], 'torus III': ['n5', 'p8', 'l10'], 'torus IV': ['n11', 'p16', 'l21'], 'torus V': ['n12', 'p17', 'l22'], 'sphere': ['n2', 'p3', 'l8'], 'sphere II': ['n2', 'p3', 'l7'], 'sphere III': ['n2', 'p9', 'l11'], 'sphere IV': ['n2', 'p9', 'l12'], 'sphere V': ['n2', 'p3', 'l11'], 'sphere VI': ['n2', 'p3', 'l12'], '3 sphere IV': ['n6', 'p10', 'l13'], '5 sphere IV': ['n7', 'p11', 'l14'], '6 sphere IV': ['n8', 'p12', 'l15'], '10d gauss sphere IV': ['n9', 'p13', 'l16'], '20d gauss sphere IV': ['n10', 'p14', 'l17'], 'sphere VII': ['n2', 'p9', 'l18'], '20d gauss sphere VII': ['n10', 'p14', 'l19'], '6 sphere VIII': ['n8', 'p15', 'l20']}
 	namesPriorLhood = shapeDict[shape]
@@ -19,6 +34,22 @@ def getToyHypersGen(dists):
 	"""
 	wrapper around getToyHypers() to get priors/ lhoods
 	specific to geometric nested sampling project
+
+	See getToyHypers for priors/likelihood that these different models correspond to.
+
+	Args:
+
+	shape: string representing toy model name e.g. 'gauss p gauss l'
+
+	Returns:
+
+	values of respective dictionaries, which contain lists of parameter names, prior and likelihood types, and their hyperparameters in the form:
+	paramNames: list of strings representing parameter names
+	priorParams: list containing prior type (denoted by integer) and hyperparameters (array)
+	LhoodParams: list containing likelihood type (denoted by integer) and hyperparameters (array)
+	Priors which prior types integers correspond to can be found in fitPriors() in prob_funcs.py.
+	Likelihoods which likelihood types integers correspond to can be found in fitLhood() in prob_funcs.py.
+
 	"""
 	genDict = {'uniform p gauss l': ['n1', 'p1', 'l1'], 'uniform uniform p gauss l': ['n2', 'p2', 'l2'], 'gauss p gauss l': ['n1', 'p6', 'l1']}
 	namesPriorLhood = genDict[dists]
@@ -27,7 +58,26 @@ def getToyHypersGen(dists):
 def getToyHypers(n, p, l):
 	"""
 	Takes three string arguments which are used in dictionary to look up
-	types of priors/ lhoods as well as their hyperparameters.
+	types of priors/ lhoods (denoted by integers) as well as their hyperparameters (arrays).
+	The priors/likelihoods that each dictionary entry corresponds to is written above the respective
+	dictionary value definition.
+
+	Args:
+
+	n: string for dictionary key of parameter names dictionary e.g. 'n1'
+	p: string for dictionary key of priors dictionary e.g. 'p1'
+	l: string for dictionary key of likelihoods dictionary e.g. 'l1'	
+
+	Returns:
+
+	values of respective dictionaries, which contain lists of parameter names, prior and likelihood types, and their hyperparameters in the form:
+	paramNames: list of strings representing parameter names
+	priorParams: list containing prior type (denoted by integer) and hyperparameters (array)
+	LhoodParams: list containing likelihood type (denoted by integer) and hyperparameters (array)
+	Priors which prior types integers correspond to can be found in fitPriors() in prob_funcs.py.
+	Likelihoods which likelihood types integers correspond to can be found in fitLhood() in prob_funcs.py.
+
+
 	"""
 	#got rid of $ signs so that works with getdist gui without having to change .paramnames
 	#one param
@@ -223,7 +273,16 @@ def getToyHypers(n, p, l):
 
 def getToyObjects(priorParams, LhoodParams):
 	"""
-	fit priors and Lhoods of toy model
+	fit priors and Lhoods of toy model.
+
+	Args:
+
+	priorParams: list containing prior type (denoted by integer) and hyperparameters (array)
+	LhoodParams: list containing likelihood type (denoted by integer) and hyperparameters (array)
+
+	Returns:
+
+	Prior and likelihood objects to be passed to getToyProbFuncs()
 	"""
 	priorObjs = prob_funcs.fitPriors(priorParams)
 	LhoodObj = prob_funcs.fitLhood(LhoodParams)
@@ -231,7 +290,18 @@ def getToyObjects(priorParams, LhoodParams):
 
 def getToyProbFuncs(priorObjs, LhoodObj):
 	"""
-	obtain pdf and ppf methods of priors and pdf & logpdf methods of lhood 
+	Obtain pdf and ppf methods of priors and pdf & logpdf methods of likelihood.
+
+	Args:
+
+	priorObjs: list containing prior objects obtained from getToyObjects()
+	LhoodObj: likelihood object obtained from getToyObjects()
+
+	Returns:
+	
+	Prior and likelihood probability functions in order: prior, log prior, prior quantile, 
+	likehood, loglikelihood.
+
 	"""
 	priorFuncsPdf = prob_funcs.getPriorPdfs(priorObjs)
 	priorFuncsLogPdf = prob_funcs.getPriorLogPdfs(priorObjs) 
@@ -242,7 +312,21 @@ def getToyProbFuncs(priorObjs, LhoodObj):
 
 def getToyFuncs(priorParams, LhoodParams):
 	"""
-	get prior and lhood functions which can be passed to NestedRun or multinest wrapper functions
+	get prior and lhood functions which can be passed to NestedRun or multinest wrapper functions,
+	i.e. calls the functions getToyObjects() and getToyProbFuncs().
+
+	Args:
+
+	priorParams: list containing prior type (denoted by integer) and hyperparameters (array)
+	LhoodParams: list containing likelihood type (denoted by integer) and hyperparameters (array)
+	Priors which prior types integers correspond to can be found in fitPriors() in prob_funcs.py.
+	Likelihoods which likelihood types integers correspond to can be found in fitLhood() in prob_funcs.py.
+
+	Returns:
+	
+	Prior and likelihood probability functions in order: prior, log prior, prior quantile, 
+	likehood, loglikelihood.
+
 	"""
 	priorObjs, LhoodObj = getToyObjects(priorParams, LhoodParams)
 	priorFuncsPdf, priorFuncsLogPdf, priorFuncsPpf, LhoodFunc, LLhoodFunc = getToyProbFuncs(priorObjs, LhoodObj)
@@ -254,6 +338,7 @@ def getToyFuncs(priorParams, LhoodParams):
 
 def getTargetSupport(priorParams):
 	"""
+	Returns prior domain for prior specified by priorParams.
 	Assumes support of priors (in each dimension) is well connected,
 	which it will always be for simple priors considered so far.
 	Returns array of shape (3, nDims) where first column is lower bound
@@ -262,6 +347,14 @@ def getTargetSupport(priorParams):
 	Fourth row is only important for theoretical Z/ H functions, as it tells them 
 	if the prior corresponding to the dimension is rectangular, and thus if it needs to be
 	integrated over or not
+
+	Args:
+
+	priorParams: list containing prior type (denoted by integer) and hyperparameters (array).
+
+	Returns:
+
+	array of target support values in array of shape (3, nDims)
 	"""
 	priorType = priorParams[0,:]
 	nDims = len(priorType)
