@@ -27,8 +27,11 @@ def fitPriors(priorParams):
 	Returns list of fitted prior objects length of nDims (one function for each parameter).
 
 	The prior types (integers) correspond as follows:
+
 	1: Uniform
+
 	2: Gaussian
+
 	3: Sine
 	"""
 	priorFuncs = []
@@ -143,7 +146,6 @@ class priorObjs:
 		Only currently designed to work with one livepoint at a time.
 		Here we have opposite problem to LhoodObjs class. When using theoretical Z/ H functions,
 		parameter has shape (1, nDims) when it needs to have shape (nDims) to not cause an IndexError exception
-		#TODO: get this to work for more than one livepoint (for calculating theoretical posterior from grid)
 		"""
 		livePointPriorValues = np.zeros_like(livePoint)
 		for i in range(len(self.priorFuncsPdf)):
@@ -160,7 +162,6 @@ class priorObjs:
 		self.priorFuncsPdf rather than taking it as an argument.
 		Here we have opposite problem to LhoodObjs class. When using theoretical Z/ H functions,
 		parameter has shape (1, nDims) when it needs to have shape (nDims) to not cause an IndexError exception
-		#TODO: get this to work for more than one livepoint (for calculating theoretical posterior from grid)
 		"""
 		livePointPriorLogValues = np.zeros(len(self.priorFuncsLogPdf))
 		for i in range(len(self.priorFuncsLogPdf)):
@@ -250,7 +251,6 @@ class LhoodObjs:
 		IndexError except statements are for. Could instead ensure that all Lhood vectors are
 		instead arrays, but I don't think it makes much difference in terms of efficiency or clarity of code.
 		Note this isn't in an issue in integrating functions, as they reshape each parameter point to (1,nDims)
-		TODO: find neater way for this to work in the case of trialing a point in the MH algorithm, i.e. when it has shape (nDims,) 
 		"""
 		try:
 			Lhoods = np.array([1.]*len(x[:,0]))
@@ -276,7 +276,6 @@ class LhoodObjs:
 		It may be the case that x is a 1d array (n,) instead of a 2d array (m,n), this is what causes the IndexErrors. Could instead ensure that all Lhood vectors are
 		instead arrays, but I don't think it makes much difference in terms of efficiency or clarity of code.
 		Note this isn't in an issue in integrating functions, as they reshape each parameter point to (1,nDims)
-		TODO: find neater way for this to work in the case of trialing a point in the MH algorithm, i.e. when it has shape (nDims,). 
 		This could be done by writing separate .pdf methods for when x is 1-d or 2-d
 		"""
 		#this is messy but sufficient for what we're doing. n.b. this is only for evaluating lhood, so doesn't affect actual implementation of gns itself
@@ -315,23 +314,39 @@ def fitLhood(LhoodParams):
 	"""
 	fit scipy.stats objects (without data) for parameters to make future evaluations much faster.
 	LLhoodType values correspond as follows
+
 	2: is multivariate Gaussian, applicable in most 'usual' circumstances
+
 	3: is the 1d von Mises distribution, a 'wrapped likelihood function defined on [-pi, pi],
 	equivalent to having a likelihood defined on the unit circle and parameterised by theta isin [-pi, pi]
+	
 	4: is the 2d (independent) von Mises distribution, a wrapped likelihood function defined on [-pi, pi] x [-pi, pi], 
 	equivalent to having a likelihood defined on the unit torus and parameterised by theta isin [-pi, pi] and phi isin [-pi, pi]
+	
 	5: uniform x truncated Gaussian on [0, pi]
+	
 	6: von Mises on [-pi, pi] x truncated Gaussian on [-pi/2, pi/2]
+	
 	7: von Mises on [-pi, pi] x truncated Gaussian on [0, pi]
+	
 	8: von Mises on [-pi, pi]^4
+	
 	9: von Mises on [-pi, pi]^6
+	
 	10: Kent distribution on a sphere
+	
 	11: sum of Kent distributions on a sphere
+	
 	12: sums of Kent distributions on three spheres
+	
 	13: sums of Kent distributions on five spheres
+	
 	14: sums of Kent distributions on six spheres
+	
 	15: Gaussian x sum of Kent distributions on a sphere
+	
 	16: von Mises on [-pi, pi]^8
+	
 	17: von Mises on [-pi, pi]^10
 	"""
 	LhoodType = LhoodParams[0]
