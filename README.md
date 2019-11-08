@@ -33,9 +33,14 @@ Examples of `setupDict` objects used to specify parameters of a nested sampling 
 The toy models (see https://arxiv.org/abs/1905.09110) are designed to make use of the key features of geometric nested sampling, i.e. to take advantage of the way it treats parameters defined on curved manifolds. The three toy models which feature in `tests.py` by default are a circular distribution (von Mises distribution), a toroidal distribution (two-dimensional von Mises distribution), and 6 spheres with Kent distributions defined on them (for more on this see [gns paper](https://arxiv.org/abs/1905.09110) and [Kent paper](https://www.jstor.org/stable/2984712?seq=1#page_scan_tab_contents)). Many more are available in `toy_models.py`, all that needs to be configured is there `paramGeomList` values when added to `tests.py`, and the relevant suffixes/prefixes to index them.
 
 ## Example
-The following script produces samples from the von Mises distribution shown in the above image, and plots these samples using `getdist`.
+The following script produces samples from the von Mises distribution shown in the above image, and plots these samples using `getdist`. Note to produce the plots at the end of the example, `getdist` must be installed. This will be done automatically if `gns` was `pip` installed (see Installation section below) with the `plotting` requirements specified, i.e.
+`pip install GNS[plotting]==1.0`.
+Otherwise `getdist` can be installed with the command
+`pip install getdist`.
+
 ```python
 import numpy as np
+import os
 import gns.nested_run as nested_run
 import gns.plotting as plotting
 import gns.toy_models as toy_models
@@ -44,16 +49,25 @@ import gns.toy_models as toy_models
 setupDict = {'verbose':True, 'trapezoidalFlag': False, 'ZLiveType':'average X', 'terminationType':'evidence', 'terminationFactor': 0.1, 'sampler':None, 'outputFile':None, 'space':'log'}
 
 shape = 'circle' #run circle toy model, simple von Mises distribution
-sampler = 'MH WG' #jgeometric nested sampler
-outputFile = '../text_output/example' #for text output
-plotFile = '../image_output/example' #for image output
+sampler = 'MH WG' #geometric nested sampler
+
+#make sure directories to store output exist, and if not, create them
+textDir = './text_output/'
+plotDir = './image_output/'
+if not os.path.exists(textDir):
+  os.mkdir(textDir)
+if not os.path.exists(plotDir):
+  os.mkdir(plotDir)
+
+outputFile = textDir + 'example' #for text output
+plotFile = plotDir + 'example' #for image output
 
 #get prior and likelihood functions from toy models for circle toy model
 paramNames, priorParams, LhoodParams = toy_models.getToyHypersGeom(shape)
 priorFunc, logPriorFunc, invPriorFunc, _, LLhoodFunc = toy_models.getToyFuncs(priorParams, LhoodParams)
 
 #can manually set paramNames e.g.
-paramNames = [r"$\phi$"] #label plot
+paramNames = [r"\phi"] #label plot
 
 nDims = 1 #number of parameters in inference
 #array with first element giving lower bound of prior support, second giving upper bound, and third giving upper - lower. shape (3, nDims)
@@ -120,15 +134,15 @@ Please see [Read the docs](https://geometric-nested-sampling.readthedocs.io/en/l
 
 To install using pip, do 
 
-`pip install GNS==1.0,` 
+`pip install GNS==1.0`, 
 
 to install the gns algorithm and the requirements to run the algorithm. To also install the packages required for plotting, do 
 
-`pip install GNS[plotting]==1.0.`
+`pip install GNS[plotting]==1.0`.
 
 Finally, to install the gns package and include `MultiNest` algorithm runs (for comparison tests), do
 
-`pip install GNS[multinest]==1.0.`
+`pip install GNS[multinest]==1.0`.
 
 Note that the above do not install the tests found in the `tests/` directory
 
@@ -136,7 +150,7 @@ Note that the above do not install the tests found in the `tests/` directory
 
 No installation of the geometric nested sampler itself is strictly necessary, one can simply clone the gns repo:
 
-`git clone https://github.com/SuperKam91/gns.git.`
+`git clone https://github.com/SuperKam91/gns.git`.
 
 Next, install all the modules included in the `requirements.txt` file (e.g. `pip install -r requirements.txt`) to be able to run the geometric nested sampling algorithm. To use the plotting functions featured in the package, one must also install all the files included in `requirements_plotting.txt`. I highly recommend installing the plot-dependent packages, to compare results the results of the toy models with those in `image_output`. Finally, to run MultiNest, install all packages in `requirements_mutlinest.txt`.
 
