@@ -21,7 +21,7 @@ def logAddArr(x, y, axis=None):
     return np.logaddexp(x, logySum)
 
 
-def logAddArr2(x, y, indexes=(None,)):
+def logAddArr2(x, y, indexes=(None, )):
     """
     Alternative version of logAddArr that avoids over/ underflow errors of exponentiating the array y, to the same extent that np.logaddexp() does
     Note however that it is slower than logAddArr, so in cases where over/ underflow isn't an issue, use that
@@ -50,6 +50,7 @@ def logsubexp(a, b):
 
 # PDF related functions
 
+
 def fitPriors(priorParams):
     """
     Only currently handles one dimensional (independent priors). Scipy.stats multivariate functions do not have built in inverse CDF methods, so if I want to consider multivariate priors I may have to write my own code.
@@ -65,12 +66,14 @@ def fitPriors(priorParams):
     param2Vec = priorParams[2, :]
     for i in range(len(priorType)):
         if priorType[i] == 1:
-            priorFunc = scipy.stats.uniform(
-                param1Vec[i], param2Vec[i] - param1Vec[i])
+            priorFunc = scipy.stats.uniform(param1Vec[i],
+                                            param2Vec[i] - param1Vec[i])
         elif priorType[i] == 2:
             priorFunc = scipy.stats.norm(param1Vec[i], param2Vec[i])
         else:
-            print("priors other than uniform and Gaussian not currently supported")
+            print(
+                "priors other than uniform and Gaussian not currently supported"
+            )
             sys.exit(1)
         priorFuncs.append(priorFunc)
     return priorFuncs
@@ -153,6 +156,7 @@ def LLhood(LhoodObj):
     """
     return LhoodObj.logpdf
 
+
 # Lhood sampling functions
 
 
@@ -172,8 +176,8 @@ def getNewLiveBlind(priorFuncsPpf, LhoodFunc, LhoodStar):
     return trialPointPhys, trialPointLhood
 
 
-def getNewLiveMH(livePointsPhys, deadIndex, priorFuncsPdf,
-                 priorParams, LhoodFunc, LhoodStar):
+def getNewLiveMH(livePointsPhys, deadIndex, priorFuncsPdf, priorParams,
+                 LhoodFunc, LhoodStar):
     """
     gets new livepoint using variant of MCMC MH algorithm. From current livepoints (not including one to be excluded in current NS iteration), first picks a point at random as starting point.
     Next the standard deviation of the trial distribution is calculated from the width of the current livepoints (including the one to be excluded) as 0.1 * [max(param_value) - min(param_value)] in each dimension.
@@ -206,8 +210,8 @@ def getNewLiveMH(livePointsPhys, deadIndex, priorFuncsPdf,
         while nTrials < maxTrials:
             nTrials += 1
             # find physical values of trial point candidate
-            trialPoint = np.random.multivariate_normal(
-                startPoint, trialSigma ** 2)
+            trialPoint = np.random.multivariate_normal(startPoint,
+                                                       trialSigma**2)
             # check trial point has physical values within sampling space
             # domain
             trialPoint = checkBoundaries(trialPoint, priorParams)
@@ -215,7 +219,8 @@ def getNewLiveMH(livePointsPhys, deadIndex, priorFuncsPdf,
             # returns previous point values if test fails, or trial point
             # values if it passes
             acceptFlag, startPoint, startLhood = testTrial(
-                trialPoint, startPoint, trialLhood, startLhood, LhoodStar, priorFuncsPdf)
+                trialPoint, startPoint, trialLhood, startLhood, LhoodStar,
+                priorFuncsPdf)
             if acceptFlag:
                 nAccept += 1
             else:
@@ -223,6 +228,7 @@ def getNewLiveMH(livePointsPhys, deadIndex, priorFuncsPdf,
             # update trial distribution variance
             trialSigma = updateTrialSigma(trialSigma, nAccept, nReject)
     return startPoint, startLhood
+
 
 # MH related functions
 
@@ -239,8 +245,8 @@ def calcInitTrialSig(livePoints):
     return trialSigma
 
 
-def testTrial(trialPoint, startPoint, trialLhood,
-              startLhood, LhoodStar, priorFuncsPdf):
+def testTrial(trialPoint, startPoint, trialLhood, startLhood, LhoodStar,
+              priorFuncsPdf):
     """
     Check if trial point has L > L* and accept with probability prior(trial) / prior(previous)
     """
@@ -249,8 +255,9 @@ def testTrial(trialPoint, startPoint, trialLhood,
     acceptFlag = False
     if trialLhood > LhoodStar:
         prob = np.random.rand()
-        priorRatio = priorFuncsProd(
-            trialPoint, priorFuncsPdf) / priorFuncsProd(startPoint, priorFuncsPdf)
+        priorRatio = priorFuncsProd(trialPoint,
+                                    priorFuncsPdf) / priorFuncsProd(
+                                        startPoint, priorFuncsPdf)
         if priorRatio > prob:
             newPoint = trialPoint
             newLhood = trialLhood
@@ -282,12 +289,9 @@ def checkBoundaries(livePoint, priorParams):
     param2Vec = priorParams[2, :]
     for i in range(len(priorType)):
         if priorType[i] == 1:
-            livePoint[i] = applyBoundary(
-                livePoint[i],
-                param1Vec[i],
-                param2Vec[i],
-                differenceCorrection,
-                pointCorrection)
+            livePoint[i] = applyBoundary(livePoint[i], param1Vec[i],
+                                         param2Vec[i], differenceCorrection,
+                                         pointCorrection)
     return livePoint
 
 
@@ -322,8 +326,9 @@ def applyBoundary(point, lower, upper, differenceCorrection, pointCorrection):
 # point within the domain. Effect of this is basically mod'ing the
 # difference by the width of the domain. It makes most intuitive sense to
 # me to use this when you want to wrap the points around the domain.
-def modToDomainWrap(point, lower, upper): return (
-    lower - point) % (upper - lower) if point < lower else (point - upper) % (upper - lower)
+def modToDomainWrap(point, lower, upper):
+    return (lower - point) % (upper - lower) if point < lower else (
+        point - upper) % (upper - lower)
 
 
 def modToDomainReflect(point, lower, upper):
@@ -362,6 +367,7 @@ def modToDomainReflect(point, lower, upper):
         pointTemp = None
     return pointTemp
 
+
 # setup related functions
 
 
@@ -369,20 +375,21 @@ def checkInputParamsShape(priorParams, LhoodParams, nDims):
     """
     checks prior and Lhood input arrays are correct shape
     """
-    assert (priorParams.shape == (3, nDims)
-            ), "Prior parameter array should have shape (3, nDims)"
-    assert (
-        LhoodParams[1].shape == (
-            1, nDims)), "Llhood params mean array should have shape (1, nDims)"
-    assert (
-        LhoodParams[2].shape == (
-            nDims, nDims)), "LLhood covariance array should have shape (nDims, nDims)"
+    assert (priorParams.shape == (
+        3, nDims)), "Prior parameter array should have shape (3, nDims)"
+    assert (LhoodParams[1].shape == (
+        1, nDims)), "Llhood params mean array should have shape (1, nDims)"
+    assert (LhoodParams[2].shape == (
+        nDims,
+        nDims)), "LLhood covariance array should have shape (nDims, nDims)"
+
 
 # NS loop related functions
 
 
 def tryTerminationLog(verbose, terminationType, terminationFactor, nest, nLive,
-                      logEofX, livePointsLLhood, LLhoodStar, ZLiveType, trapezoidalFlag, logEofZ, H):
+                      logEofX, livePointsLLhood, LLhoodStar, ZLiveType,
+                      trapezoidalFlag, logEofZ, H):
     """
     See if termination condition for main loop of NS has been met. Can be related to information value H or whether estimated remaining evidence is below a given fraction of the Z value calculated up to that iteration
     """
@@ -394,25 +401,28 @@ def tryTerminationLog(verbose, terminationType, terminationFactor, nest, nLive,
         if nest > terminator:
             # since it is terminating need to calculate remaining Z
             liveMaxIndex, liveLLhoodMax, logEofZLive, avLLhood, nFinal = getLogEofZLive(
-                nLive, logEofX, livePointsLLhood, LLhoodStar, ZLiveType, trapezoidalFlag)
+                nLive, logEofX, livePointsLLhood, LLhoodStar, ZLiveType,
+                trapezoidalFlag)
             breakFlag = True
         else:
             liveMaxIndex = None  # no point calculating
             liveLLhoodMax = None  # these values if not terminating
     elif terminationType == 'evidence':
         liveMaxIndex, liveLLhoodMax, logEofZLive, avLLhood, nFinal = getLogEofZLive(
-            nLive, logEofX, livePointsLLhood, LLhoodStar, ZLiveType, trapezoidalFlag)
+            nLive, logEofX, livePointsLLhood, LLhoodStar, ZLiveType,
+            trapezoidalFlag)
         endValue = np.exp(logEofZLive - logEofZ)
         if verbose:
-            printTerminationUpdateZ(
-                logEofZLive, endValue, terminationFactor, 'log')
+            printTerminationUpdateZ(logEofZLive, endValue, terminationFactor,
+                                    'log')
         if endValue <= terminationFactor:
             breakFlag = True
     return breakFlag, liveMaxIndex, liveLLhoodMax, avLLhood, nFinal
 
 
 def tryTermination(verbose, terminationType, terminationFactor, nest, nLive,
-                   EofX, livePointsLhood, LhoodStar, ZLiveType, trapezoidalFlag, EofZ, H):
+                   EofX, livePointsLhood, LhoodStar, ZLiveType,
+                   trapezoidalFlag, EofZ, H):
     """
     as above but in linear space
     """
@@ -423,25 +433,27 @@ def tryTermination(verbose, terminationType, terminationFactor, nest, nLive,
             printTerminationUpdateInfo(nest, terminator)
         if nest > terminator:
             liveMaxIndex, liveLhoodMax, ZLive, avLhood, nFinal = getEofZLive(
-                nLive, EofX, livePointsLhood, LhoodStar, ZLiveType, trapezoidalFlag)
+                nLive, EofX, livePointsLhood, LhoodStar, ZLiveType,
+                trapezoidalFlag)
             breakFlag = True
         else:
             liveMaxIndex = None
             liveLhoodMax = None
     elif terminationType == 'evidence':
         liveMaxIndex, liveLhoodMax, EofZLive, avLhood, nFinal = getEofZLive(
-            nLive, EofX, livePointsLhood, LhoodStar, ZLiveType, trapezoidalFlag)
+            nLive, EofX, livePointsLhood, LhoodStar, ZLiveType,
+            trapezoidalFlag)
         endValue = EofZLive / EofZ
         if verbose:
-            printTerminationUpdateZ(
-                EofZLive, endValue, terminationFactor, 'linear')
+            printTerminationUpdateZ(EofZLive, endValue, terminationFactor,
+                                    'linear')
         if endValue <= terminationFactor:
             breakFlag = True
     return breakFlag, liveMaxIndex, liveLhoodMax, avLhood, nFinal
 
 
-def getLogEofZLive(nLive, logEofX, livePointsLLhood,
-                   LLhoodStar, ZLiveType, trapezoidalFlag):
+def getLogEofZLive(nLive, logEofX, livePointsLLhood, LLhoodStar, ZLiveType,
+                   trapezoidalFlag):
     """
     NOTE logWeightsLive here is an np array
     newLiveLLhoods has same shape as logWeightsLive (i.e. account for averageLhoodOrX value). If ZLiveType == 'max' avLLhood will just be the maximum LLhood value.
@@ -460,8 +472,8 @@ def getLogEofZLive(nLive, logEofX, livePointsLLhood,
     return liveMaxIndex, liveLLhoodMax, logEofZLive, avLLhood, nFinal
 
 
-def getEofZLive(nLive, EofX, livePointsLhood,
-                LhoodStar, ZLiveType, trapezoidalFlag):
+def getEofZLive(nLive, EofX, livePointsLhood, LhoodStar, ZLiveType,
+                trapezoidalFlag):
     """
     as above but in linear space
     """
@@ -510,8 +522,8 @@ def getEofwLive(nLive, EofX, ZLiveType):
         return EofX / nLive
 
 
-def getLogEofWeightsLive(
-        logEofw, LLhoodStar, liveLLhoods, trapezoidalFlag, ZLiveType):
+def getLogEofWeightsLive(logEofw, LLhoodStar, liveLLhoods, trapezoidalFlag,
+                         ZLiveType):
     """
     From Will's implementation, Z = sum (X_im1 - X_i) * 0.5 * (L_i + L_im1)
     Unsure whether you should treat final contribution using trapezium rule (when it is used for rest of sum). I think you should
@@ -546,8 +558,8 @@ def getLogEofWeightsLive(
             # Lhood'
             n = len(liveLLhoods)
             avLLhood = LSumLhood - np.log(n)
-            logEofWeightsLive = np.log(
-                0.5) + logEofw + np.logaddexp(LLhoodStar, avLLhood)
+            logEofWeightsLive = np.log(0.5) + logEofw + np.logaddexp(
+                LLhoodStar, avLLhood)
     else:
         if ZLiveType == 'average X':
             nFinal = len(liveLLhoods)
@@ -591,11 +603,26 @@ def getEofWeightsLive(Eofw, LhoodStar, liveLhoods, trapezoidalFlag, ZLiveType):
             EofWeightsLive = Eofw * avLhood
     return EofWeightsLive, avLhood, nFinal
 
+
 # final contribution to NS sampling functions
 
 
-def getFinalContributionLog(verbose, ZLiveType, trapezoidalFlag, nFinal, logEofZ, logEofZ2, logEofX, logEofWeights,
-                            H, livePointsPhys, livePointsLLhood, avLLhood, liveLLhoodMax, liveMaxIndex, LLhoodStar, errorEval='recursive'):
+def getFinalContributionLog(verbose,
+                            ZLiveType,
+                            trapezoidalFlag,
+                            nFinal,
+                            logEofZ,
+                            logEofZ2,
+                            logEofX,
+                            logEofWeights,
+                            H,
+                            livePointsPhys,
+                            livePointsLLhood,
+                            avLLhood,
+                            liveLLhoodMax,
+                            liveMaxIndex,
+                            LLhoodStar,
+                            errorEval='recursive'):
     """
     Get final contribution from livepoints after NS loop has ended. Way of estimating final contribution is dictated by ZLiveType.
     Also updates H value and gets final weights (and physical values) for posterior
@@ -603,56 +630,63 @@ def getFinalContributionLog(verbose, ZLiveType, trapezoidalFlag, nFinal, logEofZ
     NOTE: for standard quadrature summation, average Lhood and average X give same values of Z (averaging over X is equivalent to averaging over L). However, correct posterior weights are given by latter method, and Z errors are different in both cases
     """
     livePointsLLhood = checkIfAveragedLhood(
-        nFinal, livePointsLLhood, avLLhood)  # only relevant for 'average' ZLiveType
+        nFinal, livePointsLLhood,
+        avLLhood)  # only relevant for 'average' ZLiveType
     if 'average' in ZLiveType:
         LLhoodsFinal = np.concatenate(
             (np.array([LLhoodStar]), livePointsLLhood))
         logEofZOld = logEofZ
         logEofZ2Old = logEofZ2
         for i in range(
-                nFinal):  # add weight of each remaining live point incrementally so H can be calculated easily (according to formulation given in Skilling)
+                nFinal
+        ):  # add weight of each remaining live point incrementally so H can be calculated easily (according to formulation given in Skilling)
             logEofZLive, logEofZ2Live, logEofWeightLive = updateLogZnXMomentsFinal(
-                nFinal, logEofZOld, logEofZ2Old, logEofX, LLhoodsFinal[i], LLhoodsFinal[i + 1], trapezoidalFlag, errorEval)
+                nFinal, logEofZOld, logEofZ2Old, logEofX, LLhoodsFinal[i],
+                LLhoodsFinal[i + 1], trapezoidalFlag, errorEval)
             logEofWeights.append(logEofWeightLive)
             H = updateHLog(H, logEofWeightLive, logEofZLive,
                            LLhoodsFinal[i + 1], logEofZOld)
             logEofZOld = logEofZLive
             logEofZ2Old = logEofZ2Live
             if verbose:
-                printFinalLivePoints(i,
-                                     livePointsPhys[i],
-                                     LLhoodsFinal[i + 1],
-                                     ZLiveType,
-                                     'log')
+                printFinalLivePoints(i, livePointsPhys[i], LLhoodsFinal[i + 1],
+                                     ZLiveType, 'log')
         livePointsPhysFinal, livePointsLLhoodFinal, logEofXFinalArr = getFinalAverage(
             livePointsPhys, livePointsLLhood, logEofX, nFinal, avLLhood, 'log')
     # assigns all remaining prior mass to one point which has highest
     # likelihood (of remaining livepoints)
     elif ZLiveType == 'max Lhood':
         logEofZLive, logEofZ2Live, logEofWeightLive = updateLogZnXMomentsFinal(
-            nFinal, logEofZ, logEofZ2, logEofX, LLhoodStar, liveLLhoodMax, trapezoidalFlag, errorEval)
+            nFinal, logEofZ, logEofZ2, logEofX, LLhoodStar, liveLLhoodMax,
+            trapezoidalFlag, errorEval)
         # add scalar to list (as in 'average' case) instead of 1 element array
         logEofWeights.append(logEofWeightLive)
-        H = updateHLog(
-            H,
-            logEofWeightLive,
-            logEofZLive,
-            liveLLhoodMax,
-            logEofZ)
+        H = updateHLog(H, logEofWeightLive, logEofZLive, liveLLhoodMax,
+                       logEofZ)
         livePointsPhysFinal, livePointsLLhoodFinal, logEofXFinalArr = getFinalMax(
             liveMaxIndex, livePointsPhys, liveLLhoodMax, logEofX)
         if verbose:
-            printFinalLivePoints(
-                liveMaxIndex,
-                livePointsPhysFinal,
-                livePointsLLhoodFinal,
-                ZLiveType,
-                'log')
+            printFinalLivePoints(liveMaxIndex, livePointsPhysFinal,
+                                 livePointsLLhoodFinal, ZLiveType, 'log')
     return logEofZLive, logEofZ2Live, H, livePointsPhysFinal, livePointsLLhoodFinal, logEofXFinalArr
 
 
-def getFinalContribution(verbose, ZLiveType, trapezoidalFlag, nFinal, EofZ, EofZ2, EofX, EofWeights, H,
-                         livePointsPhys, livePointsLhood, avLhood, liveLhoodMax, liveMaxIndex, LhoodStar, errorEval='recursive'):
+def getFinalContribution(verbose,
+                         ZLiveType,
+                         trapezoidalFlag,
+                         nFinal,
+                         EofZ,
+                         EofZ2,
+                         EofX,
+                         EofWeights,
+                         H,
+                         livePointsPhys,
+                         livePointsLhood,
+                         avLhood,
+                         liveLhoodMax,
+                         liveMaxIndex,
+                         LhoodStar,
+                         errorEval='recursive'):
     """
     as above but in linear space
     """
@@ -663,34 +697,29 @@ def getFinalContribution(verbose, ZLiveType, trapezoidalFlag, nFinal, EofZ, EofZ
         LhoodsFinal = np.concatenate((np.array([LhoodStar]), livePointsLhood))
         for i in range(nFinal):
             EofZLive, EofZ2Live, EofWeightLive = updateZnXMomentsFinal(
-                nFinal, EofZOld, EofZ2Old, EofX, LhoodsFinal[i], LhoodsFinal[i + 1], trapezoidalFlag, 'recursive')
+                nFinal, EofZOld, EofZ2Old, EofX, LhoodsFinal[i],
+                LhoodsFinal[i + 1], trapezoidalFlag, 'recursive')
             EofWeights.append(EofWeightLive)
-            H = updateH(H, EofWeightLive, EofZLive,
-                        LhoodsFinal[i + 1], EofZOld)
+            H = updateH(H, EofWeightLive, EofZLive, LhoodsFinal[i + 1],
+                        EofZOld)
             EofZOld = EofZLive
             EofZ2Old = EofZ2Live
             if verbose:
-                printFinalLivePoints(i,
-                                     livePointsPhys[i],
-                                     LhoodsFinal[i + 1],
-                                     ZLiveType,
-                                     'linear')
+                printFinalLivePoints(i, livePointsPhys[i], LhoodsFinal[i + 1],
+                                     ZLiveType, 'linear')
         livePointsPhysFinal, livePointsLhoodFinal, EofXFinalArr = getFinalAverage(
             livePointsPhys, livePointsLhood, EofX, nFinal, avLhood, 'linear')
     elif ZLiveType == 'max Lhood':
         EofZLive, EofZ2Live, EofWeightLive = updateZnXMomentsFinal(
-            nFinal, EofZ, EofZ2, EofX, LhoodStar, liveLhoodMax, trapezoidalFlag, 'recursive')
+            nFinal, EofZ, EofZ2, EofX, LhoodStar, liveLhoodMax,
+            trapezoidalFlag, 'recursive')
         EofWeights.append(EofWeightLive)
         H = updateH(H, EofWeightLive, EofZLive, liveLhoodMax, EofZ)
         livePointsPhysFinal, livePointsLhoodFinal, EofXFinalArr = getFinalMax(
             liveMaxIndex, livePointsPhys, liveLhoodMax, EofX)
         if verbose:
-            printFinalLivePoints(
-                liveMaxIndex,
-                livePointsPhysFinal,
-                livePointsLhoodFinal,
-                ZLiveType,
-                'linear')
+            printFinalLivePoints(liveMaxIndex, livePointsPhysFinal,
+                                 livePointsLhoodFinal, ZLiveType, 'linear')
     return EofZLive, EofZ2Live, H, livePointsPhysFinal, livePointsLhoodFinal, EofXFinalArr
 
 
@@ -707,8 +736,8 @@ def checkIfAveragedLhood(nFinal, livePointsLhood, avLhood):
         return livePointsLhood
 
 
-def getFinalAverage(livePointsPhys, livePointsLLhood,
-                    X, nFinal, avLLhood, space):
+def getFinalAverage(livePointsPhys, livePointsLLhood, X, nFinal, avLLhood,
+                    space):
     """
     gets final livepoint values and X value per remaining livepoint for average Z criteria
     NOTE Xfinal is a list not a numpy array
@@ -754,6 +783,7 @@ def getFinalMax(liveMaxIndex, livePointsPhys, liveLhoodMax, X):
     Xfinal = [X]
     return livePointsPhysFinal, livePointsLhoodFinal, Xfinal
 
+
 # final datastructure / output functions
 
 
@@ -775,8 +805,8 @@ def getTotal(deadPointsPhys, livePointsPhysFinal, deadPointsLhood,
     return totalPointsPhys, totalPointsLhood, XArr, weights
 
 
-def writeOutput(outputFile, totalPointsPhys, totalPointsLhood,
-                weights, XArr, paramNames, space):
+def writeOutput(outputFile, totalPointsPhys, totalPointsLhood, weights, XArr,
+                paramNames, space):
     """
     writes a summary file which contains values for all sampled points.
     Also writes files needed for getDist.
@@ -787,25 +817,15 @@ def writeOutput(outputFile, totalPointsPhys, totalPointsLhood,
     else:
         summaryStr = ' LLhood, logWeights, logX'
     # summary file containing most information of sampled points
-    np.savetxt(
-        outputFile +
-        '_summary.txt',
-        np.column_stack(
-            (totalPointsPhys,
-             totalPointsLhood,
-             weights,
-             XArr)),
-        delimiter=',',
-        header=paramNamesStr +
-        summaryStr)
+    np.savetxt(outputFile + '_summary.txt',
+               np.column_stack(
+                   (totalPointsPhys, totalPointsLhood, weights, XArr)),
+               delimiter=',',
+               header=paramNamesStr + summaryStr)
     # chains file in format needed for getDist: importance weight (weights or
     # logWeights), LHood (Lhood or LLhood), phys param values
-    np.savetxt(
-        outputFile + '.txt',
-        np.column_stack(
-            (weights,
-             totalPointsLhood,
-             totalPointsPhys)))
+    np.savetxt(outputFile + '.txt',
+               np.column_stack((weights, totalPointsLhood, totalPointsPhys)))
     # index and list parameter names for getDist
     nameFile = open(outputFile + '.paramnames', 'w')
     for i, name in enumerate(paramNames):
@@ -818,6 +838,7 @@ def writeOutput(outputFile, totalPointsPhys, totalPointsLhood,
         rangeFile.write('p%i N N\n' % (i + 1))
     rangeFile.close()
 
+
 # Z & H theoretical functions
 
 
@@ -829,25 +850,34 @@ def nDIntegratorZTheor(integrandFuncs, limitsList, integrandLogVal=200.):
     to avoid underflow. The final integral result (and error) is then divided by exp(integrandLogVal) to get the final value.
     """
     if integrandLogVal:
-        return scipy.integrate.nquad(evalExpLogIntegrand, limitsList, args=(
-            integrandFuncs, integrandLogVal)) / np.exp(integrandLogVal)
-    else:  # this should only occur if you aren't concerned about underflow
         return scipy.integrate.nquad(
-            evalIntegrand, limitsList, args=(integrandFuncs, ))
+            evalExpLogIntegrand,
+            limitsList,
+            args=(integrandFuncs, integrandLogVal)) / np.exp(integrandLogVal)
+    else:  # this should only occur if you aren't concerned about underflow
+        return scipy.integrate.nquad(evalIntegrand,
+                                     limitsList,
+                                     args=(integrandFuncs, ))
 
 
-def nDIntegratorHTheor(integrandFuncs, limitsList,
-                       integrandLogVal=200., LLhoodFunc=None):
+def nDIntegratorHTheor(integrandFuncs,
+                       limitsList,
+                       integrandLogVal=200.,
+                       LLhoodFunc=None):
     """
     As above but has to call nquad with a  slightly different function representing integrand when using
     exp(log(integrand)) method for calculating, due to LLhood(theta) part of integrand
     """
     if integrandLogVal:
-        return scipy.integrate.nquad(evalLogLExpLogIntegrand, limitsList, args=(
-            integrandFuncs, integrandLogVal, LLhoodFunc)) / np.exp(integrandLogVal)
-    else:  # this should only occur if you aren't concerned about underflow
         return scipy.integrate.nquad(
-            evalIntegrand, limitsList, args=(integrandFuncs,))
+            evalLogLExpLogIntegrand,
+            limitsList,
+            args=(integrandFuncs, integrandLogVal,
+                  LLhoodFunc)) / np.exp(integrandLogVal)
+    else:  # this should only occur if you aren't concerned about underflow
+        return scipy.integrate.nquad(evalIntegrand,
+                                     limitsList,
+                                     args=(integrandFuncs, ))
 
 
 def evalIntegrand(*args):
@@ -972,8 +1002,13 @@ def calcZTheorApprox(priorParams):
     return ZTheor, priorVolume
 
 
-def calcHTheor(priorParams, priorFuncsPdf, LLhoodFunc,
-               nDims, Z, ZErr, LhoodFunc=None):
+def calcHTheor(priorParams,
+               priorFuncsPdf,
+               LLhoodFunc,
+               nDims,
+               Z,
+               ZErr,
+               LhoodFunc=None):
     """
     Calculates HTheor from the KL divergence equation: H = int[P(theta) * ln(P(theta) / pi(theta))] = 1/Z * int[L(theta) * pi(theta) * ln(L(theta))] - ln(Z).
     For uniform priors, calculates volume and skips that part of integral (over pi(theta)).
@@ -1019,6 +1054,7 @@ def calcHTheorApprox(Z, nDims, priorVolume):
     return -0.5 * nDims / (Z * priorVolume) * \
         (1. + np.log(2. * np.pi)) - np.log(Z)
 
+
 # Updating expected values of Z, X and H functions
 
 
@@ -1031,7 +1067,7 @@ def calct(nLive, expectation='t', sampling=False, maxPoints=False):
         if maxPoints:
             t = np.random.rand(nLive).max()
         else:
-            t = np.random.rand() ** (1. / nLive)
+            t = np.random.rand()**(1. / nLive)
     else:
         if expectation == 'logt':
             t = np.exp(-1. / nLive)
@@ -1117,14 +1153,15 @@ def calcEofts(nLive):
     return Eoft, Eoft2, Eof1mt, Eof1mt2
 
 
-def updateZnXMoments(nLive, EofZ, EofZ2, EofZX, EofX, EofX2,
-                     LhoodStarOld, LhoodStar, trapezoidalFlag):
+def updateZnXMoments(nLive, EofZ, EofZ2, EofZX, EofX, EofX2, LhoodStarOld,
+                     LhoodStar, trapezoidalFlag):
     """
     Wrapper around updateZnXM taking into account whether trapezium rule is used or not
     """
     if trapezoidalFlag:
         EofZ, EofZ2, EofZX, EofX, EofX2, EofWeight = updateZnXM(
-            nLive, EofZ, EofZ2, EofZX, EofX, EofX2, 0.5 * (LhoodStarOld + LhoodStar))
+            nLive, EofZ, EofZ2, EofZX, EofX, EofX2,
+            0.5 * (LhoodStarOld + LhoodStar))
     else:
         EofZ, EofZ2, EofZX, EofX, EofX2, EofWeight = updateZnXM(
             nLive, EofZ, EofZ2, EofZX, EofX, EofX2, LhoodStar)
@@ -1190,17 +1227,18 @@ def calcLogEofts(nLive):
     """
     Calculate log(E[t] - E[t^2]) as it is much easier to do so here than later having on log(E[t]) and log(E[t^2])
     """
-    return np.log(calcEofts(nLive) + (calct(nLive) - calct2(nLive),))
+    return np.log(calcEofts(nLive) + (calct(nLive) - calct2(nLive), ))
 
 
-def updateLogZnXMoments(nLive, logEofZ, logEofZ2, logEofZX,
-                        logEofX, logEofX2, LLhoodStarOld, LLhoodStar, trapezoidalFlag):
+def updateLogZnXMoments(nLive, logEofZ, logEofZ2, logEofZX, logEofX, logEofX2,
+                        LLhoodStarOld, LLhoodStar, trapezoidalFlag):
     """
     as above but for log space
     """
     if trapezoidalFlag:
         logEofZ, logEofZ2, logEofZX, logEofX, logEofX2, logEofWeight = updateLogZnXM(
-            nLive, logEofZ, logEofZ2, logEofZX, logEofX, logEofX2, np.log(0.5) + np.logaddexp(LLhoodStarOld, LLhoodStar))
+            nLive, logEofZ, logEofZ2, logEofZX, logEofX, logEofX2,
+            np.log(0.5) + np.logaddexp(LLhoodStarOld, LLhoodStar))
     else:
         logEofZ, logEofZ2, logEofZX, logEofX, logEofX2, logEofWeight = updateLogZnXM(
             nLive, logEofZ, logEofZ2, logEofZX, logEofX, logEofX2, LLhoodStar)
@@ -1214,13 +1252,8 @@ def updateLogZnXM(nLive, logEofZ, logEofZ2, logEofZX, logEofX, logEofX2, LL):
     logEoft, logEoft2, logEof1mt, logEof1mt2, logEoftmEoft2 = calcLogEofts(
         nLive)
     logEofZ, logEofWeight = updateLogEofZ(logEofZ, logEof1mt, logEofX, LL)
-    logEofZ2 = updateLogEofZ2(
-        logEofZ2,
-        logEof1mt,
-        logEofZX,
-        logEof1mt2,
-        logEofX2,
-        LL)
+    logEofZ2 = updateLogEofZ2(logEofZ2, logEof1mt, logEofZX, logEof1mt2,
+                              logEofX2, LL)
     logEofZX = updateLogEofZX(logEoft, logEofZX, logEoftmEoft2, logEofX2, LL)
     logEofX2 = updateLogEofX2(logEoft2, logEofX2)
     logEofX = updateLogEofX(logEoft, logEofX)
@@ -1268,17 +1301,18 @@ def updateLogEofX(logEoft, logEofX):
     return logEoft + logEofX
 
 
-def updateZnXMomentsFinal(nFinal, EofZ, EofZ2, EofX,
-                          Lhood_im1, Lhood_i, trapezoidalFlag, errorEval):
+def updateZnXMomentsFinal(nFinal, EofZ, EofZ2, EofX, Lhood_im1, Lhood_i,
+                          trapezoidalFlag, errorEval):
     """
     Wrapper around updateZnXMomentsF taking into account whether trapezium rule is used or not
     """
     if trapezoidalFlag:
-        EofZ, EofZ2, EofWeight = updateZnXMomentsF(
-            nFinal, EofZ, EofZ2, EofX, (Lhood_im1 + Lhood_i) / 2., errorEval)
+        EofZ, EofZ2, EofWeight = updateZnXMomentsF(nFinal, EofZ, EofZ2, EofX,
+                                                   (Lhood_im1 + Lhood_i) / 2.,
+                                                   errorEval)
     else:
-        EofZ, EofZ2, EofWeight = updateZnXMomentsF(
-            nFinal, EofZ, EofZ2, EofX, Lhood_i, errorEval)
+        EofZ, EofZ2, EofWeight = updateZnXMomentsF(nFinal, EofZ, EofZ2, EofX,
+                                                   Lhood_i, errorEval)
     return EofZ, EofZ2, EofWeight
 
 
@@ -1326,14 +1360,15 @@ def updateEofX2Final(EofX, nFinal):
     return EofX**2. / nFinal**2.
 
 
-def updateLogZnXMomentsFinal(
-        nFinal, logEofZ, logEofZ2, logEofX, LLhood_im1, LLhood_i, trapezoidalFlag, errorEval):
+def updateLogZnXMomentsFinal(nFinal, logEofZ, logEofZ2, logEofX, LLhood_im1,
+                             LLhood_i, trapezoidalFlag, errorEval):
     """
     Wrapper around updateZnXMomentsF taking into account whether trapezium rule is used or not
     """
     if trapezoidalFlag:
         logEofZ, logEofZ2, logEofWeight = updateLogZnXMomentsF(
-            nFinal, logEofZ, logEofZ2, logEofX, np.log(0.5) + np.logaddexp(LLhood_im1, LLhood_i), errorEval)
+            nFinal, logEofZ, logEofZ2, logEofX,
+            np.log(0.5) + np.logaddexp(LLhood_im1, LLhood_i), errorEval)
     else:
         logEofZ, logEofZ2, logEofWeight = updateLogZnXMomentsF(
             nFinal, logEofZ, logEofZ2, logEofX, LLhood_i, errorEval)
@@ -1347,8 +1382,8 @@ def updateLogZnXMomentsF(nFinal, logEofZ, logEofZ2, logEofX, LL, errorEval):
     if errorEval == 'recursive':
         logEofX = updateLogEofXFinal(logEofX, nFinal)
         logEofX2 = updateLogEofX2Final(logEofX, nFinal)
-        logEofZ2 = updateLogEofZ2Final(
-            logEofZ2, logEofX, logEofZ, logEofX2, LL)
+        logEofZ2 = updateLogEofZ2Final(logEofZ2, logEofX, logEofZ, logEofX2,
+                                       LL)
         logEofZ, logEofWeight = updateLogEofZFinal(logEofZ, logEofX, LL)
     return logEofZ, logEofZ2, logEofWeight
 
@@ -1411,6 +1446,7 @@ def updateHLog(H, logWeight, logZNew, LLhood, logZ):
     # it as zero, ie treat it as lim Z->0^+ exp(logZ) * logZ = 0
     except FloatingPointError:
         return np.exp(logWeight - logZNew) * LLhood - logZNew
+
 
 # calculate/ retrieve final estimates/ errors of Z
 
@@ -1499,6 +1535,7 @@ def calcVarLogZSkilling(H, nLive):
     """
     return H / nLive
 
+
 # Calculate Z moments and H a-posteri using Keeton's methods
 
 # wrappers around E[t] functions for calculating powers of them.
@@ -1506,17 +1543,22 @@ def calcVarLogZSkilling(H, nLive):
 
 
 # E[t]^i
-def EoftPowi(nLive, i): return calct(nLive)**i
+def EoftPowi(nLive, i):
+    return calct(nLive)**i
+
 
 # E[t^2]^i
 
 
-def Eoft2Powi(nLive, i): return calct2(nLive)**i
+def Eoft2Powi(nLive, i):
+    return calct2(nLive)**i
+
 
 # (E[t^2]/E[t])^i
 
 
-def Eoft2OverEoftPowi(nLive, i): return (calct2(nLive) / calct(nLive))**i
+def Eoft2OverEoftPowi(nLive, i):
+    return (calct2(nLive) / calct(nLive))**i
 
 
 def calcEofftArr(Eofft, nLive, n):
@@ -1537,7 +1579,8 @@ def getEofftArr(Eofft, nLive, nest):
     faster than creating array of zeroes and looping over
     """
     return np.fromiter(calcEofftArr(Eofft, nLive, nest),
-                       dtype=float, count=nest)
+                       dtype=float,
+                       count=nest)
 
 
 def calcZMomentsKeeton(Lhoods, nLive, nest):
@@ -1579,13 +1622,9 @@ def calcSums(Lhoods, nLive, nest):
     """
     EoftArr = getEofftArr(EoftPowi, nLive, nest)
     LEoft = Lhoods * EoftArr
-    innerSums = np.fromiter(
-        calcInnerSums(
-            Lhoods,
-            nLive,
-            nest),
-        dtype=float,
-        count=nest)
+    innerSums = np.fromiter(calcInnerSums(Lhoods, nLive, nest),
+                            dtype=float,
+                            count=nest)
     outerSums = LEoft * innerSums
     return outerSums.sum()
 
@@ -1754,14 +1793,15 @@ def calcEofZZFinalKeetonLog(deadPointsLLhood, livePointsLLhood, nLive, nest):
     return logEofZZFinalK
 
 
-def calcHTotalKeetonLog(logEofZFinalK, deadPointsLLhood,
-                        nLive, nest, livePointsLLhood):
+def calcHTotalKeetonLog(logEofZFinalK, deadPointsLLhood, nLive, nest,
+                        livePointsLLhood):
     """
     TODO
     """
     print("not implemented yet. Exiting")
     sys.exit(1)
     return H
+
 
 # Functions for combining contributions from main NS loop and termination
 # ('final' quantities) for estimate or Z and its error
@@ -1793,8 +1833,8 @@ def getVarTotalKeeton(varZ, varZFinal, EofZ, EofZFinal, EofZZFinal):
     return varZ + varZFinal + 2. * (EofZZFinal - EofZ * EofZFinal)
 
 
-def getVarTotalKeetonLog(logVarZ, logVarZFinal, logEofZ,
-                         logEofZFinal, logEofZZFinal):
+def getVarTotalKeetonLog(logVarZ, logVarZFinal, logEofZ, logEofZFinal,
+                         logEofZZFinal):
     """
     TODO
     """
@@ -1820,6 +1860,7 @@ def getEofZ2TotalKeetonLog(logEofZ2, logEofZ2Final):
     sys.exit(1)
     return logEofZ2Total
 
+
 # DEPRECATED I THINK
 
 
@@ -1832,6 +1873,7 @@ def getLogEofXLogEofw(nLive, X):
     t = calct(nLive, expectation)
     XNew = X * t
     return np.log(XNew), np.log(X - XNew)
+
 
 # DEPRECATED I THINK
 
@@ -1849,6 +1891,7 @@ def getLogEofWeight(logw, LLhood_im1, LLhood_i, trapezoidalFlag):
         # weight of deadpoint (for posterior) = prior mass decrement *
         # likelihood
         return logw + LLhood_i
+
 
 # plotting functions
 
@@ -1893,15 +1936,15 @@ def callGetDist(chainsFilePrefix, plotName, nParams):
     paramList = ['p' + str(i + 1) for i in range(nParams)]
     chains = getdist.loadMCSamples(chainsFilePrefix)
     g = getdist.plots.getSubplotPlotter()
-    g.triangle_plot([chains], paramList,
-                    filled_compare=True)
+    g.triangle_plot([chains], paramList, filled_compare=True)
     g.export(plotName)
+
 
 # print output functions
 
 
-def printUpdate(nest, deadPointPhys, deadPointLhood, EofZ,
-                livePointPhys, livePointLhood, space):
+def printUpdate(nest, deadPointPhys, deadPointLhood, EofZ, livePointPhys,
+                livePointLhood, space):
     """
     gives update on latest deadpoint and newpoint found to replace it
     """
@@ -1917,9 +1960,8 @@ def printUpdate(nest, deadPointPhys, deadPointLhood, EofZ,
     print("for deadpoint %i: physical value = %s %s value = %f" %
           (nest, deadPointPhys, L, deadPointLhood))
     print("%s = %s" % (Z, EofZ))
-    print(
-        "new live point obtained: physical value = %s %s has value = %s" %
-        (livePointPhys, L, livePointLhood))
+    print("new live point obtained: physical value = %s %s has value = %s" %
+          (livePointPhys, L, livePointLhood))
 
 
 def printBreak():
@@ -1972,9 +2014,8 @@ def printTerminationUpdateInfo(nest, terminator):
     """
     Print update on termination status when evaluating by H value
     """
-    print(
-        "current end value is %i. Termination value is %f" %
-        (nest, terminator))
+    print("current end value is %i. Termination value is %f" %
+          (nest, terminator))
 
 
 def printTerminationUpdateZ(EofZLive, endValue, terminationFactor, space):
@@ -1989,9 +2030,8 @@ def printTerminationUpdateZ(EofZLive, endValue, terminationFactor, space):
         print("invalid space")
         sys.exit(1)
     print("%s = %s" % (Z, EofZLive))
-    print(
-        "current end value is %s. Termination value is %s" %
-        (endValue, terminationFactor))
+    print("current end value is %s. Termination value is %s" %
+          (endValue, terminationFactor))
 
 
 def printFinalLivePoints(i, physValue, Lhood, ZLiveType, space):
@@ -2011,16 +2051,17 @@ def printFinalLivePoints(i, physValue, Lhood, ZLiveType, space):
         sys.exit(1)
     if ZLiveType == 'average Lhood':
         print(
-            "'average' physical value = %s (n.b. this has no useful meaning), %s = %s" %
-            (physValue, L, Lhood))
+            "'average' physical value = %s (n.b. this has no useful meaning), %s = %s"
+            % (physValue, L, Lhood))
     elif ZLiveType == 'average X':
         print(
-            "remaining livepoint number %i: physical value = %s %s value = %s" %
-            (i, physValue, L, Lhood))
+            "remaining livepoint number %i: physical value = %s %s value = %s"
+            % (i, physValue, L, Lhood))
     elif ZLiveType == 'max Lhood':
         print(
-            "maximum %s remaining livepoint number %i: physical value = %s %s value = %s" %
-            (L, i, physValue, L, Lhood))
+            "maximum %s remaining livepoint number %i: physical value = %s %s value = %s"
+            % (L, i, physValue, L, Lhood))
+
 
 # nested run functions
 
@@ -2073,7 +2114,8 @@ def NestedRun(priorParams, LLhoodParams, paramNames, setupDict):
         # update expected values of moments of X and Z, and get posterior
         # weights
         logEofZNew, logEofZ2, logEofZX, logEofX, logEofX2, logEofWeight = updateLogZnXMoments(
-            nLive, logEofZ, logEofZ2, logEofZX, logEofX, logEofX2, LLhoodStarOld, LLhoodStar, setupDict['trapezoidalFlag'])
+            nLive, logEofZ, logEofZ2, logEofZX, logEofX, logEofX2,
+            LLhoodStarOld, LLhoodStar, setupDict['trapezoidalFlag'])
         logEofXArr.append(logEofX)
         logEofWeights.append(logEofWeight)
         H = updateHLog(H, logEofWeight, logEofZNew, LLhoodStar, logEofZ)
@@ -2088,114 +2130,80 @@ def NestedRun(priorParams, LLhoodParams, paramNames, setupDict):
         # update array where last deadpoint was with new livepoint picked
         # subject to L_new > L*
         if setupDict['sampler'] == 'blind':
-            livePointsPhys[deadIndex], livePointsLLhood[deadIndex] = getNewLiveBlind(
-                priorFuncsPpf, LLhoodFunc, LLhoodStar)
+            livePointsPhys[deadIndex], livePointsLLhood[
+                deadIndex] = getNewLiveBlind(priorFuncsPpf, LLhoodFunc,
+                                             LLhoodStar)
         elif setupDict['sampler'] == 'MH':
-            livePointsPhys[deadIndex], livePointsLLhood[deadIndex] = getNewLiveMH(
-                livePointsPhys, deadIndex, priorFuncsPdf, priorParams, LLhoodFunc, LLhoodStar)
+            livePointsPhys[deadIndex], livePointsLLhood[
+                deadIndex] = getNewLiveMH(livePointsPhys, deadIndex,
+                                          priorFuncsPdf, priorParams,
+                                          LLhoodFunc, LLhoodStar)
         if setupDict['verbose']:
-            printUpdate(
-                nest, deadPointPhys, deadPointLLhood, logEofZ, livePointsPhys[deadIndex].reshape(
-                    1, -1), livePointsLLhood[deadIndex], 'log')
+            printUpdate(nest, deadPointPhys, deadPointLLhood, logEofZ,
+                        livePointsPhys[deadIndex].reshape(1, -1),
+                        livePointsLLhood[deadIndex], 'log')
         nest += 1
         if nest % checkTermination == 0:
             breakFlag, liveMaxIndex, liveLLhoodMax, avLLhood, nFinal = tryTerminationLog(
-                setupDict['verbose'], setupDict['terminationType'], setupDict['terminationFactor'], nest, nLive, logEofX, livePointsLLhood, LLhoodStar, setupDict['ZLiveType'], setupDict['trapezoidalFlag'], logEofZ, H)
+                setupDict['verbose'], setupDict['terminationType'],
+                setupDict['terminationFactor'], nest, nLive, logEofX,
+                livePointsLLhood, LLhoodStar, setupDict['ZLiveType'],
+                setupDict['trapezoidalFlag'], logEofZ, H)
             if breakFlag:  # termination condition was reached
                 break
     EofZ = np.exp(logEofZ)
     EofZ2 = np.exp(logEofZ2)
     varZ = calcVariance(EofZ, EofZ2)
-    EofZK, EofZ2K = calcZMomentsKeeton(
-        np.exp(np.array(deadPointsLLhood)), nLive, nest)
+    EofZK, EofZ2K = calcZMomentsKeeton(np.exp(np.array(deadPointsLLhood)),
+                                       nLive, nest)
     varZK = calcVariance(EofZK, EofZ2K)
     HK = calcHKeeton(EofZK, np.exp(np.array(deadPointsLLhood)), nLive, nest)
     if setupDict['verbose']:
         printBreak()
-        printZHValues(
-            EofZ,
-            EofZ2,
-            varZ,
-            H,
-            'linear',
-            'before final',
-            'recursive')
-        printZHValues(
-            EofZK,
-            EofZ2K,
-            varZK,
-            HK,
-            'linear',
-            'before final',
-            'Keeton equations')
+        printZHValues(EofZ, EofZ2, varZ, H, 'linear', 'before final',
+                      'recursive')
+        printZHValues(EofZK, EofZ2K, varZK, HK, 'linear', 'before final',
+                      'Keeton equations')
     logEofZTotal, logEofZ2Total, H, livePointsPhysFinal, livePointsLLhoodFinal, logEofXFinalArr = getFinalContributionLog(
-        setupDict['verbose'], setupDict['ZLiveType'], setupDict['trapezoidalFlag'], nFinal, logEofZ, logEofZ2, logEofX, logEofWeights, H, livePointsPhys, livePointsLLhood, avLLhood, liveLLhoodMax, liveMaxIndex, LLhoodStar)
+        setupDict['verbose'], setupDict['ZLiveType'],
+        setupDict['trapezoidalFlag'], nFinal, logEofZ, logEofZ2, logEofX,
+        logEofWeights, H, livePointsPhys, livePointsLLhood, avLLhood,
+        liveLLhoodMax, liveMaxIndex, LLhoodStar)
     totalPointsPhys, totalPointsLLhood, logEofXArr, logEofWeights = getTotal(
-        deadPointsPhys, livePointsPhysFinal, deadPointsLLhood, livePointsLLhoodFinal, logEofXArr, logEofXFinalArr, logEofWeights)
+        deadPointsPhys, livePointsPhysFinal, deadPointsLLhood,
+        livePointsLLhoodFinal, logEofXArr, logEofXFinalArr, logEofWeights)
     EofZTotal = np.exp(logEofZTotal)
     EofZ2Total = np.exp(logEofZ2Total)
     varZ = calcVariance(EofZTotal, EofZ2Total)
-    EofZFinalK, EofZ2FinalK = calcZMomentsFinalKeeton(
-        np.exp(livePointsLLhood), nLive, nest)
+    EofZFinalK, EofZ2FinalK = calcZMomentsFinalKeeton(np.exp(livePointsLLhood),
+                                                      nLive, nest)
     varZFinalK = calcVariance(EofZFinalK, EofZ2FinalK)
-    EofZZFinalK = calcEofZZFinalKeeton(
-        np.exp(
-            np.array(deadPointsLLhood)),
-        np.exp(livePointsLLhood),
-        nLive,
-        nest)
-    varZTotalK = getVarTotalKeeton(
-        varZK, varZFinalK, EofZK, EofZFinalK, EofZZFinalK)
+    EofZZFinalK = calcEofZZFinalKeeton(np.exp(np.array(deadPointsLLhood)),
+                                       np.exp(livePointsLLhood), nLive, nest)
+    varZTotalK = getVarTotalKeeton(varZK, varZFinalK, EofZK, EofZFinalK,
+                                   EofZZFinalK)
     EofZTotalK = getEofZTotalKeeton(EofZK, EofZFinalK)
     EofZ2TotalK = getEofZ2TotalKeeton(EofZ2K, EofZ2FinalK)
-    HK = calcHTotalKeeton(
-        EofZTotalK,
-        np.exp(
-            np.array(deadPointsLLhood)),
-        nLive,
-        nest,
-        np.exp(livePointsLLhood))
+    HK = calcHTotalKeeton(EofZTotalK, np.exp(np.array(deadPointsLLhood)),
+                          nLive, nest, np.exp(livePointsLLhood))
     priorFuncsLogPdf = getPriorLogPdfs(priorObjs)
-    ZTheor, ZTheorErr, priorVolume = calcZTheor(
-        priorParams, priorFuncsLogPdf, LLhoodFunc, nDims)
-    HTheor, HTheorErr = calcHTheor(
-        priorParams, priorFuncsPdf, LLhoodFunc, nDims, ZTheor, ZTheorErr)
+    ZTheor, ZTheorErr, priorVolume = calcZTheor(priorParams, priorFuncsLogPdf,
+                                                LLhoodFunc, nDims)
+    HTheor, HTheorErr = calcHTheor(priorParams, priorFuncsPdf, LLhoodFunc,
+                                   nDims, ZTheor, ZTheorErr)
     numSamples = len(totalPointsPhys[:, 0])
     if setupDict['verbose']:
-        printZHValues(
-            EofZTotal,
-            EofZ2Total,
-            varZ,
-            H,
-            'linear',
-            'total',
-            'recursive')
-        printZHValues(
-            EofZFinalK,
-            EofZ2FinalK,
-            varZFinalK,
-            'not calculated',
-            'linear',
-            'final contribution',
-            'Keeton equations')
-        printZHValues(
-            EofZTotalK,
-            EofZ2TotalK,
-            varZTotalK,
-            HK,
-            'linear',
-            'total',
-            'Keeton equations')
+        printZHValues(EofZTotal, EofZ2Total, varZ, H, 'linear', 'total',
+                      'recursive')
+        printZHValues(EofZFinalK, EofZ2FinalK, varZFinalK, 'not calculated',
+                      'linear', 'final contribution', 'Keeton equations')
+        printZHValues(EofZTotalK, EofZ2TotalK, varZTotalK, HK, 'linear',
+                      'total', 'Keeton equations')
         printTheoretical(ZTheor, ZTheorErr, HTheor, HTheorErr)
     if setupDict['outputFile']:
-        writeOutput(
-            setupDict['outputFile'],
-            totalPointsPhys,
-            totalPointsLLhood,
-            logEofWeights,
-            logEofXArr,
-            paramNames,
-            'log')
+        writeOutput(setupDict['outputFile'], totalPointsPhys,
+                    totalPointsLLhood, logEofWeights, logEofXArr, paramNames,
+                    'log')
     return logEofZ, totalPointsPhys, totalPointsLLhood, logEofWeights, logEofXArr
 
 
@@ -2247,7 +2255,8 @@ def NestedRunLinear(priorParams, LhoodParams, paramNames, setupDict):
         # update expected values of moments of X and Z, and get posterior
         # weights
         EofZNew, EofZ2, EofZX, EofX, EofX2, EofWeight = updateZnXMoments(
-            nLive, EofZ, EofZ2, EofZX, EofX, EofX2, LhoodStarOld, LhoodStar, setupDict['trapezoidalFlag'])
+            nLive, EofZ, EofZ2, EofZX, EofX, EofX2, LhoodStarOld, LhoodStar,
+            setupDict['trapezoidalFlag'])
         EofXArr.append(EofX)
         EofWeights.append(EofWeight)
         H = updateH(H, EofWeight, EofZNew, LhoodStar, EofZ)
@@ -2262,19 +2271,25 @@ def NestedRunLinear(priorParams, LhoodParams, paramNames, setupDict):
         # update array where last deadpoint was with new livepoint picked
         # subject to L_new > L*
         if setupDict['sampler'] == 'blind':
-            livePointsPhys[deadIndex], livePointsLhood[deadIndex] = getNewLiveBlind(
-                priorFuncsPpf, LhoodFunc, LhoodStar)
+            livePointsPhys[deadIndex], livePointsLhood[
+                deadIndex] = getNewLiveBlind(priorFuncsPpf, LhoodFunc,
+                                             LhoodStar)
         elif setupDict['sampler'] == 'MH':
-            livePointsPhys[deadIndex], livePointsLhood[deadIndex] = getNewLiveMH(
-                livePointsPhys, deadIndex, priorFuncsPdf, priorParams, LhoodFunc, LhoodStar)
+            livePointsPhys[deadIndex], livePointsLhood[
+                deadIndex] = getNewLiveMH(livePointsPhys, deadIndex,
+                                          priorFuncsPdf, priorParams,
+                                          LhoodFunc, LhoodStar)
         if setupDict['verbose']:
-            printUpdate(
-                nest, deadPointPhys, deadPointLhood, EofZ, livePointsPhys[deadIndex].reshape(
-                    1, -1), livePointsLhood[deadIndex], 'linear')
+            printUpdate(nest, deadPointPhys, deadPointLhood, EofZ,
+                        livePointsPhys[deadIndex].reshape(1, -1),
+                        livePointsLhood[deadIndex], 'linear')
         nest += 1
         if nest % checkTermination == 0:
             breakFlag, liveMaxIndex, liveLhoodMax, avLhood, nFinal = tryTermination(
-                setupDict['verbose'], setupDict['terminationType'], setupDict['terminationFactor'], nest, nLive, EofX, livePointsLhood, LhoodStar, setupDict['ZLiveType'], setupDict['trapezoidalFlag'], EofZ, H)
+                setupDict['verbose'], setupDict['terminationType'],
+                setupDict['terminationFactor'], nest, nLive, EofX,
+                livePointsLhood, LhoodStar, setupDict['ZLiveType'],
+                setupDict['trapezoidalFlag'], EofZ, H)
             if breakFlag:  # termination condition was reached
                 break
     varZ = calcVariance(EofZ, EofZ2)
@@ -2283,85 +2298,50 @@ def NestedRunLinear(priorParams, LhoodParams, paramNames, setupDict):
     HK = calcHKeeton(EofZK, np.array(deadPointsLhood), nLive, nest)
     if setupDict['verbose']:
         printBreak()
-        printZHValues(
-            EofZ,
-            EofZ2,
-            varZ,
-            H,
-            'linear',
-            'before final',
-            'recursive')
-        printZHValues(
-            EofZK,
-            EofZ2K,
-            varZK,
-            HK,
-            'linear',
-            'before final',
-            'Keeton equations')
+        printZHValues(EofZ, EofZ2, varZ, H, 'linear', 'before final',
+                      'recursive')
+        printZHValues(EofZK, EofZ2K, varZK, HK, 'linear', 'before final',
+                      'Keeton equations')
     EofZTotal, EofZ2Total, H, livePointsPhysFinal, livePointsLhoodFinal, EofXFinalArr = getFinalContribution(
-        setupDict['verbose'], setupDict['ZLiveType'], setupDict['trapezoidalFlag'], nFinal, EofZ, EofZ2, EofX, EofWeights, H, livePointsPhys, livePointsLhood, avLhood, liveLhoodMax, liveMaxIndex, LhoodStar)
+        setupDict['verbose'], setupDict['ZLiveType'],
+        setupDict['trapezoidalFlag'], nFinal, EofZ, EofZ2, EofX, EofWeights, H,
+        livePointsPhys, livePointsLhood, avLhood, liveLhoodMax, liveMaxIndex,
+        LhoodStar)
     totalPointsPhys, totalPointsLhood, EofXArr, EofWeights = getTotal(
-        deadPointsPhys, livePointsPhysFinal, deadPointsLhood, livePointsLhoodFinal, EofXArr, EofXFinalArr, EofWeights)
+        deadPointsPhys, livePointsPhysFinal, deadPointsLhood,
+        livePointsLhoodFinal, EofXArr, EofXFinalArr, EofWeights)
     varZ = calcVariance(EofZTotal, EofZ2Total)
-    EofZFinalK, EofZ2FinalK = calcZMomentsFinalKeeton(
-        livePointsLhood, nLive, nest)
+    EofZFinalK, EofZ2FinalK = calcZMomentsFinalKeeton(livePointsLhood, nLive,
+                                                      nest)
     varZFinalK = calcVariance(EofZFinalK, EofZ2FinalK)
-    EofZZFinalK = calcEofZZFinalKeeton(
-        np.array(deadPointsLhood), livePointsLhood, nLive, nest)
-    varZTotalK = getVarTotalKeeton(
-        varZK, varZFinalK, EofZK, EofZFinalK, EofZZFinalK)
+    EofZZFinalK = calcEofZZFinalKeeton(np.array(deadPointsLhood),
+                                       livePointsLhood, nLive, nest)
+    varZTotalK = getVarTotalKeeton(varZK, varZFinalK, EofZK, EofZFinalK,
+                                   EofZZFinalK)
     EofZTotalK = getEofZTotalKeeton(EofZK, EofZFinalK)
     EofZ2TotalK = getEofZ2TotalKeeton(EofZ2K, EofZ2FinalK)
-    HK = calcHTotalKeeton(
-        EofZTotalK,
-        np.array(deadPointsLhood),
-        nLive,
-        nest,
-        livePointsLhood)
+    HK = calcHTotalKeeton(EofZTotalK, np.array(deadPointsLhood), nLive, nest,
+                          livePointsLhood)
     LLhoodFunc = LLhood(LhoodObj)
     priorFuncsLogPdf = getPriorLogPdfs(priorObjs)
-    ZTheor, ZTheorErr, priorVolume = calcZTheor(
-        priorParams, priorFuncsLogPdf, LLhoodFunc, nDims)
-    HTheor, HTheorErr = calcHTheor(
-        priorParams, priorFuncsPdf, LLhoodFunc, nDims, ZTheor, ZTheorErr)
+    ZTheor, ZTheorErr, priorVolume = calcZTheor(priorParams, priorFuncsLogPdf,
+                                                LLhoodFunc, nDims)
+    HTheor, HTheorErr = calcHTheor(priorParams, priorFuncsPdf, LLhoodFunc,
+                                   nDims, ZTheor, ZTheorErr)
     numSamples = len(totalPointsPhys[:, 0])
     if setupDict['verbose']:
-        printZHValues(
-            EofZTotal,
-            EofZ2Total,
-            varZ,
-            H,
-            'linear',
-            'total',
-            'recursive')
-        printZHValues(
-            EofZFinalK,
-            EofZ2FinalK,
-            varZFinalK,
-            'not calculated',
-            'linear',
-            'final contribution',
-            'Keeton equations')
-        printZHValues(
-            EofZTotalK,
-            EofZ2TotalK,
-            varZTotalK,
-            HK,
-            'linear',
-            'total',
-            'Keeton equations')
+        printZHValues(EofZTotal, EofZ2Total, varZ, H, 'linear', 'total',
+                      'recursive')
+        printZHValues(EofZFinalK, EofZ2FinalK, varZFinalK, 'not calculated',
+                      'linear', 'final contribution', 'Keeton equations')
+        printZHValues(EofZTotalK, EofZ2TotalK, varZTotalK, HK, 'linear',
+                      'total', 'Keeton equations')
         printTheoretical(ZTheor, ZTheorErr, HTheor, HTheorErr)
     if setupDict['outputFile']:
-        writeOutput(
-            setupDict['outputFile'],
-            totalPointsPhys,
-            totalPointsLhood,
-            EofWeights,
-            EofXArr,
-            paramNames,
-            'linear')
+        writeOutput(setupDict['outputFile'], totalPointsPhys, totalPointsLhood,
+                    EofWeights, EofXArr, paramNames, 'linear')
     return EofZ, totalPointsPhys, totalPointsLhood, EofWeights, EofXArr
+
 
 # main function
 
@@ -2376,7 +2356,8 @@ def main():
         'terminationType': 'evidence',
         'terminationFactor': 0.5,
         'sampler': 'MH',
-        'outputFile': './output/test'}
+        'outputFile': './output/test'
+    }
     # priorParams is (3,nDims) shape array. For a given parameter, first value indicates prior type (1 =	UNIFORM, 2 = NORMAL)
     # for UNIFORM PDF, 2nd value is lower bound, 3rd value is upper bound
     # for NORMAL PDF, 2nd value is mean, 3rd value is variance (parameter priors are assumed to be INDEPENDENT)
@@ -2386,8 +2367,11 @@ def main():
     # second element (shape (1, nDims)) is the mean value for the likelihood in each dimension.
     # third element (shape (nDims, nDims)) is the covariance matrix for the
     # likelihood
-    LLhoodParams = [2, np.array([0., 0.]).reshape(
-        1, 2), np.array([1., 0., 0., 1.]).reshape(2, 2)]
+    LLhoodParams = [
+        2,
+        np.array([0., 0.]).reshape(1, 2),
+        np.array([1., 0., 0., 1.]).reshape(2, 2)
+    ]
     # LLhoodParams = [2, np.array([0., 0., 0., 0.]).reshape(1,4), np.array([1., 0., 0., 0., 0., 1., 0., 0., 0., 0., 1., 0., 0., 0., 0., 1.]).reshape(4,4)]
     # paramNames = ['\\theta_1', '\\theta_2', '\\theta_3', '\\theta_4']
     paramNames = ['\\theta_1', '\\theta_2']

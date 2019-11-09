@@ -8,8 +8,22 @@ from . import output
 # final contribution to NS sampling functions
 
 
-def getFinalContributionLog(verbose, ZLiveType, trapezoidalFlag, nFinal, logEofZ, logEofZ2, logEofX, logEofWeights,
-                            H, livePointsPhys, livePointsLLhood, avLLhood, liveLLhoodMax, liveMaxIndex, LLhoodStar, errorEval='recursive'):
+def getFinalContributionLog(verbose,
+                            ZLiveType,
+                            trapezoidalFlag,
+                            nFinal,
+                            logEofZ,
+                            logEofZ2,
+                            logEofX,
+                            logEofWeights,
+                            H,
+                            livePointsPhys,
+                            livePointsLLhood,
+                            avLLhood,
+                            liveLLhoodMax,
+                            liveMaxIndex,
+                            LLhoodStar,
+                            errorEval='recursive'):
     """
     Get final contribution from livepoints after NS loop has ended. Way of estimating final contribution is dictated by ZLiveType.
     Also updates H value and gets final weights (and physical values) for posterior
@@ -17,49 +31,68 @@ def getFinalContributionLog(verbose, ZLiveType, trapezoidalFlag, nFinal, logEofZ
     NOTE: for standard quadrature summation, average Lhood and average X give same values of Z (averaging over X is equivalent to averaging over L). However, correct posterior weights are given by latter method, and Z errors are different in both cases
     """
     livePointsLLhood = checkIfAveragedLhood(
-        nFinal, livePointsLLhood, avLLhood)  # only relevant for 'average' ZLiveType
+        nFinal, livePointsLLhood,
+        avLLhood)  # only relevant for 'average' ZLiveType
     if 'average' in ZLiveType:
         LLhoodsFinal = np.concatenate(
             (np.array([LLhoodStar]), livePointsLLhood))
         logEofZOld = logEofZ
         logEofZ2Old = logEofZ2
         for i in range(
-                nFinal):  # add weight of each remaining live point incrementally so H can be calculated easily (according to formulation given in Skilling)
+                nFinal
+        ):  # add weight of each remaining live point incrementally so H can be calculated easily (according to formulation given in Skilling)
             logEofZLive, logEofZ2Live, logEofWeightLive = recurrence_calculations.updateLogZnXMomentsFinal(
-                nFinal, logEofZOld, logEofZ2Old, logEofX, LLhoodsFinal[i], LLhoodsFinal[i + 1], trapezoidalFlag, errorEval)
+                nFinal, logEofZOld, logEofZ2Old, logEofX, LLhoodsFinal[i],
+                LLhoodsFinal[i + 1], trapezoidalFlag, errorEval)
             logEofWeights.append(logEofWeightLive)
-            H = recurrence_calculations.updateHLog(
-                H, logEofWeightLive, logEofZLive, LLhoodsFinal[i + 1], logEofZOld)
+            H = recurrence_calculations.updateHLog(H, logEofWeightLive,
+                                                   logEofZLive,
+                                                   LLhoodsFinal[i + 1],
+                                                   logEofZOld)
             logEofZOld = logEofZLive
             logEofZ2Old = logEofZ2Live
             if verbose:
-                output.printFinalLivePoints(
-                    i, livePointsPhys[i], LLhoodsFinal[i + 1], ZLiveType, 'log')
+                output.printFinalLivePoints(i, livePointsPhys[i],
+                                            LLhoodsFinal[i + 1], ZLiveType,
+                                            'log')
         livePointsPhysFinal, livePointsLLhoodFinal, logEofXFinalArr = getFinalAverage(
             livePointsPhys, livePointsLLhood, logEofX, nFinal, avLLhood, 'log')
     # assigns all remaining prior mass to one point which has highest
     # likelihood (of remaining livepoints)
     elif ZLiveType == 'max Lhood':
         logEofZLive, logEofZ2Live, logEofWeightLive = recurrence_calculations.updateLogZnXMomentsFinal(
-            nFinal, logEofZ, logEofZ2, logEofX, LLhoodStar, liveLLhoodMax, trapezoidalFlag, errorEval)
+            nFinal, logEofZ, logEofZ2, logEofX, LLhoodStar, liveLLhoodMax,
+            trapezoidalFlag, errorEval)
         # add scalar to list (as in 'average' case) instead of 1 element array
         logEofWeights.append(logEofWeightLive)
-        H = recurrence_calculations.updateHLog(
-            H, logEofWeightLive, logEofZLive, liveLLhoodMax, logEofZ)
+        H = recurrence_calculations.updateHLog(H, logEofWeightLive,
+                                               logEofZLive, liveLLhoodMax,
+                                               logEofZ)
         livePointsPhysFinal, livePointsLLhoodFinal, logEofXFinalArr = getFinalMax(
             liveMaxIndex, livePointsPhys, liveLLhoodMax, logEofX)
         if verbose:
-            output.printFinalLivePoints(
-                liveMaxIndex,
-                livePointsPhysFinal,
-                livePointsLLhoodFinal,
-                ZLiveType,
-                'log')
+            output.printFinalLivePoints(liveMaxIndex, livePointsPhysFinal,
+                                        livePointsLLhoodFinal, ZLiveType,
+                                        'log')
     return logEofZLive, logEofZ2Live, H, livePointsPhysFinal, livePointsLLhoodFinal, logEofXFinalArr
 
 
-def getFinalContribution(verbose, ZLiveType, trapezoidalFlag, nFinal, EofZ, EofZ2, EofX, EofWeights, H,
-                         livePointsPhys, livePointsLhood, avLhood, liveLhoodMax, liveMaxIndex, LhoodStar, errorEval='recursive'):
+def getFinalContribution(verbose,
+                         ZLiveType,
+                         trapezoidalFlag,
+                         nFinal,
+                         EofZ,
+                         EofZ2,
+                         EofX,
+                         EofWeights,
+                         H,
+                         livePointsPhys,
+                         livePointsLhood,
+                         avLhood,
+                         liveLhoodMax,
+                         liveMaxIndex,
+                         LhoodStar,
+                         errorEval='recursive'):
     """
     as above but in linear space
     """
@@ -70,32 +103,32 @@ def getFinalContribution(verbose, ZLiveType, trapezoidalFlag, nFinal, EofZ, EofZ
         LhoodsFinal = np.concatenate((np.array([LhoodStar]), livePointsLhood))
         for i in range(nFinal):
             EofZLive, EofZ2Live, EofWeightLive = recurrence_calculations.updateZnXMomentsFinal(
-                nFinal, EofZOld, EofZ2Old, EofX, LhoodsFinal[i], LhoodsFinal[i + 1], trapezoidalFlag, 'recursive')
+                nFinal, EofZOld, EofZ2Old, EofX, LhoodsFinal[i],
+                LhoodsFinal[i + 1], trapezoidalFlag, 'recursive')
             EofWeights.append(EofWeightLive)
-            H = recurrence_calculations.updateH(
-                H, EofWeightLive, EofZLive, LhoodsFinal[i + 1], EofZOld)
+            H = recurrence_calculations.updateH(H, EofWeightLive, EofZLive,
+                                                LhoodsFinal[i + 1], EofZOld)
             EofZOld = EofZLive
             EofZ2Old = EofZ2Live
             if verbose:
-                output.printFinalLivePoints(
-                    i, livePointsPhys[i], LhoodsFinal[i + 1], ZLiveType, 'linear')
+                output.printFinalLivePoints(i, livePointsPhys[i],
+                                            LhoodsFinal[i + 1], ZLiveType,
+                                            'linear')
         livePointsPhysFinal, livePointsLhoodFinal, EofXFinalArr = getFinalAverage(
             livePointsPhys, livePointsLhood, EofX, nFinal, avLhood, 'linear')
     elif ZLiveType == 'max Lhood':
         EofZLive, EofZ2Live, EofWeightLive = recurrence_calculations.updateZnXMomentsFinal(
-            nFinal, EofZ, EofZ2, EofX, LhoodStar, liveLhoodMax, trapezoidalFlag, 'recursive')
+            nFinal, EofZ, EofZ2, EofX, LhoodStar, liveLhoodMax,
+            trapezoidalFlag, 'recursive')
         EofWeights.append(EofWeightLive)
-        H = recurrence_calculations.updateH(
-            H, EofWeightLive, EofZLive, liveLhoodMax, EofZ)
+        H = recurrence_calculations.updateH(H, EofWeightLive, EofZLive,
+                                            liveLhoodMax, EofZ)
         livePointsPhysFinal, livePointsLhoodFinal, EofXFinalArr = getFinalMax(
             liveMaxIndex, livePointsPhys, liveLhoodMax, EofX)
         if verbose:
-            output.printFinalLivePoints(
-                liveMaxIndex,
-                livePointsPhysFinal,
-                livePointsLhoodFinal,
-                ZLiveType,
-                'linear')
+            output.printFinalLivePoints(liveMaxIndex, livePointsPhysFinal,
+                                        livePointsLhoodFinal, ZLiveType,
+                                        'linear')
     return EofZLive, EofZ2Live, H, livePointsPhysFinal, livePointsLhoodFinal, EofXFinalArr
 
 
@@ -112,8 +145,8 @@ def checkIfAveragedLhood(nFinal, livePointsLhood, avLhood):
         return livePointsLhood
 
 
-def getFinalAverage(livePointsPhys, livePointsLLhood,
-                    X, nFinal, avLLhood, space):
+def getFinalAverage(livePointsPhys, livePointsLLhood, X, nFinal, avLLhood,
+                    space):
     """
     gets final livepoint values and X value per remaining livepoint for average Z criteria
     NOTE Xfinal is a list not a numpy array
@@ -158,6 +191,7 @@ def getFinalMax(liveMaxIndex, livePointsPhys, liveLhoodMax, X):
     # for consistency with 'average' equivalent function, make it a list.
     Xfinal = [X]
     return livePointsPhysFinal, livePointsLhoodFinal, Xfinal
+
 
 # final datastructure / output functions
 

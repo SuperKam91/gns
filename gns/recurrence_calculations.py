@@ -8,14 +8,15 @@ from . import calculations
 # of mine, Handley and Skilling)
 
 
-def updateZnXMoments(nLive, EofZ, EofZ2, EofZX, EofX, EofX2,
-                     LhoodStarOld, LhoodStar, trapezoidalFlag):
+def updateZnXMoments(nLive, EofZ, EofZ2, EofZX, EofX, EofX2, LhoodStarOld,
+                     LhoodStar, trapezoidalFlag):
     """
     Wrapper around updateZnXM taking into account whether trapezium rule is used or not
     """
     if trapezoidalFlag:
         EofZ, EofZ2, EofZX, EofX, EofX2, EofWeight = updateZnXM(
-            nLive, EofZ, EofZ2, EofZX, EofX, EofX2, 0.5 * (LhoodStarOld + LhoodStar))
+            nLive, EofZ, EofZ2, EofZX, EofX, EofX2,
+            0.5 * (LhoodStarOld + LhoodStar))
     else:
         EofZ, EofZ2, EofZX, EofX, EofX2, EofWeight = updateZnXM(
             nLive, EofZ, EofZ2, EofZX, EofX, EofX2, LhoodStar)
@@ -77,14 +78,15 @@ def updateEofX(Eoft, EofX):
     return Eoft * EofX
 
 
-def updateLogZnXMoments(nLive, logEofZ, logEofZ2, logEofZX,
-                        logEofX, logEofX2, LLhoodStarOld, LLhoodStar, trapezoidalFlag):
+def updateLogZnXMoments(nLive, logEofZ, logEofZ2, logEofZX, logEofX, logEofX2,
+                        LLhoodStarOld, LLhoodStar, trapezoidalFlag):
     """
     as above but for log space
     """
     if trapezoidalFlag:
         logEofZ, logEofZ2, logEofZX, logEofX, logEofX2, logEofWeight = updateLogZnXM(
-            nLive, logEofZ, logEofZ2, logEofZX, logEofX, logEofX2, np.log(0.5) + np.logaddexp(LLhoodStarOld, LLhoodStar))
+            nLive, logEofZ, logEofZ2, logEofZX, logEofX, logEofX2,
+            np.log(0.5) + np.logaddexp(LLhoodStarOld, LLhoodStar))
     else:
         logEofZ, logEofZ2, logEofZX, logEofX, logEofX2, logEofWeight = updateLogZnXM(
             nLive, logEofZ, logEofZ2, logEofZX, logEofX, logEofX2, LLhoodStar)
@@ -98,13 +100,8 @@ def updateLogZnXM(nLive, logEofZ, logEofZ2, logEofZX, logEofX, logEofX2, LL):
     logEoft, logEoft2, logEof1mt, logEof1mt2, logEoftmEoft2 = calculations.calcLogEofts(
         nLive)
     logEofZ, logEofWeight = updateLogEofZ(logEofZ, logEof1mt, logEofX, LL)
-    logEofZ2 = updateLogEofZ2(
-        logEofZ2,
-        logEof1mt,
-        logEofZX,
-        logEof1mt2,
-        logEofX2,
-        LL)
+    logEofZ2 = updateLogEofZ2(logEofZ2, logEof1mt, logEofZX, logEof1mt2,
+                              logEofX2, LL)
     logEofZX = updateLogEofZX(logEoft, logEofZX, logEoftmEoft2, logEofX2, LL)
     logEofX2 = updateLogEofX2(logEoft2, logEofX2)
     logEofX = updateLogEofX(logEoft, logEofX)
@@ -152,17 +149,18 @@ def updateLogEofX(logEoft, logEofX):
     return logEoft + logEofX
 
 
-def updateZnXMomentsFinal(nFinal, EofZ, EofZ2, EofX,
-                          Lhood_im1, Lhood_i, trapezoidalFlag, errorEval):
+def updateZnXMomentsFinal(nFinal, EofZ, EofZ2, EofX, Lhood_im1, Lhood_i,
+                          trapezoidalFlag, errorEval):
     """
     Wrapper around updateZnXMomentsF taking into account whether trapezium rule is used or not
     """
     if trapezoidalFlag:
-        EofZ, EofZ2, EofWeight = updateZnXMomentsF(
-            nFinal, EofZ, EofZ2, EofX, (Lhood_im1 + Lhood_i) / 2., errorEval)
+        EofZ, EofZ2, EofWeight = updateZnXMomentsF(nFinal, EofZ, EofZ2, EofX,
+                                                   (Lhood_im1 + Lhood_i) / 2.,
+                                                   errorEval)
     else:
-        EofZ, EofZ2, EofWeight = updateZnXMomentsF(
-            nFinal, EofZ, EofZ2, EofX, Lhood_i, errorEval)
+        EofZ, EofZ2, EofWeight = updateZnXMomentsF(nFinal, EofZ, EofZ2, EofX,
+                                                   Lhood_i, errorEval)
     return EofZ, EofZ2, EofWeight
 
 
@@ -210,14 +208,15 @@ def updateEofX2Final(EofX, nFinal):
     return EofX**2. / nFinal**2.
 
 
-def updateLogZnXMomentsFinal(
-        nFinal, logEofZ, logEofZ2, logEofX, LLhood_im1, LLhood_i, trapezoidalFlag, errorEval):
+def updateLogZnXMomentsFinal(nFinal, logEofZ, logEofZ2, logEofX, LLhood_im1,
+                             LLhood_i, trapezoidalFlag, errorEval):
     """
     Wrapper around updateZnXMomentsF taking into account whether trapezium rule is used or not
     """
     if trapezoidalFlag:
         logEofZ, logEofZ2, logEofWeight = updateLogZnXMomentsF(
-            nFinal, logEofZ, logEofZ2, logEofX, np.log(0.5) + np.logaddexp(LLhood_im1, LLhood_i), errorEval)
+            nFinal, logEofZ, logEofZ2, logEofX,
+            np.log(0.5) + np.logaddexp(LLhood_im1, LLhood_i), errorEval)
     else:
         logEofZ, logEofZ2, logEofWeight = updateLogZnXMomentsF(
             nFinal, logEofZ, logEofZ2, logEofX, LLhood_i, errorEval)
@@ -231,8 +230,8 @@ def updateLogZnXMomentsF(nFinal, logEofZ, logEofZ2, logEofX, LL, errorEval):
     if errorEval == 'recursive':
         logEofX = updateLogEofXFinal(logEofX, nFinal)
         logEofX2 = updateLogEofX2Final(logEofX, nFinal)
-        logEofZ2 = updateLogEofZ2Final(
-            logEofZ2, logEofX, logEofZ, logEofX2, LL)
+        logEofZ2 = updateLogEofZ2Final(logEofZ2, logEofX, logEofZ, logEofX2,
+                                       LL)
         logEofZ, logEofWeight = updateLogEofZFinal(logEofZ, logEofX, LL)
     return logEofZ, logEofZ2, logEofWeight
 

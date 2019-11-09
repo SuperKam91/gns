@@ -149,12 +149,14 @@ def getShapeLimits(targetSupport, circleList, torusList, sphereList):
     sphereUpperLimits = targetSupport[1, sphereList]
     return circleLowerLimits, circleUpperLimits, torusLowerLimits, torusUpperLimits, sphereLowerLimits, sphereUpperLimits
 
+
 # def getCartesianCoords(params, sigma, circleList, torusList, sphereList,
 # targetSupport):
 
 
-def getCartesianCoords(circleArr, torusArr, sphereArr, circleLowerLimits, circleUpperLimits,
-                       torusLowerLimits, torusUpperLimits, sphereLowerLimits, sphereUpperLimits):
+def getCartesianCoords(circleArr, torusArr, sphereArr, circleLowerLimits,
+                       circleUpperLimits, torusLowerLimits, torusUpperLimits,
+                       sphereLowerLimits, sphereUpperLimits):
     """
     Takes in arrays of geometrically sampled parameters
     and returns corresponding points in relevant spaces
@@ -182,12 +184,12 @@ def getCartesianCoords(circleArr, torusArr, sphereArr, circleLowerLimits, circle
     # convert each pair of torus parameters to Cartesian coords (first of each
     # pair corresponds to phi, second theta)
     while j < 2 * numTorus:
-        torusCartArr[i], torusCartArr[i +
-                                      1], torusCartArr[i +
-                                                       2] = geom.point2CartTorus(torusArr[j], torusArr[j +
-                                                                                                       1], torusLowerLimits[j], torusLowerLimits[j +
-                                                                                                                                                 1], torusUpperLimits[j], torusUpperLimits[j +
-                                                                                                                                                                                           1])
+        torusCartArr[i], torusCartArr[i + 1], torusCartArr[
+            i + 2] = geom.point2CartTorus(torusArr[j], torusArr[j + 1],
+                                          torusLowerLimits[j],
+                                          torusLowerLimits[j + 1],
+                                          torusUpperLimits[j],
+                                          torusUpperLimits[j + 1])
         i += 3
         j += 2
     i = 0
@@ -195,19 +197,21 @@ def getCartesianCoords(circleArr, torusArr, sphereArr, circleLowerLimits, circle
     # convert each pair of sphere parameters to Cartesian coords (first of
     # each pair corresponds to phi, second theta)
     while j < 2 * numSphere:
-        sphereCartArr[i], sphereCartArr[i +
-                                        1], sphereCartArr[i +
-                                                          2] = geom.point2CartSphere(sphereArr[j], sphereArr[j +
-                                                                                                             1], sphereLowerLimits[j], sphereLowerLimits[j +
-                                                                                                                                                         1], sphereUpperLimits[j], sphereUpperLimits[j +
-                                                                                                                                                                                                     1])
+        sphereCartArr[i], sphereCartArr[i + 1], sphereCartArr[
+            i + 2] = geom.point2CartSphere(sphereArr[j], sphereArr[j + 1],
+                                           sphereLowerLimits[j],
+                                           sphereLowerLimits[j + 1],
+                                           sphereUpperLimits[j],
+                                           sphereUpperLimits[j + 1])
         i += 3
         j += 2
     return numCirc, numTorus, numSphere, circCartArr, torusCartArr, sphereCartArr
 
 
-def getCartesianSigma(circleArr, torusArr, sphereArr, circleSigma, torusSigma, sphereSigma, circleLowerLimits,
-                      circleUpperLimits, torusLowerLimits, torusUpperLimits, sphereLowerLimits, sphereUpperLimits):
+def getCartesianSigma(circleArr, torusArr, sphereArr, circleSigma, torusSigma,
+                      sphereSigma, circleLowerLimits, circleUpperLimits,
+                      torusLowerLimits, torusUpperLimits, sphereLowerLimits,
+                      sphereUpperLimits):
     """
     Takes in sigma arrays (1-d, not 2-d diagonal) of geometrically sampled parameters
     (assumes they're diagonal, off-diagonal elements are missed)
@@ -225,42 +229,46 @@ def getCartesianSigma(circleArr, torusArr, sphereArr, circleSigma, torusSigma, s
     j = 0
     while j < numCirc:
         circCartSigArr[i], circCartSigArr[i + 1] = getCircleSigma(
-            circleArr[j], circleSigma[j], circleLowerLimits[j], circleUpperLimits[j])
+            circleArr[j], circleSigma[j], circleLowerLimits[j],
+            circleUpperLimits[j])
         i += 2
         j += 1
     i = 0
     j = 0
     while j < 2 * numTorus:
-        torusCartSigArr[i], torusCartSigArr[i +
-                                            1], torusCartSigArr[i +
-                                                                2] = getTorusSigma(torusArr[j], torusArr[j +
-                                                                                                         1], torusSigma[j], torusSigma[j +
-                                                                                                                                       1], torusLowerLimits[j], torusLowerLimits[j +
-                                                                                                                                                                                 1], torusUpperLimits[j], torusUpperLimits[j +
-                                                                                                                                                                                                                           1])
+        torusCartSigArr[i], torusCartSigArr[i + 1], torusCartSigArr[
+            i + 2] = getTorusSigma(torusArr[j], torusArr[j + 1], torusSigma[j],
+                                   torusSigma[j + 1], torusLowerLimits[j],
+                                   torusLowerLimits[j + 1],
+                                   torusUpperLimits[j],
+                                   torusUpperLimits[j + 1])
         i += 3
         j += 2
     i = 0
     j = 0
     while j < 2 * numSphere:
-        sphereCartSigArr[i], sphereCartSigArr[i +
-                                              1], sphereCartSigArr[i +
-                                                                   2] = getSphereSigma(sphereArr[j], sphereArr[j +
-                                                                                                               1], sphereSigma[j], sphereSigma[j +
-                                                                                                                                               1], sphereLowerLimits[j], sphereLowerLimits[j +
-                                                                                                                                                                                           1], sphereUpperLimits[j], sphereUpperLimits[j +
-                                                                                                                                                                                                                                       1])
+        sphereCartSigArr[i], sphereCartSigArr[i + 1], sphereCartSigArr[
+            i + 2] = getSphereSigma(sphereArr[j], sphereArr[j + 1],
+                                    sphereSigma[j], sphereSigma[j + 1],
+                                    sphereLowerLimits[j],
+                                    sphereLowerLimits[j + 1],
+                                    sphereUpperLimits[j],
+                                    sphereUpperLimits[j + 1])
         i += 3
         j += 2
     return circCartSigArr, torusCartSigArr, sphereCartSigArr
+
 
 # def getGeomTrialPoint(targetSupport, circleList, torusList, sphereList,
 # numCirc, numTorus, numSphere, circCartArr, torusCartArr, sphereCartArr,
 # circCartSigArr, torusCartSigArr, sphereCartSigArr):
 
 
-def getGeomTrialPoint(numCirc, numTorus, numSphere, circCartArr, torusCartArr, sphereCartArr, circCartSigArr, torusCartSigArr,
-                      sphereCartSigArr, circleLowerLimits, circleUpperLimits, torusLowerLimits, torusUpperLimits, sphereLowerLimits, sphereUpperLimits):
+def getGeomTrialPoint(numCirc, numTorus, numSphere, circCartArr, torusCartArr,
+                      sphereCartArr, circCartSigArr, torusCartSigArr,
+                      sphereCartSigArr, circleLowerLimits, circleUpperLimits,
+                      torusLowerLimits, torusUpperLimits, sphereLowerLimits,
+                      sphereUpperLimits):
     """
     Takes arrays of Cartesian coords of geometrically sampled parameters
     and gets trial point for each parameter in case of circle, or for each
@@ -274,52 +282,45 @@ def getGeomTrialPoint(numCirc, numTorus, numSphere, circCartArr, torusCartArr, s
     i = 0
     j = 0
     while j < numCirc:
-        circlePrimeArr[j] = getCircleTrial(circCartArr[i:i + 2], np.diag(
-            circCartSigArr[i:i + 2]**2.), circleLowerLimits[j], circleUpperLimits[j])
+        circlePrimeArr[j] = getCircleTrial(
+            circCartArr[i:i + 2], np.diag(circCartSigArr[i:i + 2]**2.),
+            circleLowerLimits[j], circleUpperLimits[j])
         i += 2
         j += 1
     i = 0
     j = 0
     while j < 2 * numTorus:
-        torusPrimeArr[j], torusPrimeArr[j +
-                                        1] = getTorusTrial(torusCartArr[i:i +
-                                                                        3], np.diag(torusCartSigArr[i:i +
-                                                                                                    3]**2.), torusLowerLimits[j], torusLowerLimits[j +
-                                                                                                                                                   1], torusUpperLimits[j], torusUpperLimits[j +
-                                                                                                                                                                                             1])
+        torusPrimeArr[j], torusPrimeArr[j + 1] = getTorusTrial(
+            torusCartArr[i:i + 3], np.diag(torusCartSigArr[i:i + 3]**2.),
+            torusLowerLimits[j], torusLowerLimits[j + 1], torusUpperLimits[j],
+            torusUpperLimits[j + 1])
         i += 3
         j += 2
     i = 0
     j = 0
     while j < 2 * numSphere:
-        spherePrimeArr[j], spherePrimeArr[j +
-                                          1] = getSphereTrial(sphereCartArr[i:i +
-                                                                            3], np.diag(sphereCartSigArr[i:i +
-                                                                                                         3]**2.), sphereLowerLimits[j], sphereLowerLimits[j +
-                                                                                                                                                          1], sphereUpperLimits[j], sphereUpperLimits[j +
-                                                                                                                                                                                                      1])
+        spherePrimeArr[j], spherePrimeArr[j + 1] = getSphereTrial(
+            sphereCartArr[i:i + 3], np.diag(sphereCartSigArr[i:i + 3]**2.),
+            sphereLowerLimits[j], sphereLowerLimits[j + 1],
+            sphereUpperLimits[j], sphereUpperLimits[j + 1])
         i += 3
         j += 2
     return circlePrimeArr, torusPrimeArr, spherePrimeArr
 
 
 def recombineTrialPoint(nonGeomPrimeArr, circlePrimeArr, torusPrimeArr,
-                        spherePrimeArr, nonGeomList, circleList, torusList, sphereList):
+                        spherePrimeArr, nonGeomList, circleList, torusList,
+                        sphereList):
     """
     recombine non-geom and geometric dimensions of trial point
     in same order as input parameter
     """
     trialPoint = np.zeros(
-        len(nonGeomPrimeArr) +
-        len(circlePrimeArr) +
-        len(torusPrimeArr) +
+        len(nonGeomPrimeArr) + len(circlePrimeArr) + len(torusPrimeArr) +
         len(spherePrimeArr))
     trialList = nonGeomList + circleList + torusList + sphereList
     primeArr = np.concatenate(
-        (nonGeomPrimeArr,
-         circlePrimeArr,
-         torusPrimeArr,
-         spherePrimeArr))
+        (nonGeomPrimeArr, circlePrimeArr, torusPrimeArr, spherePrimeArr))
     for i, j in enumerate(trialList):
         trialPoint[j] = primeArr[i]
     return trialPoint
@@ -376,8 +377,15 @@ def getCircleCartSigma(phi, sigmaPhi, r):
     return sigmaX, sigmaY
 
 
-def getTorusSigma(p1, p2, sigmaP1, sigmaP2, l1, l2,
-                  u1, u2, method='propagation'):
+def getTorusSigma(p1,
+                  p2,
+                  sigmaP1,
+                  sigmaP2,
+                  l1,
+                  l2,
+                  u1,
+                  u2,
+                  method='propagation'):
     """
     If method == 'constant' sets sigmaX = sigmaY = sigmaZ = 0.5
     (n.b. proposal space is solid torus greater radius = lesser radius 2,
@@ -399,64 +407,34 @@ def getTorusSigma(p1, p2, sigmaP1, sigmaP2, l1, l2,
         sigmaTheta = getTwoPiSigma(sigmaP2, l2, u2)
         phi = geom.physPeriod2TwoPi(p1, l1, u1)
         theta = geom.physPeriod2TwoPi(p2, l2, u2)
-        sigmaX, sigmaY, sigmaZ = getTorusCartSigma(
-            phi, theta, sigmaPhi, sigmaTheta, r, R)
+        sigmaX, sigmaY, sigmaZ = getTorusCartSigma(phi, theta, sigmaPhi,
+                                                   sigmaTheta, r, R)
     return sigmaX, sigmaY, sigmaZ
 
 
-def getTorusCartSigma(phi, theta, sigmaPhi, sigmaTheta,
-                      r, R, sigmaPhiTheta=0.):
+def getTorusCartSigma(phi, theta, sigmaPhi, sigmaTheta, r, R,
+                      sigmaPhiTheta=0.):
     """
     Calculate error on x and y based on
     error propagation formulae coupled with
     coordinate transformation equations
     """
-    sigmaX = np.sqrt((r *
-                      np.sin(theta) *
-                      np.cos(phi) *
-                      sigmaTheta)**2. +
-                     ((r *
-                       np.cos(theta) *
-                         np.sin(phi) +
-                         R *
-                         np.sin(phi)) *
-                      sigmaPhi)**2. +
-                     2. *
-                     r *
-                     np.sin(theta) *
-                     np.cos(phi) *
-                     (R *
-                      np.sin(phi) +
-                      r *
-                      np.cos(theta) *
-                      np.sin(phi)) *
-                     sigmaPhiTheta)
-    sigmaY = np.sqrt((r *
-                      np.sin(theta) *
-                      np.sin(phi) *
-                      sigmaTheta)**2. +
-                     ((r *
-                       np.cos(theta) *
-                         np.cos(phi) +
-                         R *
-                         np.cos(phi)) *
-                      sigmaPhi)**2. +
-                     2. *
-                     r *
-                     np.sin(theta) *
-                     np.sin(phi) *
-                     (R *
-                      np.cos(phi) +
-                      r *
-                      np.cos(theta) *
-                      np.cos(phi)) *
-                     sigmaPhiTheta)
+    sigmaX = np.sqrt(
+        (r * np.sin(theta) * np.cos(phi) * sigmaTheta)**2. +
+        ((r * np.cos(theta) * np.sin(phi) + R * np.sin(phi)) * sigmaPhi)**2. +
+        2. * r * np.sin(theta) * np.cos(phi) *
+        (R * np.sin(phi) + r * np.cos(theta) * np.sin(phi)) * sigmaPhiTheta)
+    sigmaY = np.sqrt(
+        (r * np.sin(theta) * np.sin(phi) * sigmaTheta)**2. +
+        ((r * np.cos(theta) * np.cos(phi) + R * np.cos(phi)) * sigmaPhi)**2. +
+        2. * r * np.sin(theta) * np.sin(phi) *
+        (R * np.cos(phi) + r * np.cos(theta) * np.cos(phi)) * sigmaPhiTheta)
     sigmaZ = r * np.abs(np.cos(theta)) * sigmaTheta
     return sigmaX, sigmaY, sigmaZ
 
 
-def getSphereSigma(p1, p2, sigmaP1, sigmaP2, l1,
-                   l2, u1, u2, method='constant'):
+def getSphereSigma(p1, p2, sigmaP1, sigmaP2, l1, l2, u1, u2,
+                   method='constant'):
     """
     If method == 'constant' sets sigmaX = sigmaY = sigmaZ = 0.01
     (n.b. proposal space is sphere radius = 2, sampling space is surface of sphere radius 1)
@@ -476,8 +454,8 @@ def getSphereSigma(p1, p2, sigmaP1, sigmaP2, l1,
         sigmaTheta = getPiSigma(sigmaP2, l2, u2)
         phi = geom.physPeriod2TwoPi(p1, l1, u1)
         theta = geom.physPeriod2Pi(p2, l2, u2)
-        sigmaX, sigmaY, sigmaZ = getSphereCartSigma(
-            phi, theta, sigmaPhi, sigmaTheta, r)
+        sigmaX, sigmaY, sigmaZ = getSphereCartSigma(phi, theta, sigmaPhi,
+                                                    sigmaTheta, r)
     return sigmaX, sigmaY, sigmaZ
 
 
@@ -487,10 +465,14 @@ def getSphereCartSigma(phi, theta, sigmaPhi, sigmaTheta, r, sigmaPhiTheta=0.):
     error propagation formulae coupled with
     coordinate transformation equations
     """
-    sigmaX = r * np.sqrt((np.sin(phi) * np.sin(theta) * sigmaPhi)**2. + (np.cos(phi) * np.cos(theta) * sigmaTheta) **
-                         2. + 2. * r * np.sin(phi) * np.sin(theta) * r * np.cos(phi) * np.cos(theta) * sigmaPhiTheta)
-    sigmaY = r * np.sqrt((np.cos(phi) * np.sin(theta) * sigmaPhi)**2. + (np.sin(phi) * np.cos(theta) * sigmaTheta) **
-                         2. + 2. * r * np.cos(phi) * np.sin(theta) * r * np.sin(phi) * np.cos(theta) * sigmaPhiTheta)
+    sigmaX = r * np.sqrt((np.sin(phi) * np.sin(theta) * sigmaPhi)**2. +
+                         (np.cos(phi) * np.cos(theta) * sigmaTheta)**2. +
+                         2. * r * np.sin(phi) * np.sin(theta) * r *
+                         np.cos(phi) * np.cos(theta) * sigmaPhiTheta)
+    sigmaY = r * np.sqrt((np.cos(phi) * np.sin(theta) * sigmaPhi)**2. +
+                         (np.sin(phi) * np.cos(theta) * sigmaTheta)**2. +
+                         2. * r * np.cos(phi) * np.sin(theta) * r *
+                         np.sin(phi) * np.cos(theta) * sigmaPhiTheta)
     sigmaZ = r * np.abs(np.sin(theta)) * sigmaTheta
     return sigmaX, sigmaY, sigmaZ
 

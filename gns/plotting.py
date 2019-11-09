@@ -123,8 +123,7 @@ def callGetDist(chainsFilePrefix, plotName, nParams, plotLegend):
     paramList = ['p' + str(i + 1) for i in range(nParams)]
     chains = [getdist.loadMCSamples(chain) for chain in chainsFilePrefix]
     g = getdist.plots.getSubplotPlotter(width_inch=6)
-    g.triangle_plot(chains, paramList,
-                    filled=False, legend_labels=plotLegend)
+    g.triangle_plot(chains, paramList, filled=False, legend_labels=plotLegend)
     if save:
         g.export(plotName)
     else:
@@ -167,7 +166,7 @@ def get2DMarg(params, Lhood, n):
     L2 = np.zeros(n)
     for j in range(n):
         L1[j] = Lhood[j::n].sum()
-        L2[j] = Lhood[j * n: (j + 1) * n].sum()
+        L2[j] = Lhood[j * n:(j + 1) * n].sum()
     return p1, L1, p2, L2
 
 
@@ -188,8 +187,8 @@ def get3DMarg(params, Lhood, n):
         L3[j] = Lhood[j::n].sum()
         L2[j] = Lhood[j * n * n:(j + 1) * n * n].sum()
         # for each j, gives a n x n shaped array
-        L1Indices = np.array([list(range(i, i + n))
-                              for i in range(j * n, n * n * n, n * n)])
+        L1Indices = np.array(
+            [list(range(i, i + n)) for i in range(j * n, n * n * n, n * n)])
         L1[j] = Lhood[L1Indices].sum()
     return p1, L1, p2, L2, p3, L3
 
@@ -212,28 +211,15 @@ def get4DMarg(params, Lhood, n):
     for j in range(n):
         L4[j] = Lhood[j::n].sum()
         # for each j, gives a n^2 x n shaped array
-        L3Indices = np.array([list(range(i, i + n))
-                              for i in range(j * n, n * n * n * n, n * n)])
+        L3Indices = np.array([
+            list(range(i, i + n)) for i in range(j * n, n * n * n * n, n * n)
+        ])
         L3[j] = Lhood[L3Indices].sum()
         L2[j] = Lhood[j * n * n * n:(j + 1) * n * n * n].sum()
-        L1Indices = np.array(
-            [
-                list(
-                    range(
-                        i,
-                        i +
-                        n *
-                        n)) for i in range(
-                    j *
-                    n *
-                    n,
-                    n *
-                    n *
-                    n *
-                    n,
-                    n *
-                    n *
-                    n)])  # for each j, gives a n x n^2 shaped array
+        L1Indices = np.array([
+            list(range(i, i + n * n))
+            for i in range(j * n * n, n * n * n * n, n * n * n)
+        ])  # for each j, gives a n x n^2 shaped array
         L1[j] = Lhood[L1Indices].sum()
     return p1, L1, p2, L2, p3, L3, p4, L4
 
@@ -258,44 +244,21 @@ def get5DMarg(params, Lhood, n):
     for j in range(n):
         L5[j] = Lhood[j::n].sum()
         # for each j, gives a n^3 x n shaped array
-        L4Indices = np.array([list(range(i, i + n))
-                              for i in range(j * n, n * n * n * n * n, n * n)])
+        L4Indices = np.array([
+            list(range(i, i + n))
+            for i in range(j * n, n * n * n * n * n, n * n)
+        ])
         L4[j] = Lhood[L4Indices].sum()
-        L3Indices = np.array(
-            [
-                list(
-                    range(
-                        i,
-                        i +
-                        n *
-                        n)) for i in range(
-                    j *
-                    n *
-                    n,
-                    n *
-                    n *
-                    n *
-                    n *
-                    n,
-                    n *
-                    n *
-                    n)])  # for each j, gives a n^2 x n^2 shaped array
+        L3Indices = np.array([
+            list(range(i, i + n * n))
+            for i in range(j * n * n, n * n * n * n * n, n * n * n)
+        ])  # for each j, gives a n^2 x n^2 shaped array
         L3[j] = Lhood[L3Indices].sum()
         L2[j] = Lhood[j * n * n * n * n:(j + 1) * n * n * n * n].sum()
-        L1Indices = np.array([list(range(i, i +
-                                         n *
-                                         n *
-                                         n)) for i in range(j *
-                                                            n *
-                                                            n *
-                                                            n, n *
-                                                            n *
-                                                            n *
-                                                            n *
-                                                            n, n *
-                                                            n *
-                                                            n *
-                                                            n)])  # for each j, gives a n x n^3 shaped array
+        L1Indices = np.array([
+            list(range(i, i + n * n * n))
+            for i in range(j * n * n * n, n * n * n * n * n, n * n * n * n)
+        ])  # for each j, gives a n x n^3 shaped array
         L1[j] = Lhood[L1Indices].sum()
     return p1, L1, p2, L2, p3, L3, p4, L4, p5, L5
 
@@ -316,30 +279,29 @@ def cornerPlots(chainsFilePrefix, plotName, plotLegend, labels):
         patchesList.append(matplotlib.patches.Patch(color=colours[i]))
         weights, _, params = input.getFromTxt(f + '.txt')
         try:
-            figure = corner.corner(
-                xs=params,
-                weights=weights,
-                labels=labels,
-                color=colours[i],
-                plot_density=False,
-                plot_datapoints=False,
-                levels=levels,
-                fig=figure)
+            figure = corner.corner(xs=params,
+                                   weights=weights,
+                                   labels=labels,
+                                   color=colours[i],
+                                   plot_density=False,
+                                   plot_datapoints=False,
+                                   levels=levels,
+                                   fig=figure)
         except NameError:
-            figure = corner.corner(
-                xs=params,
-                weights=weights,
-                labels=labels,
-                color=colours[i],
-                plot_density=False,
-                plot_datapoints=False,
-                levels=levels)
+            figure = corner.corner(xs=params,
+                                   weights=weights,
+                                   labels=labels,
+                                   color=colours[i],
+                                   plot_density=False,
+                                   plot_datapoints=False,
+                                   levels=levels)
     # figure.legend(patchesList, plotLegend)
     if save:
         plt.savefig(plotName)
     else:
         plt.show()
     plt.close()
+
 
 # spherical KDE plotting
 
@@ -369,15 +331,18 @@ def plotSphericalKDE(chains1, chains2=None):
     fig.add_subplot(gs_down[0], projection=cartopy.crs.PlateCarree())
     fig.add_subplot(gs_down[1], projection=cartopy.crs.PlateCarree())
     weights1, _, params1 = input.getFromTxt(chains1)
-    KDE1 = spherical_kde.SphericalKDE(
-        params1[:, 0], params1[:, 1], weights=weights1)
+    KDE1 = spherical_kde.SphericalKDE(params1[:, 0],
+                                      params1[:, 1],
+                                      weights=weights1)
     try:
         weights2, _, params2 = input.getFromTxt(chains2)
-        KDE2 = spherical_kde.SphericalKDE(
-            params2[:, 0], params2[:, 1], weights=weights2)
+        KDE2 = spherical_kde.SphericalKDE(params2[:, 0],
+                                          params2[:, 1],
+                                          weights=weights2)
     except TypeError:
-        KDE2 = spherical_kde.SphericalKDE(
-            params1[:, 2], params1[:, 3], weights=weights1)
+        KDE2 = spherical_kde.SphericalKDE(params1[:, 2],
+                                          params1[:, 3],
+                                          weights=weights1)
     # chains1 plots
     fig.axes[0].gridlines()
     KDE1.plot(fig.axes[0], 'g')

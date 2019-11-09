@@ -16,33 +16,24 @@ from . import tools
 # summary file containing most information of sampled points
 
 
-def writeSummary(
-    outputFile,
-    params,
-    Lhood,
-    weights,
-    XArr,
-    header): return np.savetxt(
-        outputFile +
-        '_summary.txt',
-        np.column_stack(
-            (params,
-             Lhood,
-             weights,
-             XArr)),
-    delimiter=',',
-    header=header)
+def writeSummary(outputFile, params, Lhood, weights, XArr, header):
+    return np.savetxt(outputFile + '_summary.txt',
+                      np.column_stack((params, Lhood, weights, XArr)),
+                      delimiter=',',
+                      header=header)
+
 
 # chains file in format needed for getDist: importance weight (weights or
 # logWeights), LHood (Lhood or LLhood), phys param values
 
 
-def writeTxt(outputFile, weights, LLhood, params): return np.savetxt(
-    outputFile + '.txt', np.column_stack((weights, LLhood, params)))
+def writeTxt(outputFile, weights, LLhood, params):
+    return np.savetxt(outputFile + '.txt',
+                      np.column_stack((weights, LLhood, params)))
 
 
-def writeTheorZ(Z, ZErr, outputFile): return np.savetxt(
-    outputFile + '_tz.txt', np.array([Z, ZErr]))
+def writeTheorZ(Z, ZErr, outputFile):
+    return np.savetxt(outputFile + '_tz.txt', np.array([Z, ZErr]))
 
 
 def writeParamNames(outputFile, paramNames):
@@ -129,8 +120,8 @@ def writeRanges(outputFile, paramNames, targetSupport):
     rangeFile.close()
 
 
-def writeOutput(outputFile, totalPointsPhys, totalPointsLhood, weights,
-                XArr, paramNames, space, targetSupport, Z, varZ, lnZ, lnVarZ):
+def writeOutput(outputFile, totalPointsPhys, totalPointsLhood, weights, XArr,
+                paramNames, space, targetSupport, Z, varZ, lnZ, lnVarZ):
     """
     writes a summary file which contains values for all sampled points.
     Also writes files needed for getDist.
@@ -175,20 +166,21 @@ def writeOutput(outputFile, totalPointsPhys, totalPointsLhood, weights,
         LLhood = totalPointsLhood
         normWeights = np.exp(weights - Z)
     header = paramNamesStr + summaryStr
-    writeSummary(
-        outputFile,
-        totalPointsPhys,
-        totalPointsLhood,
-        normWeights,
-        XArr,
-        header)
+    writeSummary(outputFile, totalPointsPhys, totalPointsLhood, normWeights,
+                 XArr, header)
     writeTxt(outputFile, normWeights, LLhood, totalPointsPhys)
     writeParamNames(outputFile, paramNames)
     writeRanges(outputFile, paramNames, targetSupport)
 
 
-def writeTheoreticalSamples(outputFile, logPriorFunc, invPriorFunc,
-                            LLhoodFunc, targetSupport, paramNames, method, priorHyperParams=None):
+def writeTheoreticalSamples(outputFile,
+                            logPriorFunc,
+                            invPriorFunc,
+                            LLhoodFunc,
+                            targetSupport,
+                            paramNames,
+                            method,
+                            priorHyperParams=None):
     """
     Write file of theoretical values of posterior in format of getdist .txt file to be used in getdist
     method == 'sampling' samples parameter space according to prior, then evaluates LLhood at these points.
@@ -229,7 +221,7 @@ def writeTheoreticalSamples(outputFile, logPriorFunc, invPriorFunc,
     if method == 'grid':
         outputFile = outputFile + '_tg'
         oneDn = 1000  # number of points per dimension
-        n = oneDn ** nDims
+        n = oneDn**nDims
         oneDGrids = []
         for i in range(len(targetSupport[0, :])):
             if np.isfinite(targetSupport[2, i]):
@@ -245,9 +237,10 @@ def writeTheoreticalSamples(outputFile, logPriorFunc, invPriorFunc,
         params = np.hstack((meshGrid.reshape(-1, 1) for meshGrid in meshGrids))
         logPrior = np.zeros(n)
         for i in range(
-                n):  # there should be a better way of doing this. But as it stands, logPriorFunc only works on (nDim,) or (1, nDim) arrays
+                n
+        ):  # there should be a better way of doing this. But as it stands, logPriorFunc only works on (nDim,) or (1, nDim) arrays
             logPrior[i] = logPriorFunc(params[i, :])
-        LLhood = LLhoodFunc(params).reshape(-1,)
+        LLhood = LLhoodFunc(params).reshape(-1, )
         logLPrior = logPrior + LLhood
         LLhood = logLPrior  # THIS ISN'T JUST LLHOOD, JUST SET TO THIS NAME SO SAME writeTxt() function call can be made for both cases
     ###################################
@@ -265,11 +258,12 @@ def writeTheoreticalSamples(outputFile, logPriorFunc, invPriorFunc,
     writeParamNames(outputFile, paramNames)
     writeRanges(outputFile, paramNames, targetSupport)
 
+
 # print output functions
 
 
-def printUpdate(nest, deadPointPhys, deadPointLhood, EofZ,
-                livePointPhys, livePointLhood, space):
+def printUpdate(nest, deadPointPhys, deadPointLhood, EofZ, livePointPhys,
+                livePointLhood, space):
     """
     gives update on latest deadpoint and newpoint found to replace it
     """
@@ -285,9 +279,8 @@ def printUpdate(nest, deadPointPhys, deadPointLhood, EofZ,
     print("for deadpoint %i: physical value = %s %s value = %s" %
           (nest, deadPointPhys, L, deadPointLhood))
     print("%s = %s" % (Z, EofZ))
-    print(
-        "new live point obtained: physical value = %s %s has value = %s" %
-        (livePointPhys, L, livePointLhood))
+    print("new live point obtained: physical value = %s %s has value = %s" %
+          (livePointPhys, L, livePointLhood))
 
 
 def printBreak():
@@ -345,9 +338,8 @@ def printTerminationUpdateInfo(nest, terminator):
     """
     Print update on termination status when evaluating by H value
     """
-    print(
-        "current end value is %i. Termination value is %f" %
-        (nest, terminator))
+    print("current end value is %i. Termination value is %f" %
+          (nest, terminator))
 
 
 def printTerminationUpdateZ(EofZLive, endValue, terminationFactor, space):
@@ -362,9 +354,8 @@ def printTerminationUpdateZ(EofZLive, endValue, terminationFactor, space):
         print("invalid space")
         sys.exit(1)
     print("%s = %s" % (Z, EofZLive))
-    print(
-        "current end value is %s. Termination value is %s" %
-        (endValue, terminationFactor))
+    print("current end value is %s. Termination value is %s" %
+          (endValue, terminationFactor))
 
 
 def printFinalLivePoints(i, physValue, Lhood, ZLiveType, space):
@@ -384,13 +375,13 @@ def printFinalLivePoints(i, physValue, Lhood, ZLiveType, space):
         sys.exit(1)
     if ZLiveType == 'average Lhood':
         print(
-            "'average' physical value = %s (n.b. this has no useful meaning), %s = %s" %
-            (physValue, L, Lhood))
+            "'average' physical value = %s (n.b. this has no useful meaning), %s = %s"
+            % (physValue, L, Lhood))
     elif ZLiveType == 'average X':
         print(
-            "remaining livepoint number %i: physical value = %s %s value = %s" %
-            (i, physValue, L, Lhood))
+            "remaining livepoint number %i: physical value = %s %s value = %s"
+            % (i, physValue, L, Lhood))
     elif ZLiveType == 'max Lhood':
         print(
-            "maximum %s remaining livepoint number %i: physical value = %s %s value = %s" %
-            (L, i, physValue, L, Lhood))
+            "maximum %s remaining livepoint number %i: physical value = %s %s value = %s"
+            % (L, i, physValue, L, Lhood))

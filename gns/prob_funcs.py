@@ -10,7 +10,6 @@ except ImportError:  # older scipy versions
 import inspect
 
 # import custom modules
-
 """
 NB scipy.stats.norm uses standard deviation, scipy.stats.multivariate_normal uses covariance!!
 NB if x.shape = (m,1), then scipy.stats.rv_continuous.pdf(x) returns array shape (m, 1)
@@ -43,14 +42,16 @@ def fitPriors(priorParams):
     param2Vec = priorParams[2, :]
     for i in range(len(priorType)):
         if priorType[i] == 1:
-            priorFunc = scipy.stats.uniform(
-                param1Vec[i], param2Vec[i] - param1Vec[i])
+            priorFunc = scipy.stats.uniform(param1Vec[i],
+                                            param2Vec[i] - param1Vec[i])
         elif priorType[i] == 2:
             priorFunc = scipy.stats.norm(param1Vec[i], param2Vec[i])
         elif priorType[i] == 3:
             priorFunc = scipy.stats.sine()
         else:
-            print("priors other than uniform, Gaussian and sin not currently supported")
+            print(
+                "priors other than uniform, Gaussian and sin not currently supported"
+            )
             sys.exit(1)
         priorFuncs.append(priorFunc)
     return priorFuncs
@@ -129,7 +130,6 @@ class priorObjs:
     This is essentially a work around for the toys models so the prior and inverse prior functions can be called
     with just livepoints as an argument, to fit to the way a user specified prior would be best called
     """
-
     def __init__(self, priorFuncsPdf, priorFuncsLogPdf, priorFuncsPpf):
         """
         get pdf and ppf methods of scipy.stats.* objects
@@ -196,7 +196,6 @@ class LhoodObjs:
     Note the outputted Lhood has shape (len(x[:]),), NOT AS IN CASE OF instances of single continuous_rv instances.
     This is because the variable Lhoods is declared to have this shape.
     """
-
     def __init__(self, mu, sigma, LhoodTypes, bounds=np.array([])):
         """
         set values of attributes and call method which fits
@@ -217,23 +216,26 @@ class LhoodObjs:
         """
         for i, LhoodType in enumerate(self.LhoodTypes):
             if LhoodType == 'normal':
-                LhoodObj = scipy.stats.norm(
-                    loc=self.mu[i], scale=self.sigma[i, i])
+                LhoodObj = scipy.stats.norm(loc=self.mu[i],
+                                            scale=self.sigma[i, i])
             elif LhoodType == 'von mises':
                 # got rid of sigma^2 on 21/01/18. n.b. this is variance not
                 # sigma for this case
-                LhoodObj = scipy.stats.vonmises(
-                    loc=self.mu[i], kappa=1. / self.sigma[i, i])
+                LhoodObj = scipy.stats.vonmises(loc=self.mu[i],
+                                                kappa=1. / self.sigma[i, i])
             elif LhoodType == 'truncated normal':
                 # scale of truncated normal affects bounds of truncation such
                 # that you must set bounds = bounds_true * 1 / scale
                 a = self.bounds[i, 0] * 1. / self.sigma[i, i]
                 b = self.bounds[i, 1] * 1. / self.sigma[i, i]
-                LhoodObj = scipy.stats.truncnorm(
-                    a=a, b=b, loc=self.mu[i], scale=self.sigma[i, i])
+                LhoodObj = scipy.stats.truncnorm(a=a,
+                                                 b=b,
+                                                 loc=self.mu[i],
+                                                 scale=self.sigma[i, i])
             elif LhoodType == 'uniform':
-                LhoodObj = scipy.stats.uniform(
-                    loc=self.mu[i], scale=self.sigma[i, i] - self.mu[i])
+                LhoodObj = scipy.stats.uniform(loc=self.mu[i],
+                                               scale=self.sigma[i, i] -
+                                               self.mu[i])
             elif LhoodType == 'kent':
                 # reshape gamma matrix to 3x3 here
                 self.mu = self.mu.reshape(3, 3)
@@ -262,8 +264,8 @@ class LhoodObjs:
                 g3s = self.mu[3]
                 kappas = self.sigma[1]
                 betas = self.sigma[2]
-                kentLhoodObj = KentDistributionSum(
-                    kappas, betas, g1s, g2s, g3s)
+                kentLhoodObj = KentDistributionSum(kappas, betas, g1s, g2s,
+                                                   g3s)
                 LhoodObjsList2.append(kentLhoodObj)
                 LhoodObj = LhoodObjsList2  # so line outside for loop doesn't need to be changed
             self.LhoodObjsList.append(LhoodObj)
@@ -282,8 +284,9 @@ class LhoodObjs:
         except IndexError:
             Lhoods = np.array([1.])
         for i, LhoodObj in enumerate(self.LhoodObjsList):
-            if 'angles' in inspect.getargspec(LhoodObj.logpdf)[
-                    0]:  # kent distribution requires two-dim array as argument
+            if 'angles' in inspect.getargspec(
+                    LhoodObj.logpdf
+            )[0]:  # kent distribution requires two-dim array as argument
                 try:
                     # assumes each pair (in 2nd dimension) corresponds to two
                     # arguments required for kent
@@ -316,8 +319,9 @@ class LhoodObjs:
             LLhoods = np.array([0.])
         for i, LhoodObj in enumerate(self.LhoodObjsList):
             try:
-                if 'angles' in inspect.getargspec(LhoodObj.logpdf)[
-                        0]:  # kent distribution requires two-dim array as argument
+                if 'angles' in inspect.getargspec(
+                        LhoodObj.logpdf
+                )[0]:  # kent distribution requires two-dim array as argument
                     try:
                         # assumes each pair (in 2nd dimension) corresponds to
                         # two arguments required for kent
@@ -387,7 +391,8 @@ def fitLhood(LhoodParams):
     17: von Mises on [-pi, pi]^10
     """
     LhoodType = LhoodParams[0]
-    if LhoodParams[0] < 11 or LhoodParams[0] == 16 or LhoodParams[0] == 17:  # hack
+    if LhoodParams[0] < 11 or LhoodParams[0] == 16 or LhoodParams[
+            0] == 17:  # hack
         mu = LhoodParams[1].reshape(-1)
     else:
         mu = LhoodParams[1]
@@ -416,12 +421,9 @@ def fitLhood(LhoodParams):
         LhoodObj = LhoodObjs(mu, sigma, LhoodTypes)
     elif LhoodType == 9:  # six-torus
         LhoodTypes = [
-            'von mises',
-            'von mises',
-            'von mises',
-            'von mises',
-            'von mises',
-            'von mises']
+            'von mises', 'von mises', 'von mises', 'von mises', 'von mises',
+            'von mises'
+        ]
         LhoodObj = LhoodObjs(mu, sigma, LhoodTypes)
     elif LhoodType == 10:  # Kent distribution
         LhoodTypes = ['kent']
@@ -437,34 +439,23 @@ def fitLhood(LhoodParams):
         LhoodObj = LhoodObjs(mu, sigma, LhoodTypes)
     elif LhoodType == 13:
         LhoodTypes = [
-            'kent sum',
-            'kent sum',
-            'kent sum',
-            'kent sum',
-            'kent sum']
+            'kent sum', 'kent sum', 'kent sum', 'kent sum', 'kent sum'
+        ]
         LhoodObj = LhoodObjs(mu, sigma, LhoodTypes)
     elif LhoodType == 14:
         LhoodTypes = [
-            'kent sum',
-            'kent sum',
-            'kent sum',
-            'kent sum',
-            'kent sum',
-            'kent sum']
+            'kent sum', 'kent sum', 'kent sum', 'kent sum', 'kent sum',
+            'kent sum'
+        ]
         LhoodObj = LhoodObjs(mu, sigma, LhoodTypes)
     elif LhoodType == 15:
         LhoodTypes = ['gauss kent sum']
         LhoodObj = LhoodObjs(mu, sigma, LhoodTypes)
     elif LhoodType == 16:  # eight-torus
         LhoodTypes = [
-            'von mises',
-            'von mises',
-            'von mises',
-            'von mises',
-            'von mises',
-            'von mises',
-            'von mises',
-            'von mises']
+            'von mises', 'von mises', 'von mises', 'von mises', 'von mises',
+            'von mises', 'von mises', 'von mises'
+        ]
         LhoodObj = LhoodObjs(mu, sigma, LhoodTypes)
     elif LhoodType == 17:  # eight-torus
         LhoodTypes = ['von mises'] * 10
@@ -510,7 +501,6 @@ class KentDistribution():
     Attempts to roughly follow style of scipy.stats functions
     in terms of how the pdf is fitted and evaluated
     """
-
     def __init__(self, kappa, beta, g1, g2, g3):
         self.kappa = kappa
         self.beta = beta
@@ -523,8 +513,10 @@ class KentDistribution():
         """
         Calculate normalisation coefficient c
         """
-        c = infinite_sum(lambda j: Gamma(j + 1. / 2.) / Gamma(j + 1) * self.beta**(2. * j) * (
-            self.kappa / 2.)**(-2. * j - 1. / 2.) * ModifiedBessel(2. * j + 1. / 2., self.kappa))
+        c = infinite_sum(
+            lambda j: Gamma(j + 1. / 2.) / Gamma(j + 1) * self.beta**(2. * j) *
+            (self.kappa / 2.) **
+            (-2. * j - 1. / 2.) * ModifiedBessel(2. * j + 1. / 2., self.kappa))
         return c
 
     def logpdf(self, angles):
@@ -541,8 +533,8 @@ class KentDistribution():
                     self.beta))
         elif 2 * self.beta > self.kappa:
             raise ValueError(
-                "KentDistribution: Parameter beta ({}) must be <= kappa / 2 ({})".format(
-                    self.beta, self.kappa / 2.))
+                "KentDistribution: Parameter beta ({}) must be <= kappa / 2 ({})"
+                .format(self.beta, self.kappa / 2.))
         try:
             x = cartesian_from_spherical(angles[:, 0], angles[:, 1])
         except IndexError:
@@ -561,24 +553,18 @@ class KentDistributionSum():
     """
     Sum of Kent distribution pdfs.
     """
-
     def __init__(self, kappas, betas, g1s, g2s, g3s):
         self.kentList = []
         for i in range(len(kappas)):
             self.kentList.append(
-                KentDistribution(
-                    kappas[i],
-                    betas[i],
-                    g1s[i],
-                    g2s[i],
-                    g3s[i]))
+                KentDistribution(kappas[i], betas[i], g1s[i], g2s[i], g3s[i]))
 
     def logpdf(self, angles):
         Lpdfs = np.array([kentObj.logpdf(angles) for kentObj in self.kentList])
         LpdfSums = []
         try:
-            LpdfSums = np.array([logsumexp(Lpdfs[:, i])
-                                 for i in range(len(Lpdfs[0, :]))])
+            LpdfSums = np.array(
+                [logsumexp(Lpdfs[:, i]) for i in range(len(Lpdfs[0, :]))])
         except IndexError:
             LpdfSums = logsumexp(Lpdfs)
         return LpdfSums

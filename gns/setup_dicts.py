@@ -17,7 +17,8 @@ def getSetupDicts(n):
         'terminationFactor': 0.2,
         'sampler': 'MH',
         'outputFile': '../text_output/test',
-        'space': 'linear'}
+        'space': 'linear'
+    }
     n2 = {
         'verbose': True,
         'trapezoidalFlag': False,
@@ -26,7 +27,8 @@ def getSetupDicts(n):
         'terminationFactor': 0.1,
         'sampler': 'MH',
         'outputFile': '../text_output/test',
-        'space': 'log'}
+        'space': 'log'
+    }
     n3 = {
         'verbose': True,
         'trapezoidalFlag': False,
@@ -35,7 +37,8 @@ def getSetupDicts(n):
         'terminationFactor': 0.01,
         'sampler': 'blind',
         'outputFile': '../text_output/test',
-        'space': 'linear'}
+        'space': 'linear'
+    }
     n4 = {
         'verbose': True,
         'trapezoidalFlag': True,
@@ -44,7 +47,8 @@ def getSetupDicts(n):
         'terminationFactor': 0.2,
         'sampler': 'MH',
         'outputFile': '../text_output/test',
-        'space': 'linear'}
+        'space': 'linear'
+    }
     n5 = {
         'verbose': True,
         'trapezoidalFlag': False,
@@ -53,7 +57,8 @@ def getSetupDicts(n):
         'terminationFactor': 0.2,
         'sampler': 'MH',
         'outputFile': '../text_output/test',
-        'space': 'linear'}
+        'space': 'linear'
+    }
     n6 = {
         'verbose': True,
         'trapezoidalFlag': False,
@@ -62,7 +67,8 @@ def getSetupDicts(n):
         'terminationFactor': 2.,
         'sampler': 'MH',
         'outputFile': '../text_output/test',
-        'space': 'linear'}
+        'space': 'linear'
+    }
     SDDict = {'n1': n1, 'n2': n2, 'n3': n3, 'n4': n4, 'n5': n5, 'n6': n6}
     setupDict = SDDict[n]
     return setupDict

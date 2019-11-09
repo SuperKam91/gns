@@ -33,7 +33,7 @@ def logAddArr(x, y):
     return np.logaddexp(x, logyExpSum)
 
 
-def logAddArr2(x, y, indexes=(None,)):
+def logAddArr2(x, y, indexes=(None, )):
     """
     Alternative version of logAddArr that avoids over/ underflow errors of exponentiating the array y, to the same extent that np.logaddexp() does
     Note however that it is slower than logAddArr, so in cases where over/ underflow isn't an issue, use that
@@ -49,7 +49,7 @@ def logAddArr2(x, y, indexes=(None,)):
     return result
 
 
-def logAddArr3(x, y, indexes=(None,)):
+def logAddArr3(x, y, indexes=(None, )):
     """
     as above but subtracts max(x, y) when doing logAddExp
     """
@@ -71,14 +71,14 @@ def logSubExp(a, b, fact):
     """
     if b > a:
         raise FloatingPointError(
-            'encountered log of a negative number in logSubExp(a,b); a = %s; b = %s' %
-            (a, b))
+            'encountered log of a negative number in logSubExp(a,b); a = %s; b = %s'
+            % (a, b))
     expa = np.exp(a - fact)
     expb = np.exp(b - fact)
     return fact + np.log(expa - expb)
 
 
-def logSubArr2(x, y, indexes=(None,)):
+def logSubArr2(x, y, indexes=(None, )):
     """
     Same as logAddArr2 but with logSubExp
     calculates log(exp(x) - exp(sum(y))).
@@ -90,7 +90,7 @@ def logSubArr2(x, y, indexes=(None,)):
     return result
 
 
-def logSubArr3(x, y, indexes=(None,)):
+def logSubArr3(x, y, indexes=(None, )):
     """
     Same as logAddArr3 but with logSubExp
     calculates log(exp(x) - exp(sum(y))).

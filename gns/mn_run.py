@@ -31,6 +31,7 @@ def MNRun(priorParams, LLhoodParams, paramNames):
         cubeArr = cube2numpyArr(cube, nDims)
         physArr = prob_funcs.invPrior(cubeArr, priorFuncsPpf)
         numpyArr2Cube(physArr, cube, nDims)
+
     LhoodObj = prob_funcs.fitLhood(LLhoodParams)
     LLhoodFunc = prob_funcs.LLhood(LhoodObj)
 
@@ -43,15 +44,14 @@ def MNRun(priorParams, LLhoodParams, paramNames):
         cubeArr = cube2numpyArr(cube, nDims)
         return LLhoodFunc(cubeArr)
 
-    pymultinest.run(
-        LLhoodWrap,
-        invPriorWrap,
-        nDims,
-        verbose=True,
-        resume=False,
-        sampling_efficiency=0.8,
-        n_live_points=500,
-        outputfiles_basename=output)
+    pymultinest.run(LLhoodWrap,
+                    invPriorWrap,
+                    nDims,
+                    verbose=True,
+                    resume=False,
+                    sampling_efficiency=0.8,
+                    n_live_points=500,
+                    outputfiles_basename=output)
 
 
 def MNRun2(invPriorFunc, LLhoodFunc, paramNames, outputFile, wrapped=False):
@@ -91,7 +91,8 @@ def MNRun2(invPriorFunc, LLhoodFunc, paramNames, outputFile, wrapped=False):
         sampling_efficiency=0.8,
         n_live_points=500,
         outputfiles_basename=outputFile,
-        wrapped_params=wrapped_params)  # nlive low value is 50, high value is 500, massive value is 2000. Since May 19, running with wrapped params.
+        wrapped_params=wrapped_params
+    )  # nlive low value is 50, high value is 500, massive value is 2000. Since May 19, running with wrapped params.
 
 
 def cube2numpyArr(cube, nDims):

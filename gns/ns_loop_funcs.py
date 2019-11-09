@@ -14,7 +14,8 @@ from . import tools
 
 
 def tryTerminationLog(verbose, terminationType, terminationFactor, nest, nLive,
-                      logEofX, livePointsLLhood, LLhoodStar, ZLiveType, trapezoidalFlag, logEofZ, H):
+                      logEofX, livePointsLLhood, LLhoodStar, ZLiveType,
+                      trapezoidalFlag, logEofZ, H):
     """
     See if termination condition for main loop of NS has been met. Can be related to information value H or whether estimated remaining evidence is below a given fraction of the Z value calculated up to that iteration
     """
@@ -26,25 +27,28 @@ def tryTerminationLog(verbose, terminationType, terminationFactor, nest, nLive,
         if nest > terminator:
             # since it is terminating need to calculate remaining Z
             liveMaxIndex, liveLLhoodMax, logEofZLive, avLLhood, nFinal = getLogEofZLive(
-                nLive, logEofX, livePointsLLhood, LLhoodStar, ZLiveType, trapezoidalFlag)
+                nLive, logEofX, livePointsLLhood, LLhoodStar, ZLiveType,
+                trapezoidalFlag)
             breakFlag = True
         else:
             liveMaxIndex = None  # no point calculating
             liveLLhoodMax = None  # these values if not terminating
     elif terminationType == 'evidence':
         liveMaxIndex, liveLLhoodMax, logEofZLive, avLLhood, nFinal = getLogEofZLive(
-            nLive, logEofX, livePointsLLhood, LLhoodStar, ZLiveType, trapezoidalFlag)
+            nLive, logEofX, livePointsLLhood, LLhoodStar, ZLiveType,
+            trapezoidalFlag)
         endValue = np.exp(logEofZLive - logEofZ)
         if verbose:
-            output.printTerminationUpdateZ(
-                logEofZLive, endValue, terminationFactor, 'log')
+            output.printTerminationUpdateZ(logEofZLive, endValue,
+                                           terminationFactor, 'log')
         if endValue <= terminationFactor:
             breakFlag = True
     return breakFlag, liveMaxIndex, liveLLhoodMax, avLLhood, nFinal
 
 
 def tryTermination(verbose, terminationType, terminationFactor, nest, nLive,
-                   EofX, livePointsLhood, LhoodStar, ZLiveType, trapezoidalFlag, EofZ, H):
+                   EofX, livePointsLhood, LhoodStar, ZLiveType,
+                   trapezoidalFlag, EofZ, H):
     """
     as above but in linear space
     """
@@ -55,25 +59,27 @@ def tryTermination(verbose, terminationType, terminationFactor, nest, nLive,
             output.printTerminationUpdateInfo(nest, terminator)
         if nest > terminator:
             liveMaxIndex, liveLhoodMax, ZLive, avLhood, nFinal = getEofZLive(
-                nLive, EofX, livePointsLhood, LhoodStar, ZLiveType, trapezoidalFlag)
+                nLive, EofX, livePointsLhood, LhoodStar, ZLiveType,
+                trapezoidalFlag)
             breakFlag = True
         else:
             liveMaxIndex = None
             liveLhoodMax = None
     elif terminationType == 'evidence':
         liveMaxIndex, liveLhoodMax, EofZLive, avLhood, nFinal = getEofZLive(
-            nLive, EofX, livePointsLhood, LhoodStar, ZLiveType, trapezoidalFlag)
+            nLive, EofX, livePointsLhood, LhoodStar, ZLiveType,
+            trapezoidalFlag)
         endValue = EofZLive / EofZ
         if verbose:
-            output.printTerminationUpdateZ(
-                EofZLive, endValue, terminationFactor, 'linear')
+            output.printTerminationUpdateZ(EofZLive, endValue,
+                                           terminationFactor, 'linear')
         if endValue <= terminationFactor:
             breakFlag = True
     return breakFlag, liveMaxIndex, liveLhoodMax, avLhood, nFinal
 
 
-def getLogEofZLive(nLive, logEofX, livePointsLLhood,
-                   LLhoodStar, ZLiveType, trapezoidalFlag):
+def getLogEofZLive(nLive, logEofX, livePointsLLhood, LLhoodStar, ZLiveType,
+                   trapezoidalFlag):
     """
     NOTE logWeightsLive here is an np array
     newLiveLLhoods has same shape as logWeightsLive (i.e. account for averageLhoodOrX value). If ZLiveType == 'max' avLLhood will just be the maximum LLhood value.
@@ -93,8 +99,8 @@ def getLogEofZLive(nLive, logEofX, livePointsLLhood,
     return liveMaxIndex, liveLLhoodMax, logEofZLive, avLLhood, nFinal
 
 
-def getEofZLive(nLive, EofX, livePointsLhood,
-                LhoodStar, ZLiveType, trapezoidalFlag):
+def getEofZLive(nLive, EofX, livePointsLhood, LhoodStar, ZLiveType,
+                trapezoidalFlag):
     """
     as above but in linear space
     """
@@ -143,8 +149,8 @@ def getEofwLive(nLive, EofX, ZLiveType):
         return EofX / nLive
 
 
-def getLogEofWeightsLive(
-        logEofw, LLhoodStar, liveLLhoods, trapezoidalFlag, ZLiveType):
+def getLogEofWeightsLive(logEofw, LLhoodStar, liveLLhoods, trapezoidalFlag,
+                         ZLiveType):
     """
     From Will's implementation, Z = sum (X_im1 - X_i) * 0.5 * (L_i + L_im1)
     Unsure whether you should treat final contribution using trapezium rule (when it is used for rest of sum). I think you should
@@ -180,8 +186,8 @@ def getLogEofWeightsLive(
             # Lhood'
             n = len(liveLLhoods)
             avLLhood = LSumLhood - np.log(n)
-            logEofWeightsLive = np.log(
-                0.5) + logEofw + np.logaddexp(LLhoodStar, avLLhood)
+            logEofWeightsLive = np.log(0.5) + logEofw + np.logaddexp(
+                LLhoodStar, avLLhood)
     else:
         if ZLiveType == 'average X':
             nFinal = len(liveLLhoods)

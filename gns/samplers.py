@@ -24,8 +24,12 @@ def getNewLiveBlind(invPriorFunc, LhoodFunc, LhoodStar, nDims):
     return trialPointPhys, trialPointLhood
 
 
-def getNewLiveMH(livePointsPhys, deadIndex, priorFunc, targetSupport, LhoodFunc, LhoodStar, nDims, nonGeomList, boundaryList, circleList, torusList, sphereList,
-                 nonGeomLowerLimits, nonGeomUpperLimits, circleLowerLimits, circleUpperLimits, torusLowerLimits, torusUpperLimits, sphereLowerLimits, sphereUpperLimits):
+def getNewLiveMH(livePointsPhys, deadIndex, priorFunc, targetSupport,
+                 LhoodFunc, LhoodStar, nDims, nonGeomList, boundaryList,
+                 circleList, torusList, sphereList, nonGeomLowerLimits,
+                 nonGeomUpperLimits, circleLowerLimits, circleUpperLimits,
+                 torusLowerLimits, torusUpperLimits, sphereLowerLimits,
+                 sphereUpperLimits):
     """
     gets new livepoint using variant of MCMC MH algorithm. From current livepoints (not including one to be excluded in current NS iteration), first picks a point at random as starting point.
     Next the standard deviation of the trial distribution is calculated from the width of the current livepoints (including the one to be excluded) as 0.1 * [max(param_value) - min(param_value)] in each dimension.
@@ -62,9 +66,14 @@ def getNewLiveMH(livePointsPhys, deadIndex, priorFunc, targetSupport, LhoodFunc,
         circleSigma, torusSigma, sphereSigma = geom_sampler.getShapeSigma(
             trialSigma, circleList, torusList, sphereList)
         numCirc, numTorus, numSphere, circCartArr, torusCartArr, sphereCartArr = geom_sampler.getCartesianCoords(
-            circleStartPoint, torusStartPoint, sphereStartPoint, circleLowerLimits, circleUpperLimits, torusLowerLimits, torusUpperLimits, sphereLowerLimits, sphereUpperLimits)
+            circleStartPoint, torusStartPoint, sphereStartPoint,
+            circleLowerLimits, circleUpperLimits, torusLowerLimits,
+            torusUpperLimits, sphereLowerLimits, sphereUpperLimits)
         circCartSigArr, torusCartSigArr, sphereCartSigArr = geom_sampler.getCartesianSigma(
-            circleStartPoint, torusStartPoint, sphereStartPoint, circleSigma, torusSigma, sphereSigma, circleLowerLimits, circleUpperLimits, torusLowerLimits, torusUpperLimits, sphereLowerLimits, sphereUpperLimits)
+            circleStartPoint, torusStartPoint, sphereStartPoint, circleSigma,
+            torusSigma, sphereSigma, circleLowerLimits, circleUpperLimits,
+            torusLowerLimits, torusUpperLimits, sphereLowerLimits,
+            sphereUpperLimits)
         # this is not used per sae, but an arbitrary value is needed for first
         # value in loop. n.b. startLhood is (1,) array not scalar
         startLhood = LhoodFunc(startPoint)
@@ -78,30 +87,32 @@ def getNewLiveMH(livePointsPhys, deadIndex, priorFunc, targetSupport, LhoodFunc,
             # nonGeomLowerLimits and nonGeomUpperLimits
             # easier to use relevant slice of targetSupport than
             # nonGeomLowerLimits and nonGeomUpperLimits
-            nonGeomTrialPoint = pickTrial(nonGeomStartPoint, np.diag(
-                nonGeomSigma**2.), targetSupport[:, nonGeomList], proposalType)
+            nonGeomTrialPoint = pickTrial(nonGeomStartPoint,
+                                          np.diag(nonGeomSigma**2.),
+                                          targetSupport[:, nonGeomList],
+                                          proposalType)
             # apply boundary conditions on trial point s.t. it has physical
             # values within sampling space domain
             # easier to use relevant slice of targetSupport than
             # nonGeomLowerLimits and nonGeomUpperLimits
-            nonGeomTrialPoint = applyBoundaries(
-                nonGeomTrialPoint, targetSupport[:, nonGeomList], boundaryList)
+            nonGeomTrialPoint = applyBoundaries(nonGeomTrialPoint,
+                                                targetSupport[:, nonGeomList],
+                                                boundaryList)
             circleTrialArr, torusTrialArr, sphereTrialArr = geom_sampler.getGeomTrialPoint(
-                numCirc, numTorus, numSphere, circCartArr, torusCartArr, sphereCartArr, circCartSigArr, torusCartSigArr, sphereCartSigArr, circleLowerLimits, circleUpperLimits, torusLowerLimits, torusUpperLimits, sphereLowerLimits, sphereUpperLimits)
+                numCirc, numTorus, numSphere, circCartArr, torusCartArr,
+                sphereCartArr, circCartSigArr, torusCartSigArr,
+                sphereCartSigArr, circleLowerLimits, circleUpperLimits,
+                torusLowerLimits, torusUpperLimits, sphereLowerLimits,
+                sphereUpperLimits)
             trialPoint = geom_sampler.recombineTrialPoint(
-                nonGeomTrialPoint,
-                circleTrialArr,
-                torusTrialArr,
-                sphereTrialArr,
-                nonGeomList,
-                circleList,
-                torusList,
-                sphereList)
+                nonGeomTrialPoint, circleTrialArr, torusTrialArr,
+                sphereTrialArr, nonGeomList, circleList, torusList, sphereList)
             trialLhood = calcTrialLhood(trialPoint, LhoodFunc, targetSupport)
             # returns previous point values if test fails, or trial point
             # values if it passes
             acceptFlag, startPoint, startLhood = testTrial(
-                trialPoint, startPoint, trialLhood, startLhood, LhoodStar, priorFunc)
+                trialPoint, startPoint, trialLhood, startLhood, LhoodStar,
+                priorFunc)
             if acceptFlag:
                 nAccept += 1
                 nonGeomStartPoint = geom_sampler.getNonGeomParams(
@@ -109,7 +120,9 @@ def getNewLiveMH(livePointsPhys, deadIndex, priorFunc, targetSupport, LhoodFunc,
                 circleStartPoint, torusStartPoint, sphereStartPoint = geom_sampler.getShapeParams(
                     startPoint, circleList, torusList, sphereList)
                 numCirc, numTorus, numSphere, circCartArr, torusCartArr, sphereCartArr = geom_sampler.getCartesianCoords(
-                    circleStartPoint, torusStartPoint, sphereStartPoint, circleLowerLimits, circleUpperLimits, torusLowerLimits, torusUpperLimits, sphereLowerLimits, sphereUpperLimits)
+                    circleStartPoint, torusStartPoint, sphereStartPoint,
+                    circleLowerLimits, circleUpperLimits, torusLowerLimits,
+                    torusUpperLimits, sphereLowerLimits, sphereUpperLimits)
 
             else:
                 nReject += 1
@@ -120,8 +133,12 @@ def getNewLiveMH(livePointsPhys, deadIndex, priorFunc, targetSupport, LhoodFunc,
             circleSigma, torusSigma, sphereSigma = geom_sampler.getShapeSigma(
                 trialSigma, circleList, torusList, sphereList)
             circCartSigArr, torusCartSigArr, sphereCartSigArr = geom_sampler.getCartesianSigma(
-                circleStartPoint, torusStartPoint, sphereStartPoint, circleSigma, torusSigma, sphereSigma, circleLowerLimits, circleUpperLimits, torusLowerLimits, torusUpperLimits, sphereLowerLimits, sphereUpperLimits)
+                circleStartPoint, torusStartPoint, sphereStartPoint,
+                circleSigma, torusSigma, sphereSigma, circleLowerLimits,
+                circleUpperLimits, torusLowerLimits, torusUpperLimits,
+                sphereLowerLimits, sphereUpperLimits)
     return startPoint, startLhood
+
 
 # MH related functions
 
@@ -146,23 +163,26 @@ def pickTrial(startPoint, trialVar, targetSupport, proposalType):
     in that dimension, centred on the startPoint.
     For the dimensions where the support is unbounded, there is no truncation
     """
-    if len(startPoint) == 0:  # needed for geometric sampling, when array of vanilla params is empty.
+    if len(
+            startPoint
+    ) == 0:  # needed for geometric sampling, when array of vanilla params is empty.
         return startPoint
     if proposalType == 'multivariate normal':
         trialPoint = np.random.multivariate_normal(startPoint, trialVar)
     elif proposalType == 'truncated multivariate normal':
         while True:
             trialPoint = np.random.multivariate_normal(startPoint, trialVar)
-            if np.any(trialPoint < (startPoint - 0.5 * targetSupport[2, :])) or np.any(
-                    trialPoint > (startPoint + 0.5 * targetSupport[2, :])):
+            if np.any(trialPoint < (
+                    startPoint - 0.5 * targetSupport[2, :])) or np.any(
+                        trialPoint > (startPoint + 0.5 * targetSupport[2, :])):
                 continue
             else:
                 break
     return trialPoint
 
 
-def testTrial(trialPoint, startPoint, trialLhood,
-              startLhood, LhoodStar, priorFunc):
+def testTrial(trialPoint, startPoint, trialLhood, startLhood, LhoodStar,
+              priorFunc):
     """
     Check if trial point has L > L* and accept with probability prior(trial) / prior(previous)
     """
@@ -170,7 +190,8 @@ def testTrial(trialPoint, startPoint, trialLhood,
     newLhood = startLhood
     acceptFlag = False
     if np.isnan(
-            trialLhood):  # immediately reject trial point if it gives nan Lhood value
+            trialLhood
+    ):  # immediately reject trial point if it gives nan Lhood value
         pass
     elif trialLhood > LhoodStar:
         prob = np.random.rand()
@@ -219,12 +240,8 @@ def applyBoundaries(livePoint, targetSupport, boundaryList):
         else:
             print("invalid value in boundaryList. Exiting...")
             sys.exit(1)
-        livePoint[i] = applyBoundary(livePoint[i],
-                                     targetSupport[0,
-                                                   i],
-                                     targetSupport[1,
-                                                   i],
-                                     differenceCorrection,
+        livePoint[i] = applyBoundary(livePoint[i], targetSupport[0, i],
+                                     targetSupport[1, i], differenceCorrection,
                                      pointCorrection)
     return livePoint
 
@@ -249,8 +266,8 @@ def checkBoundary(trialPoint, targetSupport):
     Otherwise returns true
     """
     for i in range(len(targetSupport[0, :])):
-        if (trialPoint[i] < targetSupport[0, i]) or (
-                trialPoint[i] > targetSupport[1, i]):
+        if (trialPoint[i] < targetSupport[0, i]) or (trialPoint[i] >
+                                                     targetSupport[1, i]):
             return False
     return True
 
@@ -306,8 +323,9 @@ def applyBoundary(point, lower, upper, differenceCorrection, pointCorrection):
 # point within the domain. Effect of this is basically mod'ing the
 # difference by the width of the domain. It makes most intuitive sense to
 # me to use this when you want to wrap the points around the domain.
-def modToDomainWrap(point, lower, upper): return (
-    lower - point) % (upper - lower) if point < lower else (point - upper) % (upper - lower)
+def modToDomainWrap(point, lower, upper):
+    return (lower - point) % (upper - lower) if point < lower else (
+        point - upper) % (upper - lower)
 
 
 def modToDomainReflect(point, lower, upper):

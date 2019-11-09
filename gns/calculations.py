@@ -17,7 +17,7 @@ def calct(nLive, expectation='t', sampling=False, maxPoints=False):
         if maxPoints:
             t = np.random.rand(nLive).max()
         else:
-            t = np.random.rand() ** (1. / nLive)
+            t = np.random.rand()**(1. / nLive)
     else:
         if expectation == 'logt':
             t = np.exp(-1. / nLive)
@@ -107,24 +107,30 @@ def calcLogEofts(nLive):
     """
     Calculate log(E[t] - E[t^2]) as it is much easier to do so here than later having on log(E[t]) and log(E[t^2])
     """
-    return np.log(calcEofts(nLive) + (calct(nLive) - calct2(nLive),))
+    return np.log(calcEofts(nLive) + (calct(nLive) - calct2(nLive), ))
+
 
 # wrappers around E[t] functions for calculating powers of them.
 # required for calculating Z moments with Keeton's method.
 
 
 # E[t]^i
-def EoftPowi(nLive, i): return calct(nLive)**i
+def EoftPowi(nLive, i):
+    return calct(nLive)**i
+
 
 # E[t^2]^i
 
 
-def Eoft2Powi(nLive, i): return calct2(nLive)**i
+def Eoft2Powi(nLive, i):
+    return calct2(nLive)**i
+
 
 # (E[t^2]/E[t])^i
 
 
-def Eoft2OverEoftPowi(nLive, i): return (calct2(nLive) / calct(nLive))**i
+def Eoft2OverEoftPowi(nLive, i):
+    return (calct2(nLive) / calct(nLive))**i
 
 
 def calcEofftArr(Eofft, nLive, n):
@@ -145,7 +151,9 @@ def getEofftArr(Eofft, nLive, nest):
     faster than creating array of zeroes and looping over
     """
     return np.fromiter(calcEofftArr(Eofft, nLive, nest),
-                       dtype=float, count=nest)
+                       dtype=float,
+                       count=nest)
+
 
 # calculate/ retrieve final estimates/ errors of Z
 
@@ -299,6 +307,7 @@ def calcVarLogZSkilling(H, nLive):
     """
     return H / nLive
 
+
 # DEPRECATED I THINK
 
 
@@ -311,6 +320,7 @@ def getLogEofXLogEofw(nLive, X):
     t = calct(nLive, expectation)
     XNew = X * t
     return np.log(XNew), np.log(X - XNew)
+
 
 # DEPRECATED I THINK
 

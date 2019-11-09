@@ -12,8 +12,10 @@ except ImportError:  # older scipy versions
 # Z & H theoretical functions
 
 
-def nDIntegratorZTheor(integrandFuncs, limitsList,
-                       integrandLogVal, divByFact=True):
+def nDIntegratorZTheor(integrandFuncs,
+                       limitsList,
+                       integrandLogVal,
+                       divByFact=True):
     """
     integrator used for calculating theoretical value of Z. integrand is function which evaluates to value of integrand at given parameter values (which are determined by nquad function).
     integrandFuncs is list of functions (Lhood & non-rectangular priors) which are multiplied together to give value of integrand.
@@ -37,15 +39,21 @@ def nDIntegratorZTheor(integrandFuncs, limitsList,
             divByFact = np.exp(integrandLogVal)
         else:
             divByFact = 1.
-        return scipy.integrate.nquad(evalExpLogIntegrand, limitsList, args=(
-            integrandFuncs, integrandLogVal)) / divByFact
-    else:  # this should only occur if you aren't concerned about underflow
         return scipy.integrate.nquad(
-            evalIntegrand, limitsList, args=(integrandFuncs, ))
+            evalExpLogIntegrand,
+            limitsList,
+            args=(integrandFuncs, integrandLogVal)) / divByFact
+    else:  # this should only occur if you aren't concerned about underflow
+        return scipy.integrate.nquad(evalIntegrand,
+                                     limitsList,
+                                     args=(integrandFuncs, ))
 
 
-def nDIntegratorHTheor(integrandFuncs, limitsList,
-                       integrandLogVal, divByFact=True, LLhoodFunc=None):
+def nDIntegratorHTheor(integrandFuncs,
+                       limitsList,
+                       integrandLogVal,
+                       divByFact=True,
+                       LLhoodFunc=None):
     """
     As above but has to call nquad with a  slightly different function representing integrand when using
     exp(log(integrand)) method for calculating, due to LLhood(theta) part of integrand
@@ -68,11 +76,14 @@ def nDIntegratorHTheor(integrandFuncs, limitsList,
             divByFact = np.exp(integrandLogVal)
         else:
             divByFact = 1.
-        return scipy.integrate.nquad(evalLogLExpLogIntegrand, limitsList, args=(
-            integrandFuncs, integrandLogVal, LLhoodFunc)) / divByFact
-    else:  # this should only occur if you aren't concerned about underflow
         return scipy.integrate.nquad(
-            evalIntegrand, limitsList, args=(integrandFuncs,))
+            evalLogLExpLogIntegrand,
+            limitsList,
+            args=(integrandFuncs, integrandLogVal, LLhoodFunc)) / divByFact
+    else:  # this should only occur if you aren't concerned about underflow
+        return scipy.integrate.nquad(evalIntegrand,
+                                     limitsList,
+                                     args=(integrandFuncs, ))
 
 
 def evalIntegrand(*args):
@@ -158,7 +169,7 @@ def integrateLogFunc(logPriorFunc, LLhoodFunc, targetSupport):
     sampleWidth = 1.
     oneDn = 100  # number of points per dimension
     nDims = len(targetSupport[0, :])
-    n = oneDn ** nDims
+    n = oneDn**nDims
     oneDGrids = []
     for i in range(nDims):
         if np.isfinite(targetSupport[2, i]):
@@ -175,17 +186,21 @@ def integrateLogFunc(logPriorFunc, LLhoodFunc, targetSupport):
     params = np.hstack((meshGrid.reshape(-1, 1) for meshGrid in meshGrids))
     logPrior = np.zeros(n)
     for i in range(
-            n):  # there should be a better way of doing this. But as it stands, logPriorFunc only works on (nDim,) or (1, nDim) arrays
+            n
+    ):  # there should be a better way of doing this. But as it stands, logPriorFunc only works on (nDim,) or (1, nDim) arrays
         logPrior[i] = logPriorFunc(params[i, :])
-    LLhood = LLhoodFunc(params).reshape(-1,)
+    LLhood = LLhoodFunc(params).reshape(-1, )
     logIntegrandArr = logPrior + LLhood
     logIntegral = logsumexp(logIntegrandArr) + \
         np.log(sampleWidth)  # change to scipy.special
     return logIntegral
 
 
-def getPriorIntegrandAndLimits(
-        priorFunc, targetSupport, integrandFuncs, integrateAll=True, priorFuncsPdf=None):
+def getPriorIntegrandAndLimits(priorFunc,
+                               targetSupport,
+                               integrandFuncs,
+                               integrateAll=True,
+                               priorFuncsPdf=None):
     """
     Adds prior functions to integrandFuncs dict for 'non-rectangular' (uniform) dimensions, as long as a mapping to dimensions of data required to integrate over for that function. For uniform priors, calculates the hyperrectangular volume. Also creates list of limits in each dimension of integral. For Gaussian priors, sets limits to +- infinity
     Integrate all means integrate across all dimensions, even if it has a uniform prior.
@@ -235,8 +250,12 @@ class ZTheorException(Exception):
     pass
 
 
-def calcZTheor(priorFunc, LLhoodFunc, targetSupport,
-               nDims, integrandLogVal=1., LhoodFunc=None):
+def calcZTheor(priorFunc,
+               LLhoodFunc,
+               targetSupport,
+               nDims,
+               integrandLogVal=1.,
+               LhoodFunc=None):
     """
     numerically integrates L(theta) * pi(theta) over theta
     priorFuncs must be in same order as dimensions of LhoodFunc when it was fitted (and in same order as priorParams).
@@ -268,8 +287,8 @@ def calcZTheor(priorFunc, LLhoodFunc, targetSupport,
         integrandFuncs = {LLhoodFunc: slice(None)}
     integrandFuncs, limitsList, hyperRectangleVolume = getPriorIntegrandAndLimits(
         priorFunc, targetSupport, integrandFuncs)
-    ZIntegral, ZIntegralE = nDIntegratorZTheor(
-        integrandFuncs, limitsList, integrandLogVal)
+    ZIntegral, ZIntegralE = nDIntegratorZTheor(integrandFuncs, limitsList,
+                                               integrandLogVal)
     ZTheor = 1. / hyperRectangleVolume * ZIntegral
     return ZTheor, ZIntegralE
 
@@ -292,8 +311,14 @@ def calcZTheorApprox(targetSupport):
     return ZTheor, priorVolume
 
 
-def calcHTheor(priorFunc, LLhoodFunc, targetSupport, nDims,
-               Z, ZErr, integrandLogVal=None, LhoodFunc=None):
+def calcHTheor(priorFunc,
+               LLhoodFunc,
+               targetSupport,
+               nDims,
+               Z,
+               ZErr,
+               integrandLogVal=None,
+               LhoodFunc=None):
     """
     Calculates HTheor from the KL divergence equation: H = int[P(theta) * ln(P(theta) / pi(theta))] = 1/Z * int[L(theta) * pi(theta) * ln(L(theta))] - ln(Z).
     For uniform priors, calculates volume and skips that part of integral (over pi(theta)).

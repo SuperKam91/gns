@@ -7,21 +7,28 @@ import scipy.stats
 # convert from phys point isin [l, u] to phi isin [0, 2pi]
 
 
-def physPeriod2TwoPi(p, l, u): return 2. * np.pi * (p - l) / (u - l)
+def physPeriod2TwoPi(p, l, u):
+    return 2. * np.pi * (p - l) / (u - l)
+
 
 # convert from phi isin [0, 2pi] to p isin [l, u]
 
 
-def twoPiPeriod2Phys(phi, l, u): return phi * (u - l) / (2. * np.pi) + l
+def twoPiPeriod2Phys(phi, l, u):
+    return phi * (u - l) / (2. * np.pi) + l
 
 
 # convert from phys point isin [l, u] to phi isin [0, pi]
-def physPeriod2Pi(p, l, u): return np.pi * (p - l) / (u - l)
+def physPeriod2Pi(p, l, u):
+    return np.pi * (p - l) / (u - l)
+
 
 # convert from phi isin [0, 2pi] to p isin [l, u]
 
 
-def piPeriod2Phys(phi, l, u): return phi * (u - l) / np.pi + l
+def piPeriod2Phys(phi, l, u):
+    return phi * (u - l) / np.pi + l
+
 
 # converts from angle, which takes values isin [-pi, pi] to angle which takes values isin [0, 2pi]
 # needed because np.arc functions return a value isin [-pi, pi], and has the convention that if the angle is measured from the x-axis,
@@ -33,7 +40,8 @@ def piPeriod2Phys(phi, l, u): return phi * (u - l) / np.pi + l
 # i.e. it measures the positive anti-clockwise angle from the positive x-axis
 
 
-def switchPolarSys(phi): return 2. * np.pi - np.abs(phi) if phi < 0. else phi
+def switchPolarSys(phi):
+    return 2. * np.pi - np.abs(phi) if phi < 0. else phi
 
 
 def switchTorusSys(theta, R, rho):
@@ -71,8 +79,8 @@ def cartCirc2Point(x, y, l, u):
     Note y = 0 gives p = 0 for all x
     """
     phi = np.arctan2(
-        y,
-        x)  # gives an angle isin [-pi, pi] measured counterclockwise from positive x-axis
+        y, x
+    )  # gives an angle isin [-pi, pi] measured counterclockwise from positive x-axis
     phi = switchPolarSys(phi)
     p = twoPiPeriod2Phys(phi, l, u)
     return p
@@ -86,8 +94,8 @@ def projectCart2Circ(x, y):
     Returns angle measured from positive x-axis
     """
     phi = np.arctan2(
-        y,
-        x)  # gives an angle isin [-pi, pi] measured counterclockwise from positive x-axis
+        y, x
+    )  # gives an angle isin [-pi, pi] measured counterclockwise from positive x-axis
     phi = switchPolarSys(phi)
     return phi
 
@@ -218,8 +226,9 @@ def testCircleProposalSymmetry(p, l, u, cov):
     x, y = point2CartCirc(p, l, u)
     xy = np.array([x, y])
     xyPrime = np.random.multivariate_normal(mean=xy, cov=cov)
-    xyPrimeProb = scipy.stats.multivariate_normal.pdf(
-        x=xyPrime, mean=xy, cov=cov)
+    xyPrimeProb = scipy.stats.multivariate_normal.pdf(x=xyPrime,
+                                                      mean=xy,
+                                                      cov=cov)
     pPrime2 = cartCirc2Point(xyPrime[0], xyPrime[1], l, u)
     xPrime2, yPrime2 = point2CartCirc(pPrime2, l, u)
     xyPrime2 = np.array([xPrime2, yPrime2])
@@ -241,15 +250,17 @@ def testTorusProposalSymmetry(p1, p2, l1, l2, u1, u2, cov):
     x, y, z = point2CartTorus(p1, p2, l1, l2, u1, u2)
     xyz = np.array([x, y, z])
     xyzPrime = np.random.multivariate_normal(mean=xyz, cov=cov)
-    xyzPrimeProb = scipy.stats.multivariate_normal.pdf(
-        x=xyzPrime, mean=xyz, cov=cov)
-    p1Prime2, p2Prime2 = cartTorus2Point(
-        xyzPrime[0], xyzPrime[1], xyzPrime[2], l1, l2, u1, u2)
-    xPrime2, yPrime2, zPrime2 = point2CartTorus(
-        p1Prime2, p2Prime2, l1, l2, u1, u2)
+    xyzPrimeProb = scipy.stats.multivariate_normal.pdf(x=xyzPrime,
+                                                       mean=xyz,
+                                                       cov=cov)
+    p1Prime2, p2Prime2 = cartTorus2Point(xyzPrime[0], xyzPrime[1], xyzPrime[2],
+                                         l1, l2, u1, u2)
+    xPrime2, yPrime2, zPrime2 = point2CartTorus(p1Prime2, p2Prime2, l1, l2, u1,
+                                                u2)
     xyzPrime2 = np.array([xPrime2, yPrime2, zPrime2])
-    xyzProb = scipy.stats.multivariate_normal.pdf(
-        x=xyz, mean=xyzPrime2, cov=cov)
+    xyzProb = scipy.stats.multivariate_normal.pdf(x=xyz,
+                                                  mean=xyzPrime2,
+                                                  cov=cov)
     return xyzProb == xyzPrimeProb
 
 
@@ -267,15 +278,17 @@ def testSphereProposalSymmetry(p1, p2, l1, l2, u1, u2, cov):
     x, y, z = point2CartSphere(p1, p2, l1, l2, u1, u2)
     xyz = np.array([x, y, z])
     xyzPrime = np.random.multivariate_normal(mean=xyz, cov=cov)
-    xyzPrimeProb = scipy.stats.multivariate_normal.pdf(
-        x=xyzPrime, mean=xyz, cov=cov)
-    p1Prime2, p2Prime2 = cartSphere2Point(
-        xyzPrime[0], xyzPrime[1], xyzPrime[2], l1, l2, u1, u2)
-    xPrime2, yPrime2, zPrime2 = point2CartSphere(
-        p1Prime2, p2Prime2, l1, l2, u1, u2)
+    xyzPrimeProb = scipy.stats.multivariate_normal.pdf(x=xyzPrime,
+                                                       mean=xyz,
+                                                       cov=cov)
+    p1Prime2, p2Prime2 = cartSphere2Point(xyzPrime[0], xyzPrime[1],
+                                          xyzPrime[2], l1, l2, u1, u2)
+    xPrime2, yPrime2, zPrime2 = point2CartSphere(p1Prime2, p2Prime2, l1, l2,
+                                                 u1, u2)
     xyzPrime2 = np.array([xPrime2, yPrime2, zPrime2])
-    xyzProb = scipy.stats.multivariate_normal.pdf(
-        x=xyz, mean=xyzPrime2, cov=cov)
+    xyzProb = scipy.stats.multivariate_normal.pdf(x=xyz,
+                                                  mean=xyzPrime2,
+                                                  cov=cov)
     return xyzProb == xyzPrimeProb
 
 

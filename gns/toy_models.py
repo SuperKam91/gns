@@ -33,27 +33,27 @@ def getToyHypersGeom(shape):
 
     """
     shapeDict = {
-        'circle': [
-            'n1', 'p1', 'l4'], 'torus': [
-            'n2', 'p2', 'l5'], 'torus II': [
-                'n4', 'p7', 'l9'], 'torus III': [
-                    'n5', 'p8', 'l10'], 'torus IV': [
-                        'n11', 'p16', 'l21'], 'torus V': [
-                            'n12', 'p17', 'l22'], 'sphere': [
-                                'n2', 'p3', 'l8'], 'sphere II': [
-                                    'n2', 'p3', 'l7'], 'sphere III': [
-                                        'n2', 'p9', 'l11'], 'sphere IV': [
-                                            'n2', 'p9', 'l12'], 'sphere V': [
-                                                'n2', 'p3', 'l11'], 'sphere VI': [
-                                                    'n2', 'p3', 'l12'], '3 sphere IV': [
-                                                        'n6', 'p10', 'l13'], '5 sphere IV': [
-                                                            'n7', 'p11', 'l14'], '6 sphere IV': [
-                                                                'n8', 'p12', 'l15'], '10d gauss sphere IV': [
-                                                                    'n9', 'p13', 'l16'], '20d gauss sphere IV': [
-                                                                        'n10', 'p14', 'l17'], 'sphere VII': [
-                                                                            'n2', 'p9', 'l18'], '20d gauss sphere VII': [
-                                                                                'n10', 'p14', 'l19'], '6 sphere VIII': [
-                                                                                    'n8', 'p15', 'l20']}
+        'circle': ['n1', 'p1', 'l4'],
+        'torus': ['n2', 'p2', 'l5'],
+        'torus II': ['n4', 'p7', 'l9'],
+        'torus III': ['n5', 'p8', 'l10'],
+        'torus IV': ['n11', 'p16', 'l21'],
+        'torus V': ['n12', 'p17', 'l22'],
+        'sphere': ['n2', 'p3', 'l8'],
+        'sphere II': ['n2', 'p3', 'l7'],
+        'sphere III': ['n2', 'p9', 'l11'],
+        'sphere IV': ['n2', 'p9', 'l12'],
+        'sphere V': ['n2', 'p3', 'l11'],
+        'sphere VI': ['n2', 'p3', 'l12'],
+        '3 sphere IV': ['n6', 'p10', 'l13'],
+        '5 sphere IV': ['n7', 'p11', 'l14'],
+        '6 sphere IV': ['n8', 'p12', 'l15'],
+        '10d gauss sphere IV': ['n9', 'p13', 'l16'],
+        '20d gauss sphere IV': ['n10', 'p14', 'l17'],
+        'sphere VII': ['n2', 'p9', 'l18'],
+        '20d gauss sphere VII': ['n10', 'p14', 'l19'],
+        '6 sphere VIII': ['n8', 'p15', 'l20']
+    }
     namesPriorLhood = shapeDict[shape]
     return getToyHypers(*namesPriorLhood)
 
@@ -85,10 +85,10 @@ def getToyHypersGen(dists):
 
     """
     genDict = {
-        'uniform p gauss l': [
-            'n1', 'p1', 'l1'], 'uniform uniform p gauss l': [
-            'n2', 'p2', 'l2'], 'gauss p gauss l': [
-                'n1', 'p6', 'l1']}
+        'uniform p gauss l': ['n1', 'p1', 'l1'],
+        'uniform uniform p gauss l': ['n2', 'p2', 'l2'],
+        'gauss p gauss l': ['n1', 'p6', 'l1']
+    }
     namesPriorLhood = genDict[dists]
     return getToyHypers(*namesPriorLhood)
 
@@ -137,19 +137,16 @@ def getToyHypers(n, p, l):
     n5 = n4 + ['\\theta_{5}', '\\theta_{6}']
     # three pairs of spherical params
     n6 = [
-        '\\phi_{1}',
-        '\\theta_{1}',
-        '\\phi_{2}',
-        '\\theta_{2}',
-        '\\phi_{3}',
-        '\\theta_{3}']
+        '\\phi_{1}', '\\theta_{1}', '\\phi_{2}', '\\theta_{2}', '\\phi_{3}',
+        '\\theta_{3}'
+    ]
     # five pairs of spherical params
     n7 = n6 + ['\\phi_{4}', '\\theta_{4}', '\\phi_{5}', '\\theta_{5}']
     # six pairs of spherical params
     n8 = n7 + ['\\phi_{6}', '\\theta_{6}']
     # 10 params and 2 spherical
-    n9 = n5 + ['\\theta_{7}', '\\theta_{8}',
-               '\\theta_{9}', '\\theta_{10}'] + n2
+    n9 = n5 + ['\\theta_{7}', '\\theta_{8}', '\\theta_{9}', '\\theta_{10}'
+               ] + n2
     # 20 params and 2 spherical
     n10 = ['\\theta_{i}' for i in range(1, 21)] + n2
     # 8 params
@@ -198,30 +195,48 @@ def getToyHypers(n, p, l):
     # gaussian with mu = pi and cov = 1
     l1 = [2, np.array([np.pi]).reshape(1, 1), np.array([1.]).reshape(1, 1)]
     # gaussian with mu = (pi,pi) and cov = (1,0,0,1)
-    l2 = [2, np.array([np.pi, np.pi]).reshape(
-        1, 2), np.array([1., 0., 0., 1.]).reshape(2, 2)]
+    l2 = [
+        2,
+        np.array([np.pi, np.pi]).reshape(1, 2),
+        np.array([1., 0., 0., 1.]).reshape(2, 2)
+    ]
     # gaussian with mu = (pi,pi,pi) and cov = (1,0,0,0,1,0,0,0,1)
-    l3 = [2, np.array([np.pi, np.pi, np.pi]).reshape(1, 3), np.array(
-        [1., 0., 0., 0., 1., 0., 0., 0., 1.]).reshape(3, 3)]
+    l3 = [
+        2,
+        np.array([np.pi, np.pi, np.pi]).reshape(1, 3),
+        np.array([1., 0., 0., 0., 1., 0., 0., 0., 1.]).reshape(3, 3)
+    ]
     # von mises on [0, 2pi] with mu = 0 and var = 1 / kappa = 0.25 (circle)
     l4 = [3, np.array([0.]).reshape(1, 1), np.array([0.25]).reshape(1, 1)]
     # von mises on [0, 2pi]^2 with mu = (0,0) and var = 1 / kappa =
     # (0.25,0.25) (torus)
-    l5 = [4, np.array([0., 0.]).reshape(1, 2), np.array(
-        [0.25, 0., 0., 0.25]).reshape(2, 2)]
+    l5 = [
+        4,
+        np.array([0., 0.]).reshape(1, 2),
+        np.array([0.25, 0., 0., 0.25]).reshape(2, 2)
+    ]
     # uniform on [0, 2pi] x truncated gaussian on [0, pi] with mu = (0,0)  and
     # std dev = (.,0.5) (sphere) std dev reduced from 2 to 0.5 on 21/01/18
-    l6 = [5, np.array([0., 0.]).reshape(1, 2), np.array(
-        [0., 0., 0., 0.5]).reshape(2, 2)]
+    l6 = [
+        5,
+        np.array([0., 0.]).reshape(1, 2),
+        np.array([0., 0., 0., 0.5]).reshape(2, 2)
+    ]
     # von mises on [0, 2pi] x truncated gaussian on [0, pi] with mu = (0,
     # pi/2), for the former var = 1 / kappa = 0.25, for latter std dev = 0.5
     # (sphere II)
-    l7 = [6, np.array([0., np.pi / 2.]).reshape(1, 2),
-          np.array([0.25, 0., 0., 0.5]).reshape(2, 2)]
+    l7 = [
+        6,
+        np.array([0., np.pi / 2.]).reshape(1, 2),
+        np.array([0.25, 0., 0., 0.5]).reshape(2, 2)
+    ]
     # von mises on [0, 2pi] x truncated gaussian on [0, pi] with mu = (0, 0),
     # for the former var = 1 / kappa = 0.25, for latter std dev = 1 (sphere)
-    l8 = [7, np.array([0., 0.]).reshape(1, 2), np.array(
-        [0.25, 0., 0., 1]).reshape(2, 2)]
+    l8 = [
+        7,
+        np.array([0., 0.]).reshape(1, 2),
+        np.array([0.25, 0., 0., 1]).reshape(2, 2)
+    ]
     # von mises on [0, 2pi]^4 with mu = (0,0,0,0) and var = 1 / kappa =
     # (0.25,0.25,0.25,0.25) (four-torus)
     l9 = [8, np.array([0.] * 4).reshape(1, 4), np.diag([0.25] * 4)]
@@ -351,7 +366,8 @@ def getToyHypers(n, p, l):
         'n9': n9,
         'n10': n10,
         'n11': n11,
-        'n12': n12}
+        'n12': n12
+    }
     priorParamsDict = {
         'p1': p1,
         'p2': p2,
@@ -369,7 +385,8 @@ def getToyHypers(n, p, l):
         'p14': p14,
         'p15': p15,
         'p16': p16,
-        'p17': p17}
+        'p17': p17
+    }
     LhoodParamsDict = {
         'l1': l1,
         'l2': l2,
@@ -392,7 +409,8 @@ def getToyHypers(n, p, l):
         'l19': l19,
         'l20': l20,
         'l21': l21,
-        'l22': l22}
+        'l22': l22
+    }
     paramNames = paramNamesDict[n]
     priorParams = priorParamsDict[p]
     LhoodParams = LhoodParamsDict[l]
@@ -466,8 +484,8 @@ def getToyFuncs(priorParams, LhoodParams):
     priorObjs, LhoodObj = getToyObjects(priorParams, LhoodParams)
     priorFuncsPdf, priorFuncsLogPdf, priorFuncsPpf, LhoodFunc, LLhoodFunc = getToyProbFuncs(
         priorObjs, LhoodObj)
-    priorObjects = prob_funcs.priorObjs(
-        priorFuncsPdf, priorFuncsLogPdf, priorFuncsPpf)
+    priorObjects = prob_funcs.priorObjs(priorFuncsPdf, priorFuncsLogPdf,
+                                        priorFuncsPpf)
     priorFunc = priorObjects.priorFuncsProd
     logPriorFunc = priorObjects.logPriorFuncsSum
     invPriorFunc = priorObjects.invPrior
@@ -503,17 +521,17 @@ def getTargetSupport(priorParams):
         if priorType[i] == 1:
             targetSupport[0, i] = param1Vec[i]
             targetSupport[1, i] = param2Vec[i]
-            targetSupport[2, i] = np.abs(
-                targetSupport[1, i] - targetSupport[0, i])
+            targetSupport[2, i] = np.abs(targetSupport[1, i] -
+                                         targetSupport[0, i])
         elif priorType[i] == 2:
-            targetSupport[0, i] = - np.inf
+            targetSupport[0, i] = -np.inf
             targetSupport[1, i] = np.inf
             targetSupport[2, i] = np.inf
         elif priorType[i] == 3:
             targetSupport[0, i] = param1Vec[i]
             targetSupport[1, i] = param2Vec[i]
-            targetSupport[2, i] = np.abs(
-                targetSupport[1, i] - targetSupport[0, i])
+            targetSupport[2, i] = np.abs(targetSupport[1, i] -
+                                         targetSupport[0, i])
         else:
             print("prior type not recognised")
             sys.exit(1)

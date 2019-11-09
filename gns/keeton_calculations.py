@@ -53,13 +53,9 @@ def calcSums(Lhoods, nLive, nest):
     """
     EoftArr = calculations.getEofftArr(calculations.EoftPowi, nLive, nest)
     LEoft = Lhoods * EoftArr
-    innerSums = np.fromiter(
-        calcInnerSums(
-            Lhoods,
-            nLive,
-            nest),
-        dtype=float,
-        count=nest)
+    innerSums = np.fromiter(calcInnerSums(Lhoods, nLive, nest),
+                            dtype=float,
+                            count=nest)
     outerSums = LEoft * innerSums
     return outerSums.sum()
 
@@ -121,10 +117,7 @@ def calcEofZKeetonLog(LLhoods, nLive, nest):
     based on function calcEofZKeeton
     """
     logEoftArr = np.log(
-        calculations.getEofftArr(
-            calculations.EoftPowi,
-            nLive,
-            nest))
+        calculations.getEofftArr(calculations.EoftPowi, nLive, nest))
     logLEoft = LLhoods + logEoftArr
     # return tools.logAddArr2(-np.inf, logLEoft) - np.log(nLive)
     return logsumexp(logLEoft) - np.log(nLive)
@@ -145,18 +138,11 @@ def calcLogSums(LLhoods, nLive, nest):
     Based on calcSums function
     """
     logEoftArr = np.log(
-        calculations.getEofftArr(
-            calculations.EoftPowi,
-            nLive,
-            nest))
+        calculations.getEofftArr(calculations.EoftPowi, nLive, nest))
     logLEoft = LLhoods + logEoftArr
-    innerLogSums = np.fromiter(
-        calcInnerLogSums(
-            LLhoods,
-            nLive,
-            nest),
-        dtype=float,
-        count=nest)
+    innerLogSums = np.fromiter(calcInnerLogSums(LLhoods, nLive, nest),
+                               dtype=float,
+                               count=nest)
     outerLogSums = logLEoft + innerLogSums
     # return tools.logAddArr2(-np.inf, outerLogSums)
     return logsumexp(outerLogSums)
@@ -168,8 +154,7 @@ def calcInnerLogSums(LLhoods, nLive, nest):
     """
     for k in range(1, nest + 1):
         logEoft2OverEoftArr = np.log(
-            calculations.getEofftArr(
-                calculations.Eoft2OverEoftPowi, nLive, k))
+            calculations.getEofftArr(calculations.Eoft2OverEoftPowi, nLive, k))
         innerLogTerms = LLhoods[:k] + logEoft2OverEoftArr
         # innerLogSum = tools.logAddArr2(-np.inf, innerLogTerms)
         innerLogSum = logsumexp(innerLogTerms)
@@ -185,7 +170,8 @@ def calcLogSumsLoop(LLhoods, nLive, nest):
         innerLogSum = -np.inf
         for i in range(1, k + 1):
             innerLogSum = np.logaddexp(
-                innerLogSum, LLhoods[i - 1] + np.log(calculations.Eoft2OverEoftPowi(nLive, i)))
+                innerLogSum, LLhoods[i - 1] +
+                np.log(calculations.Eoft2OverEoftPowi(nLive, i)))
         outerLogSum = LLhoods[k - 1] + \
             np.log(calculations.EoftPowi(nLive, k)) + innerLogSum
         total = np.logaddexp(total, outerLogSum)
@@ -198,9 +184,8 @@ def calcHKeetonLog(logEofZ, LLhoods, nLive, nest):
     Doesn't actually work in log-space, this is to prevent numerical difficulties e.g.
     log(negative number) associated with negative values of LLhoods and logZ (from low L, Z values)
     """
-    LovrZ = np.exp(
-        LLhoods -
-        logEofZ)  # hopefully this shouldn't under / over flow
+    LovrZ = np.exp(LLhoods -
+                   logEofZ)  # hopefully this shouldn't under / over flow
     sumTerms = LovrZ * LLhoods * \
         calculations.getEofftArr(calculations.EoftPowi, nLive, nest)
     sumTerm = 1. / nLive * sumTerms.sum()
@@ -216,8 +201,8 @@ def calcHKeetonLog2(logEofZ, LLhoods, nLive, nest):
     logSumTerms = np.log(LLhoods) + LLhoods + \
         np.log(calculations.getEofftArr(calculations.EoftPowi, nLive, nest))
     # logSumTerm = np.log(1. / logEofZ) + np.log(1. / nLive) + tools.logAddArr2(-np.inf, logSumTerms)
-    logSumTerm = np.log(1. / logEofZ) + np.log(1. /
-                                               nLive) + logsumexp(logSumTerms)
+    logSumTerm = np.log(1. / logEofZ) + np.log(
+        1. / nLive) + logsumexp(logSumTerms)
     maxTerm = max(logSumTerm, logEofZ)
     logH = tools.logSubExp(logSumTerm, np.log(logEofZ), logSumTerm)
     return np.exp(logH)
@@ -266,8 +251,8 @@ def calcEofZZFinalKeeton(Lhoods, finalLhoods, nLive, nest):
     finalLhoodAv = finalLhoods.mean()
     finalTerm = finalLhoodAv / (nLive + 1.) * \
         calculations.EoftPowi(nLive, nest)
-    Eoft2OverEoftArr = calculations.getEofftArr(
-        calculations.Eoft2OverEoftPowi, nLive, nest)
+    Eoft2OverEoftArr = calculations.getEofftArr(calculations.Eoft2OverEoftPowi,
+                                                nLive, nest)
     loopTerms = Lhoods * Eoft2OverEoftArr
     loopTerm = loopTerms.sum()
     return finalTerm * loopTerm
@@ -329,8 +314,7 @@ def calcEofZZFinalKeetonLog(LLhoods, finalLLhoods, nLive, nest):
     finalTerm = logFinalLhoodAv - \
         np.log(nLive + 1.) + np.log(calculations.EoftPowi(nLive, nest))
     logEoft2OverEoftArr = np.log(
-        calculations.getEofftArr(
-            calculations.Eoft2OverEoftPowi, nLive, nest))
+        calculations.getEofftArr(calculations.Eoft2OverEoftPowi, nLive, nest))
     loopTerms = LLhoods + logEoft2OverEoftArr
     # loopTerm = tools.logAddArr2(-np.inf, loopTerms)
     loopTerm = logsumexp(loopTerms)
@@ -368,6 +352,7 @@ def calcHTotalKeetonLog2(logEofZ, LLhoods, nLive, nest, finalLLhoods):
     # logH = np.logaddexp(logHPartial, logHPartial2)
     # return logH
 
+
 # Functions for combining contributions from main NS loop and termination
 # ('final' quantities) for estimate or Z and its error
 
@@ -398,16 +383,17 @@ def getVarTotalKeeton(varZ, varZFinal, EofZ, EofZFinal, EofZZFinal):
     return varZ + varZFinal + 2. * (EofZZFinal - EofZ * EofZFinal)
 
 
-def getVarTotalKeetonLog(logVarZ, logVarZFinal, logEofZ,
-                         logEofZFinal, logEofZZFinal):
+def getVarTotalKeetonLog(logVarZ, logVarZFinal, logEofZ, logEofZFinal,
+                         logEofZZFinal):
     """
     Get log of total variance based on Keeton's equations
     """
     # positiveTerms = tools.logAddArr2(-np.inf, np.array([logVarZ, logVarZFinal, np.log(2.) + logEofZZFinal]))
     positiveTerms = logsumexp(
-        np.array([logVarZ, logVarZFinal, np.log(2.) + logEofZZFinal]))
-    return tools.logSubExp(positiveTerms, np.log(
-        2.) + logEofZ + logEofZFinal, positiveTerms)
+        np.array([logVarZ, logVarZFinal,
+                  np.log(2.) + logEofZZFinal]))
+    return tools.logSubExp(positiveTerms,
+                           np.log(2.) + logEofZ + logEofZFinal, positiveTerms)
 
 
 def getEofZTotalKeetonLog(logEofZ, logEofZFinal):
