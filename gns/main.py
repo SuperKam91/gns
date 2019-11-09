@@ -1,13 +1,14 @@
-#import standard modules 
+# import standard modules
 
-#import custom modules
+# import custom modules
 import nested_run
 import plotting
 import input
-###########main function
+# main function
+
 
 def main():
-	#call functions in nested_run module here
+    pass
 
-if __name__ == '__main__': 
-	main()
+if __name__ == '__main__':
+    main()
