@@ -516,7 +516,7 @@ def infinite_sum(f, i0=0, eps=1e-8):
 
 class KentDistribution():
     """
-    Originally written by Will Handley, edited by Kamran Javid.
+    Kent-Fisher distribution (see https://en.wikipedia.org/wiki/Kent_distribution).
     Attempts to roughly follow style of scipy.stats functions
     in terms of how the pdf is fitted and evaluated
     """
