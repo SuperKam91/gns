@@ -21,7 +21,8 @@ whereas scipy.stats.multivariate_normal.pdf(x) returns array shape (m,)
 
 def fitPriors(priorParams):
     """
-    Only currently handles one dimensional (independent priors). Scipy.stats multivariate functions do not have built in inverse CDF methods, so if I want to consider multivariate priors I may have to write my own code.
+    Only currently handles one dimensional (independent priors). Scipy.stats multivariate functions do not have built in inverse CDF methods, 
+    so if one wants to consider multivariate priors one may have to write their own.
     Note scipy.stats.uniform takes parameters loc and scale where the boundaries are defined to be
     loc and loc + scale, so scale = upper - lower bound.
     Returns list of fitted prior objects length of nDims (one function for each parameter).
@@ -33,6 +34,15 @@ def fitPriors(priorParams):
     2: Gaussian
 
     3: Sine
+
+    Args:
+
+    priorParams: array containing prior type (denoted by integer) and hyperparameters (array), see getToyHypers() docstring.
+
+	Returns:
+
+	List of prior functions corresponding to priorParams.
+
     """
     priorFuncs = []
     priorFuncsPpf = []
@@ -389,6 +399,15 @@ def fitLhood(LhoodParams):
     16: von Mises on [-pi, pi]^8
 
     17: von Mises on [-pi, pi]^10
+
+    Args:
+
+    LhoodParams: list containing likelihood type (denoted by integer) and hyperparameters (array), see prob_funcs.getToyHypers() docstring.
+
+	Returns:
+
+	LhoodObj object corresponding to LhoodParams 
+
     """
     LhoodType = LhoodParams[0]
     if LhoodParams[0] < 11 or LhoodParams[0] == 16 or LhoodParams[

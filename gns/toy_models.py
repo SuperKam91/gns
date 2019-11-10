@@ -23,9 +23,9 @@ def getToyHypersGeom(shape):
 
     paramNames: list of strings representing parameter names
 
-    priorParams: list containing prior type (denoted by integer) and hyperparameters (array)
+    priorParams: array containing prior type (denoted by integer) and hyperparameters (array), see getToyHypers() docstring.
 
-    LhoodParams: list containing likelihood type (denoted by integer) and hyperparameters (array)
+    LhoodParams: list containing likelihood type (denoted by integer) and hyperparameters (array), see getToyHypers() docstring.
 
     Priors which prior types integers correspond to can be found in fitPriors() in prob_funcs.py.
 
@@ -75,9 +75,9 @@ def getToyHypersGen(dists):
 
     paramNames: list of strings representing parameter names
 
-    priorParams: list containing prior type (denoted by integer) and hyperparameters (array)
+    priorParams: array containing prior type (denoted by integer) and hyperparameters (array), see getToyHypers() docstring.
 
-    LhoodParams: list containing likelihood type (denoted by integer) and hyperparameters (array)
+    LhoodParams: list containing likelihood type (denoted by integer) and hyperparameters (array), see getToyHypers() docstring.
 
     Priors which prior types integers correspond to can be found in fitPriors() in prob_funcs.py.
 
@@ -114,9 +114,22 @@ def getToyHypers(n, p, l):
 
     paramNames: list of strings representing parameter names
 
-    priorParams: list containing prior type (denoted by integer) and hyperparameters (array)
+    priorParams: array containing prior type (denoted by integer) and hyperparameters (array). priorParams has shape (3, nDims), 
+    where the first element of each row corresponds to the prior type, while the remaining two elements are hyperparameter values
+    (e.g. mean and standard deviation).
 
-    LhoodParams: list containing likelihood type (denoted by integer) and hyperparameters (array)
+
+    LhoodParams: list containing likelihood type (denoted by integer) and hyperparameters (array). 
+    First element of the list is the likelihood type which is an integer, 
+    the second element is a (1, nDims) array specifying the mean of each dimension of the likelihood.
+    The third element is an (nDims, nDims) specifying the covariance (scale) of the likelihood.
+
+    NOTE: Likelihoods involving the Kent distribution are parameterised differently 
+    (see https://en.wikipedia.org/wiki/Kent_distribution), and so the second element of LhoodParams
+    should be a list of three arrays of shape (3,) while the third element of LhoodParams should be an 
+    array of shape (2,).
+
+    For examples please see the body of the function.
 
     Priors which prior types integers correspond to can be found in fitPriors() in prob_funcs.py.
 
@@ -423,9 +436,9 @@ def getToyObjects(priorParams, LhoodParams):
 
     Args:
 
-    priorParams: list containing prior type (denoted by integer) and hyperparameters (array)
+    priorParams: array containing prior type (denoted by integer) and hyperparameters (array), see getToyHypers() docstring.
 
-    LhoodParams: list containing likelihood type (denoted by integer) and hyperparameters (array)
+    LhoodParams: list containing likelihood type (denoted by integer) and hyperparameters (array), see getToyHypers() docstring.
 
     Returns:
 
@@ -442,7 +455,7 @@ def getToyProbFuncs(priorObjs, LhoodObj):
 
     Args:
 
-    priorObjs: list containing prior objects obtained from getToyObjects()
+    priorObjs: array containing prior objects obtained from getToyObjects()
 
     LhoodObj: likelihood object obtained from getToyObjects()
 
@@ -467,9 +480,9 @@ def getToyFuncs(priorParams, LhoodParams):
 
     Args:
 
-    priorParams: list containing prior type (denoted by integer) and hyperparameters (array)
+    priorParams: array containing prior type (denoted by integer) and hyperparameters (array), see getToyHypers() docstring.
 
-    LhoodParams: list containing likelihood type (denoted by integer) and hyperparameters (array)
+    LhoodParams: list containing likelihood type (denoted by integer) and hyperparameters (array), see getToyHypers() docstring.
 
     Priors which prior types integers correspond to can be found in fitPriors() in prob_funcs.py.
 
@@ -506,7 +519,7 @@ def getTargetSupport(priorParams):
 
     Args:
 
-    priorParams: list containing prior type (denoted by integer) and hyperparameters (array).
+    priorParams: array containing prior type (denoted by integer) and hyperparameters (array).
 
     Returns:
 
