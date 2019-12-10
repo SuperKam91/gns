@@ -1,7 +1,6 @@
-# geometric nested sampling
-
 ![](https://zenodo.org/badge/DOI/10.5281/zenodo.3569956.svg)
 
+# geometric nested sampling
 
 The README below as well as the package API can be found at: [gns read the docs](https://geometric-nested-sampling.readthedocs.io/en/latest/)
 
