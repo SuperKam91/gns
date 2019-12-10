@@ -4,7 +4,7 @@ The README below as well as the package API can be found at: [gns read the docs]
 
 ## Version
 
-Version: 1.0
+Version: 1.01
 
 ## Overview
 
