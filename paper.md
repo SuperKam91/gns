@@ -1,6 +1,5 @@
 ---
 title: 'Geometric nested sampling: sampling from distributions defined on non-trivial geometries'
-
 tags:
   - Nested sampling
   - Monte Carlo methods
@@ -13,7 +12,7 @@ authors:
 affiliations:
  - name: Kavli Institute for Cosmology Cambridge, Madingley Road, Cambridge, CB3 0HA, United Kingdom
    index: 1
-- name: Astrophysics Group, Cavendish Laboratory, JJ Thomson Avenue, Cambridge CB3 0HE, United Kingdom
+ - name: Astrophysics Group, Cavendish Laboratory, JJ Thomson Avenue, Cambridge CB3 0HE, United Kingdom
    index: 2
 date: 2 October 2019
 bibliography: paper.bib
